@@ -702,6 +702,11 @@ let periodoAtualPreceptor = null;
 
 // ===== INICIALIZAÇÃO =====
 window.addEventListener('load', async () => {
+  // Verifica se é link de cadastro de preceptor
+  if (window.location.hash === '#cadastro') {
+    irPara('tela-cadastro-preceptor');
+    return;
+  }
   const { data: { session } } = await sb.auth.getSession();
   if (session) {
     usuarioAtual = session.user;
