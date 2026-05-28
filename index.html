@@ -674,6 +674,7 @@ tr:hover td { background:var(--creme); }
   <div class="modal">
     <div class="modal-header"><div><div class="modal-titulo">Novo Período de Estágio</div></div><button class="btn-fechar" onclick="fecharModal('modal-novo-periodo')">✕</button></div>
     <div class="modal-body">
+      <div class="form-grupo"><label class="form-label">Semestre</label><select class="form-select" id="periodo-semestre"><option value="2024.1">2024.1</option><option value="2024.2">2024.2</option><option value="2025.1">2025.1</option><option value="2025.2">2025.2</option><option value="2026.1">2026.1</option><option value="2026.2">2026.2</option></select></div>
       <div class="form-grupo"><label class="form-label">Campo de estágio</label><select class="form-select" id="periodo-campo"></select></div>
       <div class="form-grupo"><label class="form-label">Preceptor</label><select class="form-select" id="periodo-preceptor"></select></div>
       <div class="form-grid">
@@ -861,18 +862,44 @@ async function carregarCampos() {
   const { data } = await sb.from('campos').select('*').order('instituicao');
   const el = document.getElementById('lista-campos');
   if (!data || data.length === 0) { el.innerHTML = '<div class="vazio">Nenhum campo cadastrado.</div>'; return; }
-  el.innerHTML = `<table><thead><tr><th>Instituição</th><th>Setor</th><th>Status</th></tr></thead><tbody>${
-    data.map(c => `<tr><td><b>${c.instituicao}</b></td><td>${c.setor}</td><td><span class="badge badge-verde">Ativo</span></td></tr>`).join('')
+  el.innerHTML = `<table><thead><tr><th>Instituição</th><th>Setor</th><th>Status</th><th></th></tr></thead><tbody>${
+    data.map(c => `<tr><td><b>${c.instituicao}</b></td><td>${c.setor}</td><td><span class="badge badge-verde">Ativo</span></td><td style="display:flex;gap:6px">
+      <button class="btn-tabela" onclick="editarCampo('${c.id}','${c.instituicao}','${c.setor}')">✏️ Editar</button>
+      <button class="btn-tabela" style="color:#e74c3c;border-color:#e74c3c" onclick="excluirCampo('${c.id}')">🗑️ Excluir</button>
+    </td></tr>`).join('')
   }</tbody></table>`;
 }
 
+let campoEditandoId = null;
+
 async function salvarCampo() {
-  const { error } = await sb.from('campos').insert({
-    instituicao: document.getElementById('campo-inst').value.trim(),
-    setor: document.getElementById('campo-setor').value.trim(),
-  });
-  if (error) { alert('Erro: ' + error.message); return; }
+  const inst = document.getElementById('campo-inst').value.trim();
+  const setor = document.getElementById('campo-setor').value.trim();
+  if (!inst || !setor) { alert('Preencha todos os campos.'); return; }
+  if (campoEditandoId) {
+    const { error } = await sb.from('campos').update({ instituicao: inst, setor: setor }).eq('id', campoEditandoId);
+    if (error) { alert('Erro: ' + error.message); return; }
+    campoEditandoId = null;
+  } else {
+    const { error } = await sb.from('campos').insert({ instituicao: inst, setor: setor });
+    if (error) { alert('Erro: ' + error.message); return; }
+  }
   fecharModal('modal-novo-campo');
+  carregarCampos();
+}
+
+function editarCampo(id, inst, setor) {
+  campoEditandoId = id;
+  document.getElementById('campo-inst').value = inst;
+  document.getElementById('campo-setor').value = setor;
+  document.querySelector('#modal-novo-campo .modal-titulo').textContent = 'Editar Campo';
+  document.getElementById('modal-novo-campo').classList.add('ativo');
+}
+
+async function excluirCampo(id) {
+  if (!confirm('Tem certeza que deseja excluir este campo? Esta ação não pode ser desfeita.')) return;
+  const { error } = await sb.from('campos').delete().eq('id', id);
+  if (error) { alert('Erro ao excluir: ' + error.message); return; }
   carregarCampos();
 }
 
@@ -881,11 +908,11 @@ async function carregarPeriodos() {
   const { data } = await sb.from('periodos').select('*, campos(instituicao,setor), preceptores(nome_completo)').order('data_inicio', {ascending:false});
   const el = document.getElementById('lista-periodos');
   if (!data || data.length === 0) { el.innerHTML = '<div class="vazio">Nenhum período criado ainda.</div>'; return; }
-  el.innerHTML = `<table><thead><tr><th>Campo</th><th>Preceptor</th><th>Início</th><th>Fim</th><th>Status</th></tr></thead><tbody>${
+  el.innerHTML = `<table><thead><tr><th>Semestre</th><th>Campo</th><th>Preceptor</th><th>Início</th><th>Fim</th><th>Status</th></tr></thead><tbody>${
     data.map(p => {
       const hoje = new Date().toISOString().split('T')[0];
       const ativo = p.data_fim >= hoje;
-      return `<tr><td><b>${p.campos?.instituicao}</b> · ${p.campos?.setor}</td><td>${p.preceptores?.nome_completo}</td><td>${formatarData(p.data_inicio)}</td><td>${formatarData(p.data_fim)}</td><td><span class="badge ${ativo?'badge-verde':'badge-cinza'}">${ativo?'Ativo':'Encerrado'}</span></td></tr>`;
+      return `<tr><td><span class="badge badge-azul">${p.semestre||'—'}</span></td><td><b>${p.campos?.instituicao}</b> · ${p.campos?.setor}</td><td>${p.preceptores?.nome_completo}</td><td>${formatarData(p.data_inicio)}</td><td>${formatarData(p.data_fim)}</td><td><span class="badge ${ativo?'badge-verde':'badge-cinza'}">${ativo?'Ativo':'Encerrado'}</span></td></tr>`;
     }).join('')
   }</tbody></table>`;
 }
@@ -909,7 +936,8 @@ async function salvarPeriodo() {
   const fim = document.getElementById('periodo-fim').value;
   const alunosSel = Array.from(document.getElementById('periodo-alunos').selectedOptions).map(o=>o.value);
   if (!campoId || !preceptorId || !inicio || !fim) { alert('Preencha todos os campos.'); return; }
-  const { data: periodo, error } = await sb.from('periodos').insert({ campo_id: campoId, preceptor_id: preceptorId, data_inicio: inicio, data_fim: fim }).select().single();
+  const semestre = document.getElementById('periodo-semestre').value;
+  const { data: periodo, error } = await sb.from('periodos').insert({ campo_id: campoId, preceptor_id: preceptorId, data_inicio: inicio, data_fim: fim, semestre: semestre }).select().single();
   if (error) { alert('Erro: ' + error.message); return; }
   if (alunosSel.length > 0) {
     await sb.from('periodo_alunos').insert(alunosSel.map(aid => ({ periodo_id: periodo.id, aluno_id: aid })));
@@ -1112,6 +1140,12 @@ async function carregarHistoricoPreceptor() {
 
 function abrirModal(id) {
   if(id==='modal-novo-periodo') { abrirModalPeriodo(); return; }
+  if(id==='modal-novo-campo') {
+    campoEditandoId = null;
+    document.getElementById('campo-inst').value = '';
+    document.getElementById('campo-setor').value = '';
+    document.querySelector('#modal-novo-campo .modal-titulo').textContent = 'Novo Campo de Estágio';
+  }
   document.getElementById(id).classList.add('ativo');
 }
 function fecharModal(id) { document.getElementById(id).classList.remove('ativo'); }
