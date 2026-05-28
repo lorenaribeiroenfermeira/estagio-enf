@@ -700,6 +700,7 @@ const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 let usuarioAtual = null;
 let preceptorAtual = null;
 let periodoAtualPreceptor = null;
+let campoEditandoId = null;
 
 // ===== INICIALIZAÇÃO =====
 window.addEventListener('load', async () => {
@@ -869,8 +870,6 @@ async function carregarCampos() {
     </td></tr>`).join('')
   }</tbody></table>`;
 }
-
-let campoEditandoId = null;
 
 async function salvarCampo() {
   const inst = document.getElementById('campo-inst').value.trim();
