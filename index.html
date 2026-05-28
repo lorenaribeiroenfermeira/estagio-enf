@@ -724,9 +724,11 @@ async function fazerLogin() {
 }
 
 async function definirPerfil() {
-  const tipo = document.getElementById('tipo-acesso')?.value || 'preceptor';
-  // Verifica se é supervisora pelo email
-  if (usuarioAtual.email === 'lorena@anhanguera.com' || tipo === 'supervisora') {
+  // Verifica se é supervisora pela tabela do banco
+  const { data: supervisora } = await sb.from('supervisoras').select('*').eq('email', usuarioAtual.email).single();
+  if (supervisora) {
+    document.getElementById('nome-supervisora').textContent = supervisora.nome;
+    document.getElementById('avatar-supervisora').textContent = supervisora.nome.split(' ').slice(0,2).map(n=>n[0]).join('');
     irPara('tela-supervisora');
     carregarDashboard();
   } else {
