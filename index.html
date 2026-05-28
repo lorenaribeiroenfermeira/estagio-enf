@@ -434,7 +434,12 @@ tr:hover td { background:var(--creme); }
 
       <!-- AVALIAÇÕES -->
       <div id="pagina-avaliacoes" style="display:none">
-        <div class="topbar"><div class="topbar-titulo">Avaliações</div></div>
+        <div class="topbar">
+          <div class="topbar-titulo">Avaliações</div>
+          <div class="topbar-acoes">
+            <button class="btn btn-primario" onclick="gerarRelatorioMEC()">📄 Relatório MEC</button>
+          </div>
+        </div>
         <div class="pagina">
           <div class="secao">
             <div class="secao-header"><div class="secao-titulo">Avaliações finais</div></div>
@@ -784,6 +789,8 @@ let usuarioAtual = null;
 let preceptorAtual = null;
 let periodoAtualPreceptor = null;
 let campoEditandoId = null;
+let periodoEditandoId = null;
+let alunoEditandoId = null;
 
 // ===== INICIALIZAÇÃO =====
 window.addEventListener('load', async () => {
@@ -959,8 +966,6 @@ async function carregarAlunos() {
   }</tbody></table>`;
 }
 
-let alunoEditandoId = null;
-
 async function salvarAluno() {
   const nome = document.getElementById('aluno-nome').value.trim();
   if (!nome) { alert('Preencha o nome do aluno.'); return; }
@@ -1070,11 +1075,22 @@ async function carregarPeriodos() {
   const { data } = await sb.from('periodos').select('*, campos(instituicao,setor), preceptores(nome_completo)').order('data_inicio', {ascending:false});
   const el = document.getElementById('lista-periodos');
   if (!data || data.length === 0) { el.innerHTML = '<div class="vazio">Nenhum período criado ainda.</div>'; return; }
-  el.innerHTML = `<table><thead><tr><th>Semestre</th><th>Campo</th><th>Preceptor</th><th>Início</th><th>Fim</th><th>Status</th></tr></thead><tbody>${
+  el.innerHTML = `<table><thead><tr><th>Semestre</th><th>Campo</th><th>Preceptor</th><th>Início</th><th>Fim</th><th>Status</th><th></th></tr></thead><tbody>${
     data.map(p => {
       const hoje = new Date().toISOString().split('T')[0];
       const ativo = p.data_fim >= hoje;
-      return `<tr><td><span class="badge badge-azul">${p.semestre||'—'}</span></td><td><b>${p.campos?.instituicao}</b> · ${p.campos?.setor}</td><td>${p.preceptores?.nome_completo}</td><td>${formatarData(p.data_inicio)}</td><td>${formatarData(p.data_fim)}</td><td><span class="badge ${ativo?'badge-verde':'badge-cinza'}">${ativo?'Ativo':'Encerrado'}</span></td></tr>`;
+      return `<tr>
+        <td><span class="badge badge-azul">${p.semestre||'—'}</span></td>
+        <td><b>${p.campos?.instituicao}</b> · ${p.campos?.setor}</td>
+        <td>${p.preceptores?.nome_completo}</td>
+        <td>${formatarData(p.data_inicio)}</td>
+        <td>${formatarData(p.data_fim)}</td>
+        <td><span class="badge ${ativo?'badge-verde':'badge-cinza'}">${ativo?'Ativo':'Encerrado'}</span></td>
+        <td style="display:flex;gap:6px">
+          <button class="btn-tabela" onclick="editarPeriodo('${p.id}')">✏️ Editar</button>
+          <button class="btn-tabela" style="color:#e74c3c;border-color:#e74c3c" onclick="excluirPeriodo('${p.id}')">🗑️ Excluir</button>
+        </td>
+      </tr>`;
     }).join('')
   }</tbody></table>`;
 }
@@ -1103,23 +1119,85 @@ async function abrirModalPeriodo() {
     : '<option value="">Nenhum aluno cadastrado</option>';
 }
 
+let periodoEditandoId = null;
+
+async function editarPeriodo(id) {
+  periodoEditandoId = id;
+  document.getElementById('modal-novo-periodo').classList.add('ativo');
+  document.querySelector('#modal-novo-periodo .modal-titulo').textContent = 'Editar Período';
+  document.querySelector('#modal-novo-periodo .btn-primario').textContent = 'Salvar alterações';
+  document.getElementById('periodo-campo').innerHTML = '<option>Carregando...</option>';
+  document.getElementById('periodo-preceptor').innerHTML = '<option>Carregando...</option>';
+  document.getElementById('periodo-alunos').innerHTML = '<option>Carregando...</option>';
+
+  const [campos, preceptores, alunos, periodo, alunosPeriodo] = await Promise.all([
+    sb.from('campos').select('*').order('instituicao'),
+    sb.from('preceptores').select('*').order('nome_completo'),
+    sb.from('alunos').select('*').order('nome_completo'),
+    sb.from('periodos').select('*').eq('id', id).single(),
+    sb.from('periodo_alunos').select('aluno_id').eq('periodo_id', id)
+  ]);
+
+  document.getElementById('periodo-campo').innerHTML = campos.data?.map(c=>`<option value="${c.id}">${c.instituicao} · ${c.setor}</option>`).join('');
+  document.getElementById('periodo-preceptor').innerHTML = preceptores.data?.map(p=>`<option value="${p.id}">${p.nome_completo}</option>`).join('');
+  document.getElementById('periodo-alunos').innerHTML = alunos.data?.map(a=>`<option value="${a.id}">${a.nome_completo}</option>`).join('');
+
+  if (periodo.data) {
+    document.getElementById('periodo-semestre').value = periodo.data.semestre || '';
+    document.getElementById('periodo-campo').value = periodo.data.campo_id;
+    document.getElementById('periodo-preceptor').value = periodo.data.preceptor_id;
+    document.getElementById('periodo-inicio').value = periodo.data.data_inicio;
+    document.getElementById('periodo-fim').value = periodo.data.data_fim;
+    // Marca alunos já vinculados
+    const alunosIds = new Set(alunosPeriodo.data?.map(a=>a.aluno_id));
+    Array.from(document.getElementById('periodo-alunos').options).forEach(opt => {
+      opt.selected = alunosIds.has(opt.value);
+    });
+  }
+}
+
+async function excluirPeriodo(id) {
+  if (!confirm('Excluir este período? Frequências e avaliações vinculadas também serão removidas.')) return;
+  await sb.from('periodo_alunos').delete().eq('periodo_id', id);
+  const { error } = await sb.from('periodos').delete().eq('id', id);
+  if (error) { alert('Erro: ' + error.message); return; }
+  carregarPeriodos();
+  carregarDashboard();
+}
+
 async function salvarPeriodo() {
   const campoId = document.getElementById('periodo-campo').value;
   const preceptorId = document.getElementById('periodo-preceptor').value;
   const inicio = document.getElementById('periodo-inicio').value;
   const fim = document.getElementById('periodo-fim').value;
+  const semestre = document.getElementById('periodo-semestre').value;
   const alunosSel = Array.from(document.getElementById('periodo-alunos').selectedOptions).map(o=>o.value);
   if (!campoId || !preceptorId || !inicio || !fim) { alert('Preencha todos os campos.'); return; }
-  const semestre = document.getElementById('periodo-semestre').value;
-  const { data: periodo, error } = await sb.from('periodos').insert({ campo_id: campoId, preceptor_id: preceptorId, data_inicio: inicio, data_fim: fim, semestre: semestre }).select().single();
-  if (error) { alert('Erro: ' + error.message); return; }
-  if (alunosSel.length > 0) {
-    await sb.from('periodo_alunos').insert(alunosSel.map(aid => ({ periodo_id: periodo.id, aluno_id: aid })));
+
+  if (periodoEditandoId) {
+    // Atualiza período existente
+    const { error } = await sb.from('periodos').update({ campo_id: campoId, preceptor_id: preceptorId, data_inicio: inicio, data_fim: fim, semestre }).eq('id', periodoEditandoId);
+    if (error) { alert('Erro: ' + error.message); return; }
+    // Atualiza alunos: remove todos e reinsere
+    await sb.from('periodo_alunos').delete().eq('periodo_id', periodoEditandoId);
+    if (alunosSel.length > 0) {
+      await sb.from('periodo_alunos').insert(alunosSel.map(aid => ({ periodo_id: periodoEditandoId, aluno_id: aid })));
+    }
+    periodoEditandoId = null;
+    alert('Período atualizado com sucesso!');
+  } else {
+    // Novo período
+    const { data: periodo, error } = await sb.from('periodos').insert({ campo_id: campoId, preceptor_id: preceptorId, data_inicio: inicio, data_fim: fim, semestre }).select().single();
+    if (error) { alert('Erro: ' + error.message); return; }
+    if (alunosSel.length > 0) {
+      await sb.from('periodo_alunos').insert(alunosSel.map(aid => ({ periodo_id: periodo.id, aluno_id: aid })));
+    }
+    alert('Período criado com sucesso!');
   }
+
   fecharModal('modal-novo-periodo');
   carregarPeriodos();
   carregarDashboard();
-  alert('Período criado com sucesso!');
 }
 
 // ===== FREQUÊNCIAS (PRECEPTOR) =====
@@ -1378,12 +1456,186 @@ function abrirModal(id) {
   }
   document.getElementById(id).classList.add('ativo');
 }
-function fecharModal(id) { document.getElementById(id).classList.remove('ativo'); }
+function fecharModal(id) {
+  document.getElementById(id).classList.remove('ativo');
+  if (id === 'modal-novo-periodo') {
+    periodoEditandoId = null;
+    document.querySelector('#modal-novo-periodo .modal-titulo').textContent = 'Novo Período de Estágio';
+    document.querySelector('#modal-novo-periodo .btn-primario').textContent = 'Criar período';
+    document.getElementById('periodo-inicio').value = '';
+    document.getElementById('periodo-fim').value = '';
+  }
+}
 
 function formatarData(d) {
   if (!d) return '—';
   const [y,m,dia] = d.split('-');
   return `${dia}/${m}/${y}`;
+}
+
+async function gerarRelatorioMEC() {
+  const { data: avaliacoes } = await sb.from('avaliacoes')
+    .select('*, alunos(*), preceptores(*), periodos(*, campos(instituicao,setor))')
+    .order('created_at', {ascending:false});
+
+  if (!avaliacoes || avaliacoes.length === 0) {
+    alert('Nenhuma avaliação finalizada para gerar relatório.');
+    return;
+  }
+
+  // Busca frequências
+  const periodoIds = [...new Set(avaliacoes.map(a=>a.periodo_id))];
+  const { data: frequencias } = await sb.from('frequencias')
+    .select('*, alunos(nome_completo)')
+    .in('periodo_id', periodoIds);
+
+  const agora = new Date().toLocaleString('pt-BR');
+
+  let html_rel = `<!DOCTYPE html><html lang="pt-BR"><head>
+  <meta charset="UTF-8">
+  <title>Relatório MEC — EstágioEnf</title>
+  <style>
+    body { font-family: Arial, sans-serif; font-size: 12px; color: #222; margin: 0; padding: 0; }
+    .pagina { page-break-after: always; padding: 30px; max-width: 800px; margin: 0 auto; }
+    .pagina:last-child { page-break-after: avoid; }
+    .cabecalho { text-align: center; border-bottom: 2px solid #E87722; padding-bottom: 12px; margin-bottom: 20px; }
+    .cabecalho h1 { font-size: 16px; color: #E87722; margin: 0 0 4px; }
+    .cabecalho p { margin: 2px 0; font-size: 11px; color: #666; }
+    .secao { margin-bottom: 16px; }
+    .secao-titulo { background: #FFF0E3; border-left: 4px solid #E87722; padding: 6px 10px; font-weight: bold; font-size: 12px; margin-bottom: 8px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 12px; font-size: 11px; }
+    th { background: #f5f5f5; padding: 5px 8px; text-align: left; border: 1px solid #ddd; font-size: 10px; text-transform: uppercase; }
+    td { padding: 5px 8px; border: 1px solid #ddd; vertical-align: top; }
+    .nota-final { font-size: 22px; font-weight: bold; color: #2D7D46; text-align: center; padding: 10px; border: 2px solid #2D7D46; border-radius: 8px; display: inline-block; min-width: 80px; }
+    .rodape { margin-top: 30px; border-top: 1px solid #ddd; padding-top: 12px; display: flex; justify-content: space-between; }
+    .assinatura { text-align: center; }
+    .linha-assinatura { border-top: 1px solid #333; width: 200px; margin: 40px auto 4px; }
+    .presente { color: #2D7D46; font-weight: bold; }
+    .falta { color: #e74c3c; font-weight: bold; }
+    .abonada { color: #E87722; font-weight: bold; }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+    .info-item { background: #fafafa; border: 1px solid #eee; padding: 6px 10px; border-radius: 4px; }
+    .info-label { font-size: 9px; text-transform: uppercase; color: #999; }
+    .info-valor { font-size: 12px; font-weight: 600; }
+    @media print { .pagina { padding: 20px; } }
+  </style></head><body>`;
+
+  for (const aval of avaliacoes) {
+    const freqAluno = frequencias?.filter(f => f.aluno_id === aval.aluno_id && f.periodo_id === aval.periodo_id) || [];
+    const totalP = freqAluno.filter(f=>f.status==='presente').length;
+    const totalF = freqAluno.filter(f=>f.status==='falta').length;
+    const totalFA = freqAluno.filter(f=>f.status==='falta_abonada').length;
+    const total = freqAluno.length;
+    const perc = total > 0 ? Math.round((totalP + totalFA) / total * 100) : 0;
+
+    html_rel += `<div class="pagina">
+      <div class="cabecalho">
+        <h1>FICHA AVALIATIVA INDIVIDUAL — ESTÁGIO SUPERVISIONADO</h1>
+        <p>Faculdade Anhanguera de Brasília — Unidade Asa Norte</p>
+        <p>Coordenação de Bacharelado em Enfermagem — Supervisão de Estágio</p>
+        <p style="font-size:10px;color:#999">Gerado em ${agora}</p>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item"><div class="info-label">Aluno(a)</div><div class="info-valor">${aval.alunos?.nome_completo||'—'}</div></div>
+        <div class="info-item"><div class="info-label">Matrícula</div><div class="info-valor">${aval.alunos?.matricula||'—'}</div></div>
+        <div class="info-item"><div class="info-label">Preceptor(a)</div><div class="info-valor">${aval.preceptores?.nome_completo||'—'}</div></div>
+        <div class="info-item"><div class="info-label">COREN</div><div class="info-valor">${aval.preceptores?.coren||'—'}</div></div>
+        <div class="info-item"><div class="info-label">Campo de estágio</div><div class="info-valor">${aval.periodos?.campos?.instituicao||'—'} — ${aval.periodos?.campos?.setor||'—'}</div></div>
+        <div class="info-item"><div class="info-label">Período</div><div class="info-valor">${formatarData(aval.periodos?.data_inicio)} a ${formatarData(aval.periodos?.data_fim)} · ${aval.periodos?.semestre||'—'}</div></div>
+        <div class="info-item"><div class="info-label">Modalidade</div><div class="info-valor">${aval.alunos?.modalidade||'—'}</div></div>
+        <div class="info-item"><div class="info-label">Avaliação finalizada em</div><div class="info-valor">${new Date(aval.created_at).toLocaleString('pt-BR')}</div></div>
+      </div>
+
+      <div class="secao">
+        <div class="secao-titulo">Frequência</div>
+        <table>
+          <thead><tr><th>Data</th><th>Entrada</th><th>Saída</th><th>Status</th></tr></thead>
+          <tbody>${freqAluno.map(f=>`<tr>
+            <td>${formatarData(f.data)}</td>
+            <td>${f.hora_entrada||'—'}</td>
+            <td>${f.hora_saida||'—'}</td>
+            <td class="${f.status==='presente'?'presente':f.status==='falta_abonada'?'abonada':'falta'}">${f.status==='presente'?'Presente':f.status==='falta_abonada'?'Falta Abonada':'Falta'}</td>
+          </tr>`).join('')}
+          <tr style="background:#f9f9f9;font-weight:bold">
+            <td colspan="2">Total: ${total} dias</td>
+            <td>Presenças: ${totalP+totalFA}</td>
+            <td>Frequência: ${perc}%</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="secao">
+        <div class="secao-titulo">Avaliação — Critérios</div>
+        <table>
+          <thead><tr><th>Critério</th><th style="width:60px;text-align:center">Máx.</th><th style="width:60px;text-align:center">Nota</th></tr></thead>
+          <tbody>
+            <tr><td colspan="3" style="background:#FFF0E3;font-weight:bold">Responsabilidade, ética e apresentação pessoal</td></tr>
+            <tr><td>Pontual e assíduo(a)</td><td style="text-align:center">0,5</td><td style="text-align:center">${(aval.resp_etica_1||0).toFixed(1).replace('.',',')}</td></tr>
+            <tr><td>Comparece uniformizado(a), com material de bolso</td><td style="text-align:center">0,5</td><td style="text-align:center">${(aval.resp_etica_2||0).toFixed(1).replace('.',',')}</td></tr>
+            <tr><td>Atua conforme código de ética COFEN 564/2017</td><td style="text-align:center">0,5</td><td style="text-align:center">${(aval.resp_etica_3||0).toFixed(1).replace('.',',')}</td></tr>
+            <tr><td>Cumpre atividades intra e extracampo</td><td style="text-align:center">0,5</td><td style="text-align:center">${(aval.resp_etica_4||0).toFixed(1).replace('.',',')}</td></tr>
+            <tr><td colspan="3" style="background:#FFF0E3;font-weight:bold">Colaboração e relacionamento interpessoal</td></tr>
+            <tr><td>Atua com respeito e harmonia com funcionários</td><td style="text-align:center">0,25</td><td style="text-align:center">${(aval.colab_1||0).toFixed(2).replace('.',',')}</td></tr>
+            <tr><td>Colabora com equipe multidisciplinar e colegas</td><td style="text-align:center">0,25</td><td style="text-align:center">${(aval.colab_2||0).toFixed(2).replace('.',',')}</td></tr>
+            <tr><td>Demonstra cooperação para realizar todas as atividades</td><td style="text-align:center">0,25</td><td style="text-align:center">${(aval.colab_3||0).toFixed(2).replace('.',',')}</td></tr>
+            <tr><td>Demonstra discrição, respeito e compromisso</td><td style="text-align:center">0,25</td><td style="text-align:center">${(aval.colab_4||0).toFixed(2).replace('.',',')}</td></tr>
+            <tr><td colspan="3" style="background:#FFF0E3;font-weight:bold">Conhecimento técnico teórico</td></tr>
+            <tr><td>Planeja atividades conforme necessidades do campo</td><td style="text-align:center">1,0</td><td style="text-align:center">${(aval.tec_teorico_1||0).toFixed(1).replace('.',',')}</td></tr>
+            <tr><td>Realiza provisão de materiais para procedimentos</td><td style="text-align:center">1,0</td><td style="text-align:center">${(aval.tec_teorico_2||0).toFixed(1).replace('.',',')}</td></tr>
+            <tr><td>Possui embasamento teórico para fundamentar ações</td><td style="text-align:center">1,0</td><td style="text-align:center">${(aval.tec_teorico_3||0).toFixed(1).replace('.',',')}</td></tr>
+            <tr><td colspan="3" style="background:#FFF0E3;font-weight:bold">Conhecimento técnico prático</td></tr>
+            <tr><td>Realiza atividades seguindo técnicas necessárias</td><td style="text-align:center">0,25</td><td style="text-align:center">${(aval.tec_pratico_1||0).toFixed(2).replace('.',',')}</td></tr>
+            <tr><td>Demonstra segurança e habilidade técnica</td><td style="text-align:center">0,25</td><td style="text-align:center">${(aval.tec_pratico_2||0).toFixed(2).replace('.',',')}</td></tr>
+            <tr><td>Promove privacidade do paciente e organiza o ambiente</td><td style="text-align:center">0,5</td><td style="text-align:center">${(aval.tec_pratico_3||0).toFixed(1).replace('.',',')}</td></tr>
+            <tr><td>Realiza atividades seguindo princípios da SAE</td><td style="text-align:center">0,5</td><td style="text-align:center">${(aval.tec_pratico_4||0).toFixed(1).replace('.',',')}</td></tr>
+            <tr><td>Desenvolve anotações e evoluções de enfermagem</td><td style="text-align:center">0,5</td><td style="text-align:center">${(aval.tec_pratico_5||0).toFixed(1).replace('.',',')}</td></tr>
+            <tr><td colspan="3" style="background:#FFF0E3;font-weight:bold">Ações educativas</td></tr>
+            <tr><td>Observa fragilidades passíveis de reparação</td><td style="text-align:center">0,5</td><td style="text-align:center">${(aval.ed_saude_1||0).toFixed(1).replace('.',',')}</td></tr>
+            <tr><td>Realiza estratégias de educação em saúde</td><td style="text-align:center">0,5</td><td style="text-align:center">${(aval.ed_saude_2||0).toFixed(1).replace('.',',')}</td></tr>
+            <tr><td colspan="3" style="background:#FFF0E3;font-weight:bold">Liderança</td></tr>
+            <tr><td>Capacidade de comunicação clara e empática</td><td style="text-align:center">0,5</td><td style="text-align:center">${(aval.lideranca_1||0).toFixed(1).replace('.',',')}</td></tr>
+            <tr><td>Visão de coordenação e liderança administrativa</td><td style="text-align:center">0,5</td><td style="text-align:center">${(aval.lideranca_2||0).toFixed(1).replace('.',',')}</td></tr>
+            <tr style="background:#222;color:white">
+              <td style="font-weight:bold;font-size:13px">NOTA FINAL</td>
+              <td style="text-align:center;font-weight:bold">10,0</td>
+              <td style="text-align:center;font-size:18px;font-weight:bold;color:#F5A623">${(aval.nota_final||0).toFixed(1).replace('.',',')}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="rodape">
+        <div class="assinatura">
+          <div class="linha-assinatura"></div>
+          <div><b>${aval.preceptores?.nome_completo||'Preceptor(a)'}</b></div>
+          <div style="font-size:10px;color:#666">COREN ${aval.preceptores?.coren||'—'}</div>
+          <div style="font-size:10px;color:#666">Assinatura do(a) Preceptor(a)</div>
+        </div>
+        <div class="assinatura">
+          <div class="linha-assinatura"></div>
+          <div><b>Lorena Ribeiro</b></div>
+          <div style="font-size:10px;color:#666">Supervisora de Estágio</div>
+          <div style="font-size:10px;color:#666">Assinatura da Supervisora</div>
+        </div>
+        <div class="assinatura">
+          <div class="linha-assinatura"></div>
+          <div><b>${aval.alunos?.nome_completo||'Aluno(a)'}</b></div>
+          <div style="font-size:10px;color:#666">Matrícula: ${aval.alunos?.matricula||'—'}</div>
+          <div style="font-size:10px;color:#666">Assinatura do(a) Aluno(a)</div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  html_rel += '</body></html>';
+
+  // Abre em nova janela para imprimir/salvar como PDF
+  const janela = window.open('', '_blank');
+  janela.document.write(html_rel);
+  janela.document.close();
+  janela.onload = () => janela.print();
 }
 
 // Init páginas
