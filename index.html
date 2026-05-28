@@ -612,24 +612,74 @@ tr:hover td { background:var(--creme); }
       </div>
       <div style="padding:28px 36px">
         <div id="cadastro-erro" class="login-erro"></div>
-        <div class="form-grupo"><label class="form-label">Nome completo</label><input class="form-input" id="cad-nome" placeholder="Enfermeiro(a) Nome Completo"></div>
+        
+        <div style="font-size:13px;font-weight:600;color:var(--laranja);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--laranja-claro)">Dados Pessoais</div>
+        
+        <div class="form-grupo"><label class="form-label">Nome completo *</label><input class="form-input" id="cad-nome" placeholder="Nome completo"></div>
         <div class="form-grid">
-          <div class="form-grupo"><label class="form-label">CPF</label><input class="form-input" id="cad-cpf" placeholder="000.000.000-00"></div>
-          <div class="form-grupo"><label class="form-label">COREN</label><input class="form-input" id="cad-coren" placeholder="123456-DF"></div>
+          <div class="form-grupo"><label class="form-label">CPF *</label><input class="form-input" id="cad-cpf" placeholder="000.000.000-00"></div>
+          <div class="form-grupo"><label class="form-label">Data de nascimento *</label><input class="form-input" id="cad-nasc" type="date"></div>
         </div>
-        <div class="form-grupo"><label class="form-label">E-mail profissional</label><input class="form-input" id="cad-email" type="email" placeholder="nome@hospital.com"></div>
         <div class="form-grid">
-          <div class="form-grupo"><label class="form-label">Telefone</label><input class="form-input" id="cad-tel" placeholder="(61) 99999-9999"></div>
-          <div class="form-grupo"><label class="form-label">Data de nascimento</label><input class="form-input" id="cad-nasc" type="date"></div>
+          <div class="form-grupo"><label class="form-label">Nome do pai *</label><input class="form-input" id="cad-pai" placeholder="Nome do pai"></div>
+          <div class="form-grupo"><label class="form-label">Nome da mãe *</label><input class="form-input" id="cad-mae" placeholder="Nome da mãe"></div>
         </div>
-        <div class="form-grupo"><label class="form-label">Instituição onde atua</label><input class="form-input" id="cad-inst" placeholder="Ex: Hospital de Base do DF"></div>
-        <div class="form-grupo"><label class="form-label">Setor / Unidade</label><input class="form-input" id="cad-setor" placeholder="Ex: Ambulatório de Cardiologia"></div>
-        <div class="form-grupo"><label class="form-label">Endereço completo</label><input class="form-input" id="cad-end" placeholder="Rua, número, bairro, cidade"></div>
         <div class="form-grid">
-          <div class="form-grupo"><label class="form-label">Senha</label><input class="form-input" id="cad-senha" type="password" placeholder="Mínimo 6 caracteres"></div>
-          <div class="form-grupo"><label class="form-label">Confirmar senha</label><input class="form-input" id="cad-senha2" type="password"></div>
+          <div class="form-grupo"><label class="form-label">Município de nascimento *</label><input class="form-input" id="cad-municipio" placeholder="Cidade"></div>
+          <div class="form-grupo"><label class="form-label">Estado de nascimento *</label><select class="form-select" id="cad-estado-nasc"><option value="">Selecione</option><option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option><option>SE</option><option>TO</option></select></div>
         </div>
-        <button class="btn btn-primario" style="width:100%;padding:14px;font-size:15px;margin-top:8px" onclick="cadastrarPreceptor()">Criar cadastro →</button>
+        <div class="form-grid">
+          <div class="form-grupo"><label class="form-label">RG *</label><input class="form-input" id="cad-rg" placeholder="0000000"></div>
+          <div class="form-grupo"><label class="form-label">Data de emissão do RG *</label><input class="form-input" id="cad-rg-emissao" type="date"></div>
+        </div>
+
+        <div style="font-size:13px;font-weight:600;color:var(--laranja);text-transform:uppercase;letter-spacing:.06em;margin:20px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--laranja-claro)">Endereço</div>
+        
+        <div class="form-grupo"><label class="form-label">Endereço (Rua e número) *</label><input class="form-input" id="cad-end" placeholder="Rua, número"></div>
+        <div class="form-grid">
+          <div class="form-grupo"><label class="form-label">Complemento (N/A se não houver)</label><input class="form-input" id="cad-complemento" placeholder="N/A"></div>
+          <div class="form-grupo"><label class="form-label">Bairro *</label><input class="form-input" id="cad-bairro" placeholder="Bairro"></div>
+        </div>
+        <div class="form-grid">
+          <div class="form-grupo"><label class="form-label">Cidade *</label><input class="form-input" id="cad-cidade" placeholder="Cidade"></div>
+          <div class="form-grupo"><label class="form-label">CEP *</label><input class="form-input" id="cad-cep" placeholder="00000-000"></div>
+        </div>
+        <div class="form-grid">
+          <div class="form-grupo"><label class="form-label">DDD *</label><input class="form-input" id="cad-ddd" placeholder="61" style="max-width:80px"></div>
+          <div class="form-grupo"><label class="form-label">Telefone *</label><input class="form-input" id="cad-tel" placeholder="99999-9999"></div>
+        </div>
+
+        <div style="font-size:13px;font-weight:600;color:var(--laranja);text-transform:uppercase;letter-spacing:.06em;margin:20px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--laranja-claro)">Registro Profissional</div>
+        
+        <div class="form-grupo"><label class="form-label">COREN (número) *</label><input class="form-input" id="cad-coren" placeholder="123456"></div>
+        <div class="form-grid">
+          <div class="form-grupo"><label class="form-label">Órgão emissor *</label><input class="form-input" id="cad-orgao" placeholder="COREN"></div>
+          <div class="form-grupo"><label class="form-label">Estado do órgão emissor *</label><select class="form-select" id="cad-estado-coren"><option value="">Selecione</option><option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option><option>SE</option><option>TO</option></select></div>
+        </div>
+        <div class="form-grupo"><label class="form-label">Campo de atuação *</label><input class="form-input" id="cad-inst" placeholder="Ex: Hospital de Base do DF — Cardiologia"></div>
+
+        <div style="font-size:13px;font-weight:600;color:var(--laranja);text-transform:uppercase;letter-spacing:.06em;margin:20px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--laranja-claro)">Acesso ao sistema</div>
+        
+        <div class="form-grupo"><label class="form-label">E-mail *</label><input class="form-input" id="cad-email" type="email" placeholder="seu@email.com"></div>
+        <div class="form-grid">
+          <div class="form-grupo"><label class="form-label">Senha *</label><input class="form-input" id="cad-senha" type="password" placeholder="Mínimo 6 caracteres"></div>
+          <div class="form-grupo"><label class="form-label">Confirmar senha *</label><input class="form-input" id="cad-senha2" type="password"></div>
+        </div>
+
+        <div style="font-size:13px;font-weight:600;color:var(--laranja);text-transform:uppercase;letter-spacing:.06em;margin:20px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--laranja-claro)">Documentos (PDF ou imagem — frente e verso quando indicado)</div>
+        
+        <div class="form-grupo"><label class="form-label">RG (frente e verso) *</label><input class="form-input" id="doc-rg" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple></div>
+        <div class="form-grupo"><label class="form-label">CPF (frente e verso) *</label><input class="form-input" id="doc-cpf" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple></div>
+        <div class="form-grupo"><label class="form-label">COREN (frente e verso) *</label><input class="form-input" id="doc-coren" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple></div>
+        <div class="form-grupo"><label class="form-label">Cartão de vacina atualizado (frente e verso) *</label><input class="form-input" id="doc-vacina" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple></div>
+        <div class="form-grupo"><label class="form-label">Certidão COREN nada consta *</label><input class="form-input" id="doc-nada-consta" type="file" accept=".pdf,.jpg,.jpeg,.png"></div>
+        <div class="form-grupo"><label class="form-label">Certificado de graduação (frente e verso) *</label><input class="form-input" id="doc-graduacao" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple></div>
+        <div class="form-grupo"><label class="form-label">Certificado de pós-graduação (frente e verso) *</label><input class="form-input" id="doc-pos" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple></div>
+        <div class="form-grupo"><label class="form-label">Curso adicional se solicitado (frente e verso)</label><input class="form-input" id="doc-curso" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple></div>
+
+        <div id="progresso-upload" style="display:none;background:var(--azul-claro);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--azul);margin-bottom:12px">📤 Enviando documentos, aguarde...</div>
+        
+        <button class="btn btn-primario" style="width:100%;padding:14px;font-size:15px;margin-top:8px" onclick="cadastrarPreceptor()">Criar cadastro e enviar documentos →</button>
         <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--cinza-texto)">Já tem acesso? <a href="#" onclick="irPara('tela-login')" style="color:var(--laranja-escuro);text-decoration:none">Fazer login</a></p>
       </div>
     </div>
@@ -804,22 +854,60 @@ async function cadastrarPreceptor() {
   const senha2 = document.getElementById('cad-senha2').value;
   const erro = document.getElementById('cadastro-erro');
   erro.style.display = 'none';
-  if (!nome || !email || !senha) { erro.textContent = 'Preencha todos os campos obrigatórios.'; erro.style.display = 'block'; return; }
+
+  // Validações obrigatórias
+  const obrigatorios = ['cad-nome','cad-cpf','cad-nasc','cad-pai','cad-mae','cad-municipio','cad-estado-nasc','cad-rg','cad-rg-emissao','cad-end','cad-bairro','cad-cidade','cad-cep','cad-ddd','cad-tel','cad-coren','cad-orgao','cad-estado-coren','cad-inst','cad-email'];
+  for (const id of obrigatorios) {
+    if (!document.getElementById(id)?.value.trim()) {
+      erro.textContent = 'Preencha todos os campos obrigatórios (*).' ; erro.style.display = 'block';
+      document.getElementById(id)?.focus(); return;
+    }
+  }
   if (senha !== senha2) { erro.textContent = 'As senhas não coincidem.'; erro.style.display = 'block'; return; }
+  if (senha.length < 6) { erro.textContent = 'Senha mínimo 6 caracteres.'; erro.style.display = 'block'; return; }
+
+  // Docs obrigatórios
+  const docsObrig = ['doc-rg','doc-cpf','doc-coren','doc-vacina','doc-nada-consta','doc-graduacao','doc-pos'];
+  for (const id of docsObrig) {
+    if (!document.getElementById(id)?.files.length) {
+      erro.textContent = 'Anexe todos os documentos obrigatórios.'; erro.style.display = 'block';
+      document.getElementById(id)?.focus(); return;
+    }
+  }
+
   const { data, error } = await sb.auth.signUp({ email, password: senha });
   if (error) { erro.textContent = error.message; erro.style.display = 'block'; return; }
-  await sb.from('preceptores').insert({
+
+  // Salva perfil
+  const { data: prec, error: errPrec } = await sb.from('preceptores').insert({
     user_id: data.user.id,
     nome_completo: nome,
-    cpf: document.getElementById('cad-cpf').value,
-    coren: document.getElementById('cad-coren').value,
+    cpf: document.getElementById('cad-cpf').value.trim(),
+    coren: document.getElementById('cad-coren').value.trim(),
     email,
-    telefone: document.getElementById('cad-tel').value,
-    instituicao: document.getElementById('cad-inst').value,
-    setor: document.getElementById('cad-setor').value,
-    endereco: document.getElementById('cad-end').value,
-  });
-  alert('Cadastro realizado! Verifique seu e-mail para confirmar o acesso.');
+    telefone: '(' + document.getElementById('cad-ddd').value.trim() + ') ' + document.getElementById('cad-tel').value.trim(),
+    instituicao: document.getElementById('cad-inst').value.trim(),
+    setor: document.getElementById('cad-orgao').value.trim(),
+    endereco: document.getElementById('cad-end').value.trim() + ', ' + (document.getElementById('cad-complemento').value.trim()||'N/A') + ', ' + document.getElementById('cad-bairro').value.trim() + ', ' + document.getElementById('cad-cidade').value.trim() + ', CEP: ' + document.getElementById('cad-cep').value.trim(),
+  }).select().single();
+
+  if (errPrec) { erro.textContent = 'Erro ao salvar perfil: ' + errPrec.message; erro.style.display = 'block'; return; }
+
+  // Upload documentos
+  document.getElementById('progresso-upload').style.display = 'block';
+  const docIds = ['doc-rg','doc-cpf','doc-coren','doc-vacina','doc-nada-consta','doc-graduacao','doc-pos','doc-curso'];
+  for (const docId of docIds) {
+    const files = document.getElementById(docId)?.files;
+    if (!files?.length) continue;
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const path = `${prec.id}/${docId}-${i}-${file.name}`;
+      await sb.storage.from('documentos-preceptores').upload(path, file);
+    }
+  }
+
+  document.getElementById('progresso-upload').style.display = 'none';
+  alert('Cadastro realizado com sucesso! Seus documentos foram enviados.');
   irPara('tela-login');
 }
 
@@ -857,23 +945,65 @@ async function carregarAlunos() {
   const { data } = await sb.from('alunos').select('*').order('nome_completo');
   const el = document.getElementById('lista-alunos');
   if (!data || data.length === 0) { el.innerHTML = '<div class="vazio">Nenhum aluno cadastrado ainda.</div>'; return; }
-  el.innerHTML = `<table><thead><tr><th>Nome</th><th>Matrícula</th><th>Semestre</th><th>Modalidade</th></tr></thead><tbody>${
-    data.map(a => `<tr><td><b>${a.nome_completo}</b></td><td>${a.matricula||'—'}</td><td>${a.semestre||'—'}</td><td><span class="badge ${a.modalidade==='presencial'?'badge-azul':'badge-cinza'}">${a.modalidade}</span></td></tr>`).join('')
+  el.innerHTML = `<table><thead><tr><th>Nome</th><th>Matrícula</th><th>Semestre</th><th>Modalidade</th><th></th></tr></thead><tbody>${
+    data.map(a => `<tr>
+      <td><b>${a.nome_completo}</b></td>
+      <td>${a.matricula||'—'}</td>
+      <td>${a.semestre||'—'}</td>
+      <td><span class="badge ${a.modalidade==='presencial'?'badge-azul':'badge-cinza'}">${a.modalidade}</span></td>
+      <td style="display:flex;gap:6px">
+        <button class="btn-tabela" onclick="editarAluno('${a.id}','${a.nome_completo}','${a.matricula||''}','${a.semestre||''}','${a.modalidade||''}','${a.email||''}')">✏️ Editar</button>
+        <button class="btn-tabela" style="color:#e74c3c;border-color:#e74c3c" onclick="excluirAluno('${a.id}')">🗑️ Excluir</button>
+      </td>
+    </tr>`).join('')
   }</tbody></table>`;
 }
 
+let alunoEditandoId = null;
+
 async function salvarAluno() {
-  const { error } = await sb.from('alunos').insert({
-    nome_completo: document.getElementById('aluno-nome').value.trim(),
-    matricula: document.getElementById('aluno-matricula').value.trim(),
-    semestre: document.getElementById('aluno-semestre').value,
-    modalidade: document.getElementById('aluno-modalidade').value,
-    email: document.getElementById('aluno-email').value.trim(),
-  });
-  if (error) { alert('Erro ao salvar: ' + error.message); return; }
+  const nome = document.getElementById('aluno-nome').value.trim();
+  if (!nome) { alert('Preencha o nome do aluno.'); return; }
+  if (alunoEditandoId) {
+    const { error } = await sb.from('alunos').update({
+      nome_completo: nome,
+      matricula: document.getElementById('aluno-matricula').value.trim(),
+      semestre: document.getElementById('aluno-semestre').value,
+      modalidade: document.getElementById('aluno-modalidade').value,
+      email: document.getElementById('aluno-email').value.trim(),
+    }).eq('id', alunoEditandoId);
+    if (error) { alert('Erro: ' + error.message); return; }
+    alunoEditandoId = null;
+  } else {
+    const { error } = await sb.from('alunos').insert({
+      nome_completo: nome,
+      matricula: document.getElementById('aluno-matricula').value.trim(),
+      semestre: document.getElementById('aluno-semestre').value,
+      modalidade: document.getElementById('aluno-modalidade').value,
+      email: document.getElementById('aluno-email').value.trim(),
+    });
+    if (error) { alert('Erro ao salvar: ' + error.message); return; }
+  }
   fecharModal('modal-novo-aluno');
   carregarAlunos();
-  alert('Aluno cadastrado com sucesso!');
+}
+
+function editarAluno(id, nome, matricula, semestre, modalidade, email) {
+  alunoEditandoId = id;
+  document.getElementById('aluno-nome').value = nome;
+  document.getElementById('aluno-matricula').value = matricula;
+  document.getElementById('aluno-semestre').value = semestre;
+  document.getElementById('aluno-modalidade').value = modalidade;
+  document.getElementById('aluno-email').value = email;
+  document.querySelector('#modal-novo-aluno .modal-titulo').textContent = 'Editar Aluno';
+  document.getElementById('modal-novo-aluno').classList.add('ativo');
+}
+
+async function excluirAluno(id) {
+  if (!confirm('Excluir este aluno? Esta ação não pode ser desfeita.')) return;
+  const { error } = await sb.from('alunos').delete().eq('id', id);
+  if (error) { alert('Erro: ' + error.message); return; }
+  carregarAlunos();
 }
 
 // ===== PRECEPTORES =====
@@ -1064,7 +1194,56 @@ async function carregarSelectAlunos() {
   const { data } = await sb.from('periodo_alunos').select('*, alunos(*)').eq('periodo_id', periodoAtualPreceptor.id);
   const sel = document.getElementById('select-aluno-aval');
   sel.innerHTML = data?.map(i=>`<option value="${i.alunos.id}">${i.alunos.nome_completo}</option>`).join('') || '';
-  if (data?.length) document.getElementById('nome-aluno-aval').textContent = data[0].alunos.nome_completo;
+  if (data?.length) {
+    document.getElementById('nome-aluno-aval').textContent = data[0].alunos.nome_completo;
+    carregarAvaliacaoAluno();
+  }
+}
+
+async function carregarAvaliacaoAluno() {
+  if (!periodoAtualPreceptor || !preceptorAtual) return;
+  const alunoId = document.getElementById('select-aluno-aval').value;
+  if (!alunoId) return;
+  document.getElementById('nome-aluno-aval').textContent = document.getElementById('select-aluno-aval').selectedOptions[0]?.text || '';
+  // Busca avaliação existente
+  const { data } = await sb.from('avaliacoes').select('*')
+    .eq('periodo_id', periodoAtualPreceptor.id)
+    .eq('aluno_id', alunoId).single();
+  
+  const aviso = document.getElementById('aviso-aval');
+  const btnFinalizar = document.querySelector('#prec-aval .btn-verde');
+  
+  if (data && data.finalizada) {
+    // Avaliação já finalizada - modo retificação
+    aviso.style.background = 'var(--laranja-claro)';
+    aviso.style.borderColor = 'var(--laranja)';
+    aviso.innerHTML = '✏️ Avaliação já finalizada. Você pode <b>retificar</b> os valores abaixo — a alteração ficará registrada.';
+    if(btnFinalizar) btnFinalizar.textContent = '✓ Salvar retificação';
+    // Preenche os campos com valores existentes
+    const campos = ['n1','n2','n3','n4','n5','n6','n7','n8','n9','n10','n11','n12','n13','n14','n15','n16','n17','n18','n19','n20'];
+    const chaves = ['resp_etica_1','resp_etica_2','resp_etica_3','resp_etica_4','colab_1','colab_2','colab_3','colab_4','tec_teorico_1','tec_teorico_2','tec_teorico_3','tec_pratico_1','tec_pratico_2','tec_pratico_3','tec_pratico_4','tec_pratico_5','ed_saude_1','ed_saude_2','lideranca_1','lideranca_2'];
+    campos.forEach((id, i) => { document.getElementById(id).value = data[chaves[i]] || 0; });
+    calcTotal();
+  } else if (data) {
+    aviso.innerHTML = '📝 Rascunho em andamento. Complete e finalize a avaliação.';
+    aviso.style.background = 'var(--azul-claro)';
+  } else {
+    // Nova avaliação - verifica se está no último dia
+    const hoje = new Date().toISOString().split('T')[0];
+    const ultimoDia = periodoAtualPreceptor.data_fim;
+    if (hoje < ultimoDia) {
+      const diasRestantes = Math.ceil((new Date(ultimoDia) - new Date(hoje)) / (1000*60*60*24));
+      aviso.innerHTML = `🔒 A avaliação final só pode ser lançada a partir do <b>último dia do campo (${formatarData(ultimoDia)})</b>. Faltam ${diasRestantes} dias.`;
+      aviso.style.background = 'var(--amarelo-claro)';
+    } else {
+      aviso.innerHTML = '✅ Período encerrado. Você pode lançar a avaliação final agora.';
+      aviso.style.background = 'var(--verde-claro)';
+    }
+    // Zera campos
+    for(let i=1;i<=20;i++) { const el = document.getElementById('n'+i); if(el) el.value=0; }
+    calcTotal();
+    if(btnFinalizar) btnFinalizar.textContent = '✓ Finalizar e assinar avaliação';
+  }
 }
 
 function calcTotal() {
@@ -1189,6 +1368,13 @@ function abrirModal(id) {
     document.getElementById('campo-inst').value = '';
     document.getElementById('campo-setor').value = '';
     document.querySelector('#modal-novo-campo .modal-titulo').textContent = 'Novo Campo de Estágio';
+  }
+  if(id==='modal-novo-aluno') {
+    alunoEditandoId = null;
+    document.getElementById('aluno-nome').value = '';
+    document.getElementById('aluno-matricula').value = '';
+    document.getElementById('aluno-email').value = '';
+    document.querySelector('#modal-novo-aluno .modal-titulo').textContent = 'Cadastrar Aluno';
   }
   document.getElementById(id).classList.add('ativo');
 }
