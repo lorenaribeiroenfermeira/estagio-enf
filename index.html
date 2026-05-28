@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EstágioEnf — Anhanguera Asa Norte</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --laranja: #E87722;
+  --laranja-escuro: #c45f0a;
+  --laranja-claro: #FFF0E3;
+  --laranja-medio: #FFD9B5;
+  --amarelo: #F5A623;
+  --amarelo-claro: #FFF8EC;
+  --creme: #FAFAF8;
+  --cinza-claro: #F5F4F1;
+  --cinza-medio: #E0DED9;
+  --cinza-texto: #6B6860;
+  --preto: #2A2520;
+  --branco: #FFFFFF;
+  --verde: #2D7D46;
+  --verde-claro: #EBF5EE;
+  --azul: #1B4F8A;
+  --azul-claro: #EBF1F9;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'DM Sans',sans-serif; background:var(--creme); color:var(--preto); min-height:100vh; }
+
+/* TELAS */
+.tela { display:none; min-height:100vh; }
+.tela.ativa { display:flex; flex-direction:column; }
+
+/* LOGIN */
+#tela-login {
+  background: linear-gradient(135deg, #FFF8F0 0%, #FFE8CC 50%, #FFF3E0 100%);
+  align-items:center; justify-content:center; position:relative; overflow:hidden;
+}
+#tela-login::before {
+  content:''; position:absolute; width:600px; height:600px;
+  background:radial-gradient(circle, rgba(232,119,34,0.25) 0%, transparent 70%);
+  top:-100px; right:-100px; border-radius:50%;
+}
+#tela-login::after {
+  content:''; position:absolute; width:400px; height:400px;
+  background:radial-gradient(circle, rgba(245,166,35,0.2) 0%, transparent 70%);
+  bottom:-80px; left:-80px; border-radius:50%;
+}
+.login-card {
+  background:rgba(255,255,255,0.95);
+  border:1px solid rgba(232,119,34,0.2);
+  backdrop-filter:blur(20px);
+  box-shadow:0 20px 60px rgba(232,119,34,0.15);
+  border-radius:24px; padding:48px; width:440px;
+  position:relative; z-index:1;
+  animation:fadeUp 0.6s ease;
+}
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+.login-logo { display:flex; align-items:center; gap:12px; margin-bottom:32px; }
+.logo-icon {
+  width:44px; height:44px; background:var(--laranja); border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'DM Serif Display',serif; color:white; font-size:20px;
+}
+.logo-text .main { font-family:'DM Serif Display',serif; font-size:18px; display:block; color:var(--preto); }
+.logo-text .sub { font-size:11px; color:var(--cinza-texto); letter-spacing:0.05em; }
+.login-titulo { font-family:'DM Serif Display',serif; color:var(--preto); font-size:28px; margin-bottom:6px; }
+.login-sub { color:var(--cinza-texto); font-size:13px; margin-bottom:32px; }
+.campo-form { margin-bottom:16px; }
+.campo-form label { display:block; color:var(--cinza-texto); font-size:12px; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:8px; }
+.campo-form input, .campo-form select {
+  width:100%; background:var(--cinza-claro); border:1px solid var(--cinza-medio);
+  border-radius:10px; padding:12px 16px; color:var(--preto);
+  font-family:'DM Sans',sans-serif; font-size:14px; outline:none; transition:border-color 0.2s;
+}
+.campo-form input:focus, .campo-form select:focus { border-color:var(--laranja); }
+.btn-login {
+  width:100%; background:var(--laranja); color:white; border:none; border-radius:10px;
+  padding:14px; font-family:'DM Sans',sans-serif; font-size:15px; font-weight:600;
+  cursor:pointer; margin-top:8px; transition:background 0.2s,transform 0.1s;
+}
+.btn-login:hover { background:var(--laranja-escuro); transform:translateY(-1px); }
+.login-link { text-align:center; margin-top:20px; color:var(--cinza-texto); font-size:13px; }
+.login-link a { color:var(--laranja-escuro); text-decoration:none; font-weight:500; }
+.login-erro { background:#FEE8E8; border:1px solid #F5AAAA; border-radius:8px; padding:10px 14px; font-size:13px; color:#c0392b; margin-bottom:12px; display:none; }
+
+/* LAYOUT */
+.layout { display:flex; min-height:100vh; }
+.sidebar {
+  width:260px; background:#FFFFFF; border-right:1px solid #EDE9E4;
+  display:flex; flex-direction:column; position:fixed; top:0; left:0; bottom:0; z-index:100;
+}
+.sidebar-header { padding:24px 20px; border-bottom:1px solid #EDE9E4; background:linear-gradient(135deg,#FFF0E3,#FFF8F0); }
+.sidebar-logo { display:flex; align-items:center; gap:10px; }
+.sidebar-logo .logo-icon { width:36px; height:36px; font-size:16px; }
+.sidebar-logo .logo-text .main { font-size:15px; }
+.sidebar-logo .logo-text .sub { font-size:10px; }
+.sidebar-perfil { padding:16px 20px; border-bottom:1px solid #EDE9E4; }
+.perfil-info { display:flex; align-items:center; gap:10px; }
+.perfil-avatar {
+  width:36px; height:36px; background:var(--laranja); border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  color:white; font-weight:600; font-size:14px; flex-shrink:0;
+}
+.perfil-nome { color:var(--preto); font-size:13px; font-weight:500; }
+.perfil-cargo { color:var(--cinza-texto); font-size:11px; margin-top:1px; }
+.sidebar-nav { padding:16px 12px; flex:1; overflow-y:auto; }
+.nav-grupo { margin-bottom:24px; }
+.nav-grupo-titulo { color:#B0A89E; font-size:10px; letter-spacing:0.12em; text-transform:uppercase; padding:0 8px; margin-bottom:6px; }
+.nav-item {
+  display:flex; align-items:center; gap:10px; padding:10px 8px; border-radius:8px;
+  color:#4A4540; font-size:13px; cursor:pointer; transition:all 0.15s; margin-bottom:2px;
+}
+.nav-item:hover { background:#FFF0E3; color:var(--laranja-escuro); }
+.nav-item.ativo { background:#FFF0E3; color:var(--laranja-escuro); font-weight:600; }
+.nav-item.ativo .nav-icon { color:var(--laranja); }
+.nav-icon { font-size:16px; width:20px; text-align:center; }
+.sidebar-rodape { padding:16px 12px; border-top:1px solid #EDE9E4; }
+.btn-sair {
+  display:flex; align-items:center; gap:10px; padding:10px 8px; border-radius:8px;
+  color:var(--cinza-texto); font-size:13px; cursor:pointer; transition:all 0.15s;
+  width:100%; border:none; background:none; font-family:'DM Sans',sans-serif;
+}
+.btn-sair:hover { background:#FFF0E3; color:var(--laranja-escuro); }
+.conteudo { margin-left:260px; flex:1; display:flex; flex-direction:column; }
+.topbar {
+  background:white; border-bottom:1px solid var(--cinza-medio); padding:0 32px; height:64px;
+  display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:50;
+}
+.topbar-titulo { font-family:'DM Serif Display',serif; font-size:22px; color:var(--preto); }
+.topbar-acoes { display:flex; gap:10px; align-items:center; }
+.btn {
+  padding:9px 18px; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:13px;
+  font-weight:500; cursor:pointer; border:none; transition:all 0.15s;
+  display:inline-flex; align-items:center; gap:6px;
+}
+.btn-primario { background:var(--laranja); color:white; }
+.btn-primario:hover { background:var(--laranja-escuro); }
+.btn-secundario { background:var(--cinza-claro); color:var(--preto); border:1px solid var(--cinza-medio); }
+.btn-secundario:hover { background:var(--cinza-medio); }
+.btn-verde { background:var(--verde); color:white; }
+.btn-verde:hover { background:#245f37; }
+.btn-vermelho { background:#e74c3c; color:white; }
+.pagina { padding:32px; flex:1; }
+
+/* CARDS */
+.cards-resumo { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:32px; }
+.card-resumo {
+  background:white; border-radius:16px; padding:20px;
+  border:1px solid var(--cinza-medio); position:relative; overflow:hidden;
+  animation:fadeUp 0.4s ease both;
+}
+.card-resumo::after { content:''; position:absolute; top:0; right:0; width:4px; height:100%; border-radius:0 16px 16px 0; }
+.card-resumo.laranja::after { background:var(--laranja); }
+.card-resumo.verde::after { background:var(--verde); }
+.card-resumo.azul::after { background:var(--azul); }
+.card-resumo.amarelo::after { background:var(--amarelo); }
+.card-icone { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; margin-bottom:12px; }
+.card-icone.laranja { background:var(--laranja-claro); }
+.card-icone.verde { background:var(--verde-claro); }
+.card-icone.azul { background:var(--azul-claro); }
+.card-icone.amarelo { background:var(--amarelo-claro); }
+.card-numero { font-family:'DM Serif Display',serif; font-size:32px; color:var(--preto); line-height:1; margin-bottom:4px; }
+.card-label { font-size:12px; color:var(--cinza-texto); }
+
+/* SEÇÕES */
+.secao { background:white; border-radius:16px; border:1px solid var(--cinza-medio); margin-bottom:24px; overflow:hidden; }
+.secao-header { padding:20px 24px; border-bottom:1px solid var(--cinza-claro); display:flex; align-items:center; justify-content:space-between; }
+.secao-titulo { font-family:'DM Serif Display',serif; font-size:18px; }
+.secao-sub { font-size:12px; color:var(--cinza-texto); margin-top:2px; }
+table { width:100%; border-collapse:collapse; }
+th { text-align:left; padding:12px 24px; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--cinza-texto); background:var(--cinza-claro); font-weight:500; }
+td { padding:14px 24px; font-size:13px; border-bottom:1px solid var(--cinza-claro); vertical-align:middle; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:var(--creme); }
+
+/* BADGES */
+.badge { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:500; }
+.badge-verde { background:var(--verde-claro); color:var(--verde); }
+.badge-vermelho { background:#FEE8EC; color:#c0392b; }
+.badge-laranja { background:var(--laranja-claro); color:var(--laranja-escuro); }
+.badge-azul { background:var(--azul-claro); color:var(--azul); }
+.badge-cinza { background:var(--cinza-claro); color:var(--cinza-texto); }
+.btn-tabela {
+  padding:5px 12px; border-radius:6px; font-size:12px; font-weight:500;
+  cursor:pointer; border:1px solid var(--cinza-medio); background:white;
+  color:var(--preto); font-family:'DM Sans',sans-serif; transition:all 0.15s;
+}
+.btn-tabela:hover { background:var(--cinza-claro); }
+
+/* FREQUÊNCIA */
+.freq-card { background:white; border-radius:16px; border:1px solid var(--cinza-medio); margin-bottom:16px; overflow:hidden; }
+.freq-header { background:linear-gradient(135deg,var(--laranja),var(--amarelo)); padding:16px 24px; display:flex; align-items:center; justify-content:space-between; }
+.freq-header-info .titulo { color:white; font-size:15px; font-weight:600; }
+.freq-header-info .sub { color:rgba(255,255,255,0.75); font-size:12px; margin-top:2px; }
+.freq-data-hoje { background:rgba(255,255,255,0.25); color:white; padding:6px 14px; border-radius:8px; font-size:12px; font-weight:600; }
+.freq-aluno { display:flex; align-items:center; padding:14px 24px; border-bottom:1px solid var(--cinza-claro); gap:16px; }
+.freq-aluno:last-child { border-bottom:none; }
+.aluno-nome { flex:1; font-size:14px; font-weight:500; }
+.aluno-modalidade { font-size:11px; color:var(--cinza-texto); margin-top:2px; }
+.freq-horarios { display:flex; gap:8px; align-items:center; }
+.freq-input { width:70px; border:1px solid var(--cinza-medio); border-radius:6px; padding:6px 8px; font-size:12px; font-family:'DM Sans',sans-serif; text-align:center; outline:none; background:var(--cinza-claro); }
+.freq-input:focus { border-color:var(--laranja); background:white; }
+.freq-status { display:flex; gap:6px; }
+.btn-status { padding:6px 14px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; border:2px solid; transition:all 0.15s; font-family:'DM Sans',sans-serif; }
+.btn-presente { border-color:var(--verde); color:var(--verde); background:white; }
+.btn-presente.selecionado, .btn-presente:hover { background:var(--verde); color:white; }
+.btn-falta { border-color:#e74c3c; color:#e74c3c; background:white; }
+.btn-falta.selecionado, .btn-falta:hover { background:#e74c3c; color:white; }
+
+/* AVALIAÇÃO */
+.aval-grupo { border:1px solid var(--cinza-medio); border-radius:12px; margin-bottom:16px; overflow:hidden; }
+.aval-grupo-header { background:var(--cinza-claro); padding:12px 20px; display:flex; align-items:center; justify-content:space-between; }
+.aval-grupo-titulo { font-weight:600; font-size:14px; }
+.aval-grupo-valor { font-size:12px; color:var(--cinza-texto); }
+.aval-criterio { display:flex; align-items:center; padding:12px 20px; border-bottom:1px solid var(--cinza-claro); gap:16px; }
+.aval-criterio:last-child { border-bottom:none; }
+.aval-criterio-texto { flex:1; font-size:13px; }
+.aval-criterio-max { font-size:12px; color:var(--cinza-texto); min-width:60px; text-align:right; }
+.nota-input { width:70px; border:1px solid var(--cinza-medio); border-radius:6px; padding:6px 8px; font-size:13px; font-family:'DM Sans',sans-serif; text-align:center; outline:none; }
+.nota-input:focus { border-color:var(--laranja); }
+.nota-total-box { background:linear-gradient(135deg,var(--laranja-escuro),var(--laranja)); color:white; border-radius:12px; padding:20px 24px; display:flex; align-items:center; justify-content:space-between; margin-top:20px; }
+.nota-total-label { font-size:14px; color:rgba(255,255,255,0.8); }
+.nota-total-valor { font-family:'DM Serif Display',serif; font-size:36px; color:white; }
+
+/* MODAL */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:200; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
+.modal-overlay.ativo { display:flex; }
+.modal { background:white; border-radius:20px; width:520px; max-height:85vh; overflow-y:auto; animation:fadeUp 0.3s ease; }
+.modal-header { padding:24px 28px 16px; border-bottom:1px solid var(--cinza-claro); display:flex; align-items:flex-start; justify-content:space-between; position:sticky; top:0; background:white; z-index:1; }
+.modal-titulo { font-family:'DM Serif Display',serif; font-size:22px; }
+.modal-sub { font-size:13px; color:var(--cinza-texto); margin-top:2px; }
+.btn-fechar { background:var(--cinza-claro); border:none; border-radius:8px; width:32px; height:32px; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:background 0.15s; }
+.btn-fechar:hover { background:var(--cinza-medio); }
+.modal-body { padding:24px 28px; }
+.form-grupo { margin-bottom:16px; }
+.form-label { display:block; font-size:12px; letter-spacing:0.06em; text-transform:uppercase; color:var(--cinza-texto); margin-bottom:6px; font-weight:500; }
+.form-input, .form-select, .form-textarea { width:100%; border:1px solid var(--cinza-medio); border-radius:8px; padding:10px 14px; font-family:'DM Sans',sans-serif; font-size:14px; color:var(--preto); background:white; outline:none; transition:border-color 0.2s; }
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color:var(--laranja); }
+.form-textarea { resize:vertical; min-height:80px; }
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.modal-footer { padding:16px 28px 24px; display:flex; justify-content:flex-end; gap:10px; border-top:1px solid var(--cinza-claro); position:sticky; bottom:0; background:white; }
+
+/* LOG */
+.log-item { display:flex; align-items:flex-start; gap:12px; padding:12px 24px; border-bottom:1px solid var(--cinza-claro); font-size:13px; }
+.log-item:last-child { border-bottom:none; }
+.log-dot { width:8px; height:8px; border-radius:50%; margin-top:5px; flex-shrink:0; }
+.log-dot.verde { background:var(--verde); }
+.log-dot.vermelho { background:#e74c3c; }
+.log-dot.azul { background:var(--azul); }
+.log-dot.laranja { background:var(--laranja); }
+.log-texto { flex:1; line-height:1.5; }
+.log-tempo { color:var(--cinza-texto); font-size:11px; white-space:nowrap; }
+.abono-box { background:var(--amarelo-claro); border:1px solid #F5D98B; border-radius:10px; padding:14px 18px; display:flex; align-items:center; gap:12px; font-size:13px; margin-bottom:16px; }
+
+/* LOADING */
+.loading { display:flex; align-items:center; justify-content:center; padding:40px; color:var(--cinza-texto); font-size:14px; gap:10px; }
+.spinner { width:20px; height:20px; border:2px solid var(--cinza-medio); border-top-color:var(--laranja); border-radius:50%; animation:spin 0.8s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.vazio { text-align:center; padding:40px; color:var(--cinza-texto); font-size:14px; }
+</style>
+</head>
+<body>
+
+<!-- ===== TELA LOGIN ===== -->
+<div id="tela-login" class="tela ativa">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="logo-icon">E</div>
+      <div class="logo-text">
+        <span class="main">EstágioEnf</span>
+        <span class="sub">Anhanguera Asa Norte · Enfermagem</span>
+      </div>
+    </div>
+    <h1 class="login-titulo">Bem-vinda!</h1>
+    <p class="login-sub">Acesse o sistema de supervisão de estágio.</p>
+    <div id="login-erro" class="login-erro"></div>
+    <div class="campo-form">
+      <label>Tipo de acesso</label>
+      <select id="tipo-acesso">
+        <option value="supervisora">Supervisora de Estágio</option>
+        <option value="preceptor">Preceptor(a)</option>
+      </select>
+    </div>
+    <div class="campo-form">
+      <label>E-mail</label>
+      <input type="email" id="login-email" placeholder="seu@email.com">
+    </div>
+    <div class="campo-form">
+      <label>Senha</label>
+      <input type="password" id="login-senha" placeholder="••••••••">
+    </div>
+    <button class="btn-login" onclick="fazerLogin()">Entrar →</button>
+    <p class="login-link">Preceptor novo? <a href="#" onclick="irPara('tela-cadastro-preceptor')">Faça seu cadastro aqui</a></p>
+  </div>
+</div>
+
+<!-- ===== PAINEL SUPERVISORA ===== -->
+<div id="tela-supervisora" class="tela">
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <div class="logo-icon" style="width:36px;height:36px;font-size:16px">E</div>
+          <div class="logo-text">
+            <span class="main" style="font-size:15px;color:var(--preto)">EstágioEnf</span>
+            <span class="sub" style="font-size:10px">Anhanguera Asa Norte</span>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-perfil">
+        <div class="perfil-info">
+          <div class="perfil-avatar" id="avatar-supervisora">LR</div>
+          <div>
+            <div class="perfil-nome" id="nome-supervisora">Lorena Ribeiro</div>
+            <div class="perfil-cargo">Supervisora de Estágio</div>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-nav">
+        <div class="nav-grupo">
+          <div class="nav-grupo-titulo">Geral</div>
+          <div class="nav-item ativo" onclick="mostrarPagina('painel', this)"><span class="nav-icon">◼</span> Painel Geral</div>
+          <div class="nav-item" onclick="mostrarPagina('alunos', this)"><span class="nav-icon">👤</span> Alunos</div>
+          <div class="nav-item" onclick="mostrarPagina('preceptores', this)"><span class="nav-icon">🏥</span> Preceptores</div>
+          <div class="nav-item" onclick="mostrarPagina('campos', this)"><span class="nav-icon">📍</span> Campos de Estágio</div>
+        </div>
+        <div class="nav-grupo">
+          <div class="nav-grupo-titulo">Períodos</div>
+          <div class="nav-item" onclick="mostrarPagina('periodos', this)"><span class="nav-icon">📅</span> Períodos</div>
+          <div class="nav-item" onclick="mostrarPagina('frequencias', this)"><span class="nav-icon">✅</span> Frequências</div>
+          <div class="nav-item" onclick="mostrarPagina('avaliacoes', this)"><span class="nav-icon">⭐</span> Avaliações</div>
+        </div>
+        <div class="nav-grupo">
+          <div class="nav-grupo-titulo">Sistema</div>
+          <div class="nav-item" onclick="mostrarPagina('auditoria', this)"><span class="nav-icon">🔍</span> Log de Auditoria</div>
+        </div>
+      </div>
+      <div class="sidebar-rodape">
+        <button class="btn-sair" onclick="fazerLogout()">↩ Sair do sistema</button>
+      </div>
+    </nav>
+    <div class="conteudo" id="conteudo-supervisora">
+
+      <!-- PAINEL -->
+      <div id="pagina-painel">
+        <div class="topbar">
+          <div class="topbar-titulo">Painel Geral</div>
+          <div class="topbar-acoes">
+            <button class="btn btn-primario" onclick="abrirModal('modal-novo-periodo')">+ Novo Período</button>
+          </div>
+        </div>
+        <div class="pagina">
+          <div class="cards-resumo">
+            <div class="card-resumo laranja"><div class="card-icone laranja">🎓</div><div class="card-numero" id="total-alunos">—</div><div class="card-label">Alunos cadastrados</div></div>
+            <div class="card-resumo verde"><div class="card-icone verde">🏥</div><div class="card-numero" id="total-preceptores">—</div><div class="card-label">Preceptores ativos</div></div>
+            <div class="card-resumo azul"><div class="card-icone azul">📍</div><div class="card-numero" id="total-campos">—</div><div class="card-label">Campos de estágio</div></div>
+            <div class="card-resumo amarelo"><div class="card-icone amarelo">📅</div><div class="card-numero" id="total-periodos">—</div><div class="card-label">Períodos ativos</div></div>
+          </div>
+          <div class="secao">
+            <div class="secao-header"><div><div class="secao-titulo">Períodos em andamento</div><div class="secao-sub">Campos ativos com preceptores e alunos</div></div></div>
+            <div id="lista-periodos-painel"><div class="loading"><div class="spinner"></div> Carregando...</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ALUNOS -->
+      <div id="pagina-alunos" style="display:none">
+        <div class="topbar">
+          <div class="topbar-titulo">Alunos</div>
+          <div class="topbar-acoes"><button class="btn btn-primario" onclick="abrirModal('modal-novo-aluno')">+ Cadastrar aluno</button></div>
+        </div>
+        <div class="pagina">
+          <div class="secao">
+            <div class="secao-header"><div class="secao-titulo">Todos os alunos</div></div>
+            <div id="lista-alunos"><div class="loading"><div class="spinner"></div> Carregando...</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRECEPTORES -->
+      <div id="pagina-preceptores" style="display:none">
+        <div class="topbar">
+          <div class="topbar-titulo">Preceptores</div>
+          <div class="topbar-acoes"><button class="btn btn-secundario" onclick="copiarLinkCadastro()">📤 Copiar link de cadastro</button></div>
+        </div>
+        <div class="pagina">
+          <div class="secao">
+            <div class="secao-header"><div class="secao-titulo">Preceptores cadastrados</div></div>
+            <div id="lista-preceptores"><div class="loading"><div class="spinner"></div> Carregando...</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CAMPOS -->
+      <div id="pagina-campos" style="display:none">
+        <div class="topbar">
+          <div class="topbar-titulo">Campos de Estágio</div>
+          <div class="topbar-acoes"><button class="btn btn-primario" onclick="abrirModal('modal-novo-campo')">+ Novo campo</button></div>
+        </div>
+        <div class="pagina">
+          <div class="secao">
+            <div class="secao-header"><div class="secao-titulo">Campos cadastrados</div></div>
+            <div id="lista-campos"><div class="loading"><div class="spinner"></div> Carregando...</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PERÍODOS -->
+      <div id="pagina-periodos" style="display:none">
+        <div class="topbar">
+          <div class="topbar-titulo">Períodos</div>
+          <div class="topbar-acoes"><button class="btn btn-primario" onclick="abrirModal('modal-novo-periodo')">+ Novo Período</button></div>
+        </div>
+        <div class="pagina">
+          <div class="secao">
+            <div class="secao-header"><div class="secao-titulo">Todos os períodos</div></div>
+            <div id="lista-periodos"><div class="loading"><div class="spinner"></div> Carregando...</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FREQUÊNCIAS -->
+      <div id="pagina-frequencias" style="display:none">
+        <div class="topbar"><div class="topbar-titulo">Frequências</div></div>
+        <div class="pagina">
+          <div class="secao">
+            <div class="secao-header"><div class="secao-titulo">Registro de frequências</div><div class="secao-sub">Selecione um período para visualizar</div></div>
+            <div id="lista-frequencias"><div class="loading"><div class="spinner"></div> Carregando...</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AVALIAÇÕES -->
+      <div id="pagina-avaliacoes" style="display:none">
+        <div class="topbar"><div class="topbar-titulo">Avaliações</div></div>
+        <div class="pagina">
+          <div class="secao">
+            <div class="secao-header"><div class="secao-titulo">Avaliações finais</div></div>
+            <div id="lista-avaliacoes"><div class="loading"><div class="spinner"></div> Carregando...</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AUDITORIA -->
+      <div id="pagina-auditoria" style="display:none">
+        <div class="topbar"><div class="topbar-titulo">Log de Auditoria</div></div>
+        <div class="pagina">
+          <div class="secao">
+            <div class="secao-header"><div class="secao-titulo">Registro de todas as ações</div><div class="secao-sub">Data, hora e usuário de cada lançamento</div></div>
+            <div id="lista-auditoria"><div class="loading"><div class="spinner"></div> Carregando...</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAINEL PRECEPTOR ===== -->
+<div id="tela-preceptor" class="tela">
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <div class="logo-icon" style="width:36px;height:36px;font-size:16px">E</div>
+          <div class="logo-text">
+            <span class="main" style="font-size:15px;color:var(--preto)">EstágioEnf</span>
+            <span class="sub" style="font-size:10px">Área do Preceptor</span>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-perfil">
+        <div class="perfil-info">
+          <div class="perfil-avatar" id="avatar-preceptor" style="background:var(--azul)">P</div>
+          <div>
+            <div class="perfil-nome" id="nome-preceptor">Preceptor</div>
+            <div class="perfil-cargo" id="campo-preceptor">Campo de estágio</div>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-nav">
+        <div class="nav-grupo">
+          <div class="nav-item ativo" onclick="mostrarPaginaPrec('prec-freq', this)"><span class="nav-icon">✅</span> Lançar Frequência</div>
+          <div class="nav-item" onclick="mostrarPaginaPrec('prec-aval', this)"><span class="nav-icon">⭐</span> Avaliação Final</div>
+          <div class="nav-item" onclick="mostrarPaginaPrec('prec-retif', this)"><span class="nav-icon">📎</span> Retificar Falta</div>
+          <div class="nav-item" onclick="mostrarPaginaPrec('prec-hist', this)"><span class="nav-icon">📋</span> Histórico</div>
+        </div>
+      </div>
+      <div class="sidebar-rodape"><button class="btn-sair" onclick="fazerLogout()">↩ Sair</button></div>
+    </nav>
+    <div class="conteudo">
+
+      <!-- FREQUÊNCIA PRECEPTOR -->
+      <div id="prec-freq">
+        <div class="topbar">
+          <div class="topbar-titulo">Lançar Frequência</div>
+          <div class="topbar-acoes"><div class="freq-data-hoje" style="background:var(--laranja);color:white;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600" id="data-hoje-prec"></div></div>
+        </div>
+        <div class="pagina">
+          <div id="aviso-campo-prec" style="background:var(--azul-claro);border:1px solid #c5d8ef;border-radius:10px;padding:14px 18px;font-size:13px;margin-bottom:20px;color:var(--azul)"></div>
+          <div id="lista-freq-alunos"><div class="loading"><div class="spinner"></div> Carregando seus alunos...</div></div>
+          <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px">
+            <button class="btn btn-verde" onclick="salvarFrequencias()">✓ Confirmar frequências</button>
+          </div>
+          <div id="msg-sucesso-freq" style="display:none;background:var(--verde-claro);border:1px solid #a8d5b8;border-radius:10px;padding:16px 20px;margin-top:16px;color:var(--verde);font-size:14px">
+            ✅ <b>Frequência registrada com sucesso!</b> Registro gravado com data e hora.
+          </div>
+        </div>
+      </div>
+
+      <!-- AVALIAÇÃO PRECEPTOR -->
+      <div id="prec-aval" style="display:none">
+        <div class="topbar">
+          <div class="topbar-titulo">Avaliação Final</div>
+          <div class="topbar-acoes">
+            <select class="form-select" style="width:220px" id="select-aluno-aval" onchange="carregarAvaliacaoAluno()"></select>
+          </div>
+        </div>
+        <div class="pagina">
+          <div id="aviso-aval" style="background:var(--amarelo-claro);border:1px solid #F5D98B;border-radius:10px;padding:14px 18px;font-size:13px;margin-bottom:20px">
+            🔒 A avaliação final só pode ser lançada a partir do <b>último dia do campo</b>.
+          </div>
+          <div id="form-avaliacao">
+            <div class="aval-grupo">
+              <div class="aval-grupo-header"><div class="aval-grupo-titulo">Responsabilidade, ética e apresentação pessoal</div><div class="aval-grupo-valor">Valor máximo: 2,0</div></div>
+              <div class="aval-criterio"><div class="aval-criterio-texto">Pontual e assíduo(a)</div><div class="aval-criterio-max">0,5</div><input class="nota-input" id="n1" type="number" min="0" max="0.5" step="0.1" value="0" oninput="calcTotal()"></div>
+              <div class="aval-criterio"><div class="aval-criterio-texto">Comparece uniformizado(a), com material de bolso e apresentação adequada</div><div class="aval-criterio-max">0,5</div><input class="nota-input" id="n2" type="number" min="0" max="0.5" step="0.1" value="0" oninput="calcTotal()"></div>
+              <div class="aval-criterio"><div class="aval-criterio-texto">Atua conforme código de ética COFEN 564/2017</div><div class="aval-criterio-max">0,5</div><input class="nota-input" id="n3" type="number" min="0" max="0.5" step="0.1" value="0" oninput="calcTotal()"></div>
+              <div class="aval-criterio"><div class="aval-criterio-texto">Cumpre atividades intra e extracampo</div><div class="aval-criterio-max">0,5</div><input class="nota-input" id="n4" type="number" min="0" max="0.5" step="0.1" value="0" oninput="calcTotal()"></div>
+            </div>
+            <div class="aval-grupo">
+              <div class="aval-grupo-header"><div class="aval-grupo-titulo">Colaboração e relacionamento interpessoal</div><div class="aval-grupo-valor">Valor máximo: 1,0</div></div>
+              <div class="aval-criterio"><div class="aval-criterio-texto">Atua com respeito e harmonia com funcionários</div><div class="aval-criterio-max">0,25</div><input class="nota-input" id="n5" type="number" min="0" max="0.25" step="0.05" value="0" oninput="calcTotal()"></div>
+              <div class="aval-criterio"><div class="aval-criterio-texto">Colabora com equipe multidisciplinar e colegas</div><div class="aval-criterio-max">0,25</div><input class="nota-input" id="n6" type="number" min="0" max="0.25" step="0.05" value="0" oninput="calcTotal()"></div>
+              <div class="aval-criterio"><div class="aval-criterio-texto">Demonstra cooperação para realizar todas as atividades</div><div class="aval-criterio-max">0,25</div><input class="nota-input" id="n7" type="number" min="0" max="0.25" step="0.05" value="0" oninput="calcTotal()"></div>
+              <div class="aval-criterio"><div class="aval-criterio-texto">Demonstra discrição, respeito e compromisso</div><div class="aval-criterio-max">0,25</div><input class="nota-input" id="n8" type="number" min="0" max="0.25" step="0.05" value="0" oninput="calcTotal()"></div>
+            </div>
+            <div class="aval-grupo">
+              <div class="aval-grupo-header"><div class="aval-grupo-titulo">Conhecimento técnico teórico</div><div class="aval-grupo-valor">Valor máximo: 3,0</div></div>
+              <div class="aval-criterio"><div class="aval-criterio-texto">Planeja atividades conforme necessidades do campo</div><div class="aval-criterio-max">1,0</div><input class="nota-input" id="n9" type="number" min="0" max="1" step="0.1" value="0" oninput="calcTotal()"></div>
+              <div class="aval-criterio"><div class="aval-criterio-texto">Realiza provisão de materiais para procedimentos</div><div class="aval-criterio-max">1,0</div><input class="nota-input" id="n10" type="number" min="0" max="1" step="0.1" value="0" oninput="calcTotal()"></div>
+              <div class="aval-criterio"><div class="aval-criterio-texto">Possui embasamento teórico para fundamentar ações</div><div class="aval-criterio-max">1,0</div><input class="nota-input" id="n11" type="number" min="0" max="1" step="0.1" value="0" oninput="calcTotal()"></div>
+            </div>
+            <div class="aval-grupo">
+              <div class="aval-grupo-header"><div class="aval-grupo-titulo">Conhecimento técnico prático</div><div class="aval-grupo-valor">Valor máximo: 2,0</div></div>
+              <div class="aval-criterio"><div class="aval-criterio-texto">Realiza atividades seguindo técnicas e cuidados necessários</div><div class="aval-criterio-max">0,25</div><input class="nota-input" id="n12" type="number" min="0" max="0.25" step="0.05" value="0" oninput="calcTotal()"></div>
+              <div class="aval-criterio"><div class="aval-criterio-texto">Demonstra segurança e habilidade técnica</div><div class="aval-criterio-max">0,25</div><input class="nota-input" id="n13" type="number" min="0" max="0.25" step="0.05" value="0" oninput="calcTotal()"></div>
+              <div class="aval-criterio"><div class="aval-criterio-texto">Promove privacidade do paciente e organiza o ambiente</div><div class="aval-criterio-max">0,5</div><input class="nota-input" id="n14" type="number" min="0" max="0.5" step="0.1" value="0" oninput="calcTotal()"></div>
+              <div class="aval-criterio"><div class="aval-criterio-texto">Realiza atividades seguindo princípios da SAE</div><div class="aval-criterio-max">0,5</div><input class="nota-input" id="n15" type="number" min="0" max="0.5" step="0.1" value="0" oninput="calcTotal()"></div>
+              <div class="aval-criterio"><div class="aval-criterio-texto">Desenvolve anotações e evoluções de enfermagem</div><div class="aval-criterio-max">0,5</div><input class="nota-input" id="n16" type="number" min="0" max="0.5" step="0.1" value="0" oninput="calcTotal()"></div>
+            </div>
+            <div class="aval-grupo">
+              <div class="aval-grupo-header"><div class="aval-grupo-titulo">Ações educativas</div><div class="aval-grupo-valor">Valor máximo: 1,0</div></div>
+              <div class="aval-criterio"><div class="aval-criterio-texto">Observa fragilidades passíveis de reparação</div><div class="aval-criterio-max">0,5</div><input class="nota-input" id="n17" type="number" min="0" max="0.5" step="0.1" value="0" oninput="calcTotal()"></div>
+              <div class="aval-criterio"><div class="aval-criterio-texto">Realiza estratégias de educação em saúde</div><div class="aval-criterio-max">0,5</div><input class="nota-input" id="n18" type="number" min="0" max="0.5" step="0.1" value="0" oninput="calcTotal()"></div>
+            </div>
+            <div class="aval-grupo">
+              <div class="aval-grupo-header"><div class="aval-grupo-titulo">Liderança</div><div class="aval-grupo-valor">Valor máximo: 1,0</div></div>
+              <div class="aval-criterio"><div class="aval-criterio-texto">Capacidade de se comunicar de forma clara e empática</div><div class="aval-criterio-max">0,5</div><input class="nota-input" id="n19" type="number" min="0" max="0.5" step="0.1" value="0" oninput="calcTotal()"></div>
+              <div class="aval-criterio"><div class="aval-criterio-texto">Visão de coordenação em enfermagem e liderança administrativa</div><div class="aval-criterio-max">0,5</div><input class="nota-input" id="n20" type="number" min="0" max="0.5" step="0.1" value="0" oninput="calcTotal()"></div>
+            </div>
+            <div class="nota-total-box">
+              <div><div class="nota-total-label">Nota final calculada</div><div style="color:rgba(255,255,255,0.6);font-size:12px" id="nome-aluno-aval">Selecione um aluno</div></div>
+              <div class="nota-total-valor" id="nota-total">0,0</div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px">
+              <button class="btn btn-verde" onclick="salvarAvaliacao()">✓ Finalizar e assinar avaliação</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RETIFICAÇÃO -->
+      <div id="prec-retif" style="display:none">
+        <div class="topbar"><div class="topbar-titulo">Retificar Falta</div></div>
+        <div class="pagina">
+          <div class="secao">
+            <div class="secao-header"><div class="secao-titulo">Faltas disponíveis para retificação</div><div class="secao-sub">Anexe o atestado em PDF para abonar</div></div>
+            <div id="lista-faltas-retif"><div class="loading"><div class="spinner"></div> Carregando...</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HISTÓRICO -->
+      <div id="prec-hist" style="display:none">
+        <div class="topbar"><div class="topbar-titulo">Histórico</div></div>
+        <div class="pagina">
+          <div class="secao">
+            <div class="secao-header"><div class="secao-titulo">Seus lançamentos</div></div>
+            <div id="lista-hist-prec"><div class="loading"><div class="spinner"></div> Carregando...</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===== CADASTRO PRECEPTOR ===== -->
+<div id="tela-cadastro-preceptor" class="tela">
+  <div style="background:linear-gradient(135deg,#FFF8F0,#FFE8CC);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px">
+    <div style="background:white;border-radius:24px;width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(232,119,34,0.15)">
+      <div style="padding:32px 36px 24px;border-bottom:1px solid var(--cinza-claro)">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+          <div class="logo-icon">E</div>
+          <div class="logo-text"><span class="main">EstágioEnf</span><span class="sub">Anhanguera Asa Norte · Enfermagem</span></div>
+        </div>
+        <div class="modal-titulo">Cadastro de Preceptor</div>
+        <div class="modal-sub">Preencha seus dados para criar seu acesso</div>
+      </div>
+      <div style="padding:28px 36px">
+        <div id="cadastro-erro" class="login-erro"></div>
+        <div class="form-grupo"><label class="form-label">Nome completo</label><input class="form-input" id="cad-nome" placeholder="Enfermeiro(a) Nome Completo"></div>
+        <div class="form-grid">
+          <div class="form-grupo"><label class="form-label">CPF</label><input class="form-input" id="cad-cpf" placeholder="000.000.000-00"></div>
+          <div class="form-grupo"><label class="form-label">COREN</label><input class="form-input" id="cad-coren" placeholder="123456-DF"></div>
+        </div>
+        <div class="form-grupo"><label class="form-label">E-mail profissional</label><input class="form-input" id="cad-email" type="email" placeholder="nome@hospital.com"></div>
+        <div class="form-grid">
+          <div class="form-grupo"><label class="form-label">Telefone</label><input class="form-input" id="cad-tel" placeholder="(61) 99999-9999"></div>
+          <div class="form-grupo"><label class="form-label">Data de nascimento</label><input class="form-input" id="cad-nasc" type="date"></div>
+        </div>
+        <div class="form-grupo"><label class="form-label">Instituição onde atua</label><input class="form-input" id="cad-inst" placeholder="Ex: Hospital de Base do DF"></div>
+        <div class="form-grupo"><label class="form-label">Setor / Unidade</label><input class="form-input" id="cad-setor" placeholder="Ex: Ambulatório de Cardiologia"></div>
+        <div class="form-grupo"><label class="form-label">Endereço completo</label><input class="form-input" id="cad-end" placeholder="Rua, número, bairro, cidade"></div>
+        <div class="form-grid">
+          <div class="form-grupo"><label class="form-label">Senha</label><input class="form-input" id="cad-senha" type="password" placeholder="Mínimo 6 caracteres"></div>
+          <div class="form-grupo"><label class="form-label">Confirmar senha</label><input class="form-input" id="cad-senha2" type="password"></div>
+        </div>
+        <button class="btn btn-primario" style="width:100%;padding:14px;font-size:15px;margin-top:8px" onclick="cadastrarPreceptor()">Criar cadastro →</button>
+        <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--cinza-texto)">Já tem acesso? <a href="#" onclick="irPara('tela-login')" style="color:var(--laranja-escuro);text-decoration:none">Fazer login</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAIS -->
+<div id="modal-novo-aluno" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header"><div><div class="modal-titulo">Cadastrar Aluno</div></div><button class="btn-fechar" onclick="fecharModal('modal-novo-aluno')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grupo"><label class="form-label">Nome completo</label><input class="form-input" id="aluno-nome" placeholder="Nome do aluno"></div>
+      <div class="form-grid">
+        <div class="form-grupo"><label class="form-label">Matrícula</label><input class="form-input" id="aluno-matricula" placeholder="20240000"></div>
+        <div class="form-grupo"><label class="form-label">Semestre</label><select class="form-select" id="aluno-semestre"><option>7º</option><option>8º</option><option>9º</option><option>10º</option></select></div>
+      </div>
+      <div class="form-grupo"><label class="form-label">Modalidade</label><select class="form-select" id="aluno-modalidade"><option value="presencial">Presencial</option><option value="semipresencial">Semipresencial</option></select></div>
+      <div class="form-grupo"><label class="form-label">E-mail</label><input class="form-input" id="aluno-email" type="email" placeholder="aluno@email.com"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secundario" onclick="fecharModal('modal-novo-aluno')">Cancelar</button>
+      <button class="btn btn-primario" onclick="salvarAluno()">Cadastrar</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-novo-campo" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header"><div><div class="modal-titulo">Novo Campo de Estágio</div></div><button class="btn-fechar" onclick="fecharModal('modal-novo-campo')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grupo"><label class="form-label">Instituição</label><input class="form-input" id="campo-inst" placeholder="Ex: Hospital de Base do DF"></div>
+      <div class="form-grupo"><label class="form-label">Setor / Unidade</label><input class="form-input" id="campo-setor" placeholder="Ex: Ambulatório de Cardiologia"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secundario" onclick="fecharModal('modal-novo-campo')">Cancelar</button>
+      <button class="btn btn-primario" onclick="salvarCampo()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-novo-periodo" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header"><div><div class="modal-titulo">Novo Período de Estágio</div></div><button class="btn-fechar" onclick="fecharModal('modal-novo-periodo')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grupo"><label class="form-label">Campo de estágio</label><select class="form-select" id="periodo-campo"></select></div>
+      <div class="form-grupo"><label class="form-label">Preceptor</label><select class="form-select" id="periodo-preceptor"></select></div>
+      <div class="form-grid">
+        <div class="form-grupo"><label class="form-label">Data início</label><input class="form-input" id="periodo-inicio" type="date"></div>
+        <div class="form-grupo"><label class="form-label">Data fim</label><input class="form-input" id="periodo-fim" type="date"></div>
+      </div>
+      <div class="form-grupo"><label class="form-label">Alunos do período</label><select class="form-select" id="periodo-alunos" multiple style="height:120px"></select><div style="font-size:11px;color:var(--cinza-texto);margin-top:4px">Segure Ctrl para selecionar vários</div></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secundario" onclick="fecharModal('modal-novo-periodo')">Cancelar</button>
+      <button class="btn btn-primario" onclick="salvarPeriodo()">Criar período</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== SUPABASE =====
+const SUPABASE_URL = 'https://muwbmqkoxflvbvewfmfo.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_P_CcTtiSZluXIBvfm0CtWg_LZgEuDL-';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let usuarioAtual = null;
+let preceptorAtual = null;
+let periodoAtualPreceptor = null;
+
+// ===== INICIALIZAÇÃO =====
+window.addEventListener('load', async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    usuarioAtual = session.user;
+    await definirPerfil();
+  }
+  document.getElementById('data-hoje-prec').textContent = '📅 ' + new Date().toLocaleDateString('pt-BR', {weekday:'long', day:'2-digit', month:'2-digit', year:'numeric'});
+});
+
+// ===== AUTH =====
+async function fazerLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const senha = document.getElementById('login-senha').value;
+  const erro = document.getElementById('login-erro');
+  erro.style.display = 'none';
+  if (!email || !senha) { erro.textContent = 'Preencha e-mail e senha.'; erro.style.display = 'block'; return; }
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: senha });
+  if (error) { erro.textContent = 'E-mail ou senha incorretos.'; erro.style.display = 'block'; return; }
+  usuarioAtual = data.user;
+  await definirPerfil();
+}
+
+async function definirPerfil() {
+  const tipo = document.getElementById('tipo-acesso')?.value || 'preceptor';
+  // Verifica se é supervisora pelo email
+  if (usuarioAtual.email === 'lorena@anhanguera.com' || tipo === 'supervisora') {
+    irPara('tela-supervisora');
+    carregarDashboard();
+  } else {
+    // Preceptor
+    const { data } = await sb.from('preceptores').select('*').eq('user_id', usuarioAtual.id).single();
+    if (data) {
+      preceptorAtual = data;
+      document.getElementById('nome-preceptor').textContent = data.nome_completo;
+      document.getElementById('avatar-preceptor').textContent = data.nome_completo.split(' ').slice(0,2).map(n=>n[0]).join('');
+      // Busca período ativo
+      const { data: periodo } = await sb.from('periodos').select('*, campos(instituicao, setor)').eq('preceptor_id', data.id).gte('data_fim', new Date().toISOString().split('T')[0]).order('data_inicio').limit(1).single();
+      if (periodo) {
+        periodoAtualPreceptor = periodo;
+        document.getElementById('campo-preceptor').textContent = periodo.campos?.instituicao + ' · ' + periodo.campos?.setor;
+        document.getElementById('aviso-campo-prec').innerHTML = `🏥 <b>${periodo.campos?.instituicao} – ${periodo.campos?.setor}</b> · Período: ${formatarData(periodo.data_inicio)} a ${formatarData(periodo.data_fim)}`;
+      }
+      irPara('tela-preceptor');
+      carregarAlunosFrequencia();
+    }
+  }
+}
+
+async function fazerLogout() {
+  await sb.auth.signOut();
+  usuarioAtual = null; preceptorAtual = null;
+  irPara('tela-login');
+}
+
+async function cadastrarPreceptor() {
+  const nome = document.getElementById('cad-nome').value.trim();
+  const email = document.getElementById('cad-email').value.trim();
+  const senha = document.getElementById('cad-senha').value;
+  const senha2 = document.getElementById('cad-senha2').value;
+  const erro = document.getElementById('cadastro-erro');
+  erro.style.display = 'none';
+  if (!nome || !email || !senha) { erro.textContent = 'Preencha todos os campos obrigatórios.'; erro.style.display = 'block'; return; }
+  if (senha !== senha2) { erro.textContent = 'As senhas não coincidem.'; erro.style.display = 'block'; return; }
+  const { data, error } = await sb.auth.signUp({ email, password: senha });
+  if (error) { erro.textContent = error.message; erro.style.display = 'block'; return; }
+  await sb.from('preceptores').insert({
+    user_id: data.user.id,
+    nome_completo: nome,
+    cpf: document.getElementById('cad-cpf').value,
+    coren: document.getElementById('cad-coren').value,
+    email,
+    telefone: document.getElementById('cad-tel').value,
+    instituicao: document.getElementById('cad-inst').value,
+    setor: document.getElementById('cad-setor').value,
+    endereco: document.getElementById('cad-end').value,
+  });
+  alert('Cadastro realizado! Verifique seu e-mail para confirmar o acesso.');
+  irPara('tela-login');
+}
+
+// ===== DASHBOARD =====
+async function carregarDashboard() {
+  const [alunos, preceptores, campos, periodos] = await Promise.all([
+    sb.from('alunos').select('id', {count:'exact', head:true}),
+    sb.from('preceptores').select('id', {count:'exact', head:true}),
+    sb.from('campos').select('id', {count:'exact', head:true}),
+    sb.from('periodos').select('id', {count:'exact', head:true}).gte('data_fim', new Date().toISOString().split('T')[0])
+  ]);
+  document.getElementById('total-alunos').textContent = alunos.count ?? 0;
+  document.getElementById('total-preceptores').textContent = preceptores.count ?? 0;
+  document.getElementById('total-campos').textContent = campos.count ?? 0;
+  document.getElementById('total-periodos').textContent = periodos.count ?? 0;
+  carregarPeriodosAtivos();
+}
+
+async function carregarPeriodosAtivos() {
+  const { data } = await sb.from('periodos').select('*, campos(instituicao,setor), preceptores(nome_completo)').gte('data_fim', new Date().toISOString().split('T')[0]).order('data_inicio');
+  const el = document.getElementById('lista-periodos-painel');
+  if (!data || data.length === 0) { el.innerHTML = '<div class="vazio">Nenhum período ativo no momento.</div>'; return; }
+  el.innerHTML = `<table><thead><tr><th>Campo / Setor</th><th>Preceptor</th><th>Período</th><th>Status</th></tr></thead><tbody>${
+    data.map(p => `<tr>
+      <td><b>${p.campos?.instituicao}</b><br><span style="font-size:11px;color:var(--cinza-texto)">${p.campos?.setor}</span></td>
+      <td>${p.preceptores?.nome_completo}</td>
+      <td>${formatarData(p.data_inicio)} – ${formatarData(p.data_fim)}</td>
+      <td><span class="badge badge-verde">Ativo</span></td>
+    </tr>`).join('')
+  }</tbody></table>`;
+}
+
+// ===== ALUNOS =====
+async function carregarAlunos() {
+  const { data } = await sb.from('alunos').select('*').order('nome_completo');
+  const el = document.getElementById('lista-alunos');
+  if (!data || data.length === 0) { el.innerHTML = '<div class="vazio">Nenhum aluno cadastrado ainda.</div>'; return; }
+  el.innerHTML = `<table><thead><tr><th>Nome</th><th>Matrícula</th><th>Semestre</th><th>Modalidade</th></tr></thead><tbody>${
+    data.map(a => `<tr><td><b>${a.nome_completo}</b></td><td>${a.matricula||'—'}</td><td>${a.semestre||'—'}</td><td><span class="badge ${a.modalidade==='presencial'?'badge-azul':'badge-cinza'}">${a.modalidade}</span></td></tr>`).join('')
+  }</tbody></table>`;
+}
+
+async function salvarAluno() {
+  const { error } = await sb.from('alunos').insert({
+    nome_completo: document.getElementById('aluno-nome').value.trim(),
+    matricula: document.getElementById('aluno-matricula').value.trim(),
+    semestre: document.getElementById('aluno-semestre').value,
+    modalidade: document.getElementById('aluno-modalidade').value,
+    email: document.getElementById('aluno-email').value.trim(),
+  });
+  if (error) { alert('Erro ao salvar: ' + error.message); return; }
+  fecharModal('modal-novo-aluno');
+  carregarAlunos();
+  alert('Aluno cadastrado com sucesso!');
+}
+
+// ===== PRECEPTORES =====
+async function carregarPreceptores() {
+  const { data } = await sb.from('preceptores').select('*').order('nome_completo');
+  const el = document.getElementById('lista-preceptores');
+  if (!data || data.length === 0) { el.innerHTML = '<div class="vazio">Nenhum preceptor cadastrado.</div>'; return; }
+  el.innerHTML = `<table><thead><tr><th>Nome</th><th>COREN</th><th>Instituição</th><th>Setor</th></tr></thead><tbody>${
+    data.map(p => `<tr><td><b>${p.nome_completo}</b></td><td>${p.coren||'—'}</td><td>${p.instituicao||'—'}</td><td>${p.setor||'—'}</td></tr>`).join('')
+  }</tbody></table>`;
+}
+
+function copiarLinkCadastro() {
+  navigator.clipboard.writeText(window.location.origin + window.location.pathname + '#cadastro');
+  alert('Link copiado! Envie para o preceptor se cadastrar.');
+}
+
+// ===== CAMPOS =====
+async function carregarCampos() {
+  const { data } = await sb.from('campos').select('*').order('instituicao');
+  const el = document.getElementById('lista-campos');
+  if (!data || data.length === 0) { el.innerHTML = '<div class="vazio">Nenhum campo cadastrado.</div>'; return; }
+  el.innerHTML = `<table><thead><tr><th>Instituição</th><th>Setor</th><th>Status</th></tr></thead><tbody>${
+    data.map(c => `<tr><td><b>${c.instituicao}</b></td><td>${c.setor}</td><td><span class="badge badge-verde">Ativo</span></td></tr>`).join('')
+  }</tbody></table>`;
+}
+
+async function salvarCampo() {
+  const { error } = await sb.from('campos').insert({
+    instituicao: document.getElementById('campo-inst').value.trim(),
+    setor: document.getElementById('campo-setor').value.trim(),
+  });
+  if (error) { alert('Erro: ' + error.message); return; }
+  fecharModal('modal-novo-campo');
+  carregarCampos();
+}
+
+// ===== PERÍODOS =====
+async function carregarPeriodos() {
+  const { data } = await sb.from('periodos').select('*, campos(instituicao,setor), preceptores(nome_completo)').order('data_inicio', {ascending:false});
+  const el = document.getElementById('lista-periodos');
+  if (!data || data.length === 0) { el.innerHTML = '<div class="vazio">Nenhum período criado ainda.</div>'; return; }
+  el.innerHTML = `<table><thead><tr><th>Campo</th><th>Preceptor</th><th>Início</th><th>Fim</th><th>Status</th></tr></thead><tbody>${
+    data.map(p => {
+      const hoje = new Date().toISOString().split('T')[0];
+      const ativo = p.data_fim >= hoje;
+      return `<tr><td><b>${p.campos?.instituicao}</b> · ${p.campos?.setor}</td><td>${p.preceptores?.nome_completo}</td><td>${formatarData(p.data_inicio)}</td><td>${formatarData(p.data_fim)}</td><td><span class="badge ${ativo?'badge-verde':'badge-cinza'}">${ativo?'Ativo':'Encerrado'}</span></td></tr>`;
+    }).join('')
+  }</tbody></table>`;
+}
+
+async function abrirModalPeriodo() {
+  const [campos, preceptores, alunos] = await Promise.all([
+    sb.from('campos').select('*').order('instituicao'),
+    sb.from('preceptores').select('*').order('nome_completo'),
+    sb.from('alunos').select('*').order('nome_completo')
+  ]);
+  document.getElementById('periodo-campo').innerHTML = campos.data?.map(c=>`<option value="${c.id}">${c.instituicao} · ${c.setor}</option>`).join('');
+  document.getElementById('periodo-preceptor').innerHTML = preceptores.data?.map(p=>`<option value="${p.id}">${p.nome_completo}</option>`).join('');
+  document.getElementById('periodo-alunos').innerHTML = alunos.data?.map(a=>`<option value="${a.id}">${a.nome_completo}</option>`).join('');
+  abrirModal('modal-novo-periodo');
+}
+
+async function salvarPeriodo() {
+  const campoId = document.getElementById('periodo-campo').value;
+  const preceptorId = document.getElementById('periodo-preceptor').value;
+  const inicio = document.getElementById('periodo-inicio').value;
+  const fim = document.getElementById('periodo-fim').value;
+  const alunosSel = Array.from(document.getElementById('periodo-alunos').selectedOptions).map(o=>o.value);
+  if (!campoId || !preceptorId || !inicio || !fim) { alert('Preencha todos os campos.'); return; }
+  const { data: periodo, error } = await sb.from('periodos').insert({ campo_id: campoId, preceptor_id: preceptorId, data_inicio: inicio, data_fim: fim }).select().single();
+  if (error) { alert('Erro: ' + error.message); return; }
+  if (alunosSel.length > 0) {
+    await sb.from('periodo_alunos').insert(alunosSel.map(aid => ({ periodo_id: periodo.id, aluno_id: aid })));
+  }
+  fecharModal('modal-novo-periodo');
+  carregarPeriodos();
+  carregarDashboard();
+  alert('Período criado com sucesso!');
+}
+
+// ===== FREQUÊNCIAS (PRECEPTOR) =====
+async function carregarAlunosFrequencia() {
+  if (!periodoAtualPreceptor) { document.getElementById('lista-freq-alunos').innerHTML = '<div class="vazio">Nenhum período ativo encontrado.</div>'; return; }
+  const { data: pa } = await sb.from('periodo_alunos').select('*, alunos(*)').eq('periodo_id', periodoAtualPreceptor.id);
+  const el = document.getElementById('lista-freq-alunos');
+  if (!pa || pa.length === 0) { el.innerHTML = '<div class="vazio">Nenhum aluno vinculado a este período.</div>'; return; }
+  const hoje = new Date().toISOString().split('T')[0];
+  // Verifica frequências já lançadas hoje
+  const { data: freqHoje } = await sb.from('frequencias').select('*').eq('periodo_id', periodoAtualPreceptor.id).eq('data', hoje);
+  const jaLancados = new Set(freqHoje?.map(f=>f.aluno_id));
+  el.innerHTML = `<div class="freq-card">
+    <div class="freq-header">
+      <div class="freq-header-info"><div class="titulo">${periodoAtualPreceptor.campos?.instituicao} · ${periodoAtualPreceptor.campos?.setor}</div><div class="sub">Lançamento de hoje — todos os campos obrigatórios</div></div>
+      <div class="freq-data-hoje">📅 ${new Date().toLocaleDateString('pt-BR')}</div>
+    </div>
+    <div>${pa.map(item => {
+      const a = item.alunos;
+      const jaFez = jaLancados.has(a.id);
+      return `<div class="freq-aluno" id="freq-${a.id}" data-aluno="${a.id}">
+        <div style="flex:1"><div class="aluno-nome">${a.nome_completo}</div><div class="aluno-modalidade">${a.modalidade} · ${a.semestre}</div></div>
+        <div class="freq-horarios">
+          <input class="freq-input" id="entrada-${a.id}" placeholder="Entrada" ${jaFez?'disabled':''}>
+          <input class="freq-input" id="saida-${a.id}" placeholder="Saída" ${jaFez?'disabled':''}>
+        </div>
+        <div class="freq-status">
+          <button class="btn-status btn-presente ${jaFez?'selecionado':''}" onclick="toggleStatus('${a.id}','presente')" ${jaFez?'disabled':''}>✓ Presente</button>
+          <button class="btn-status btn-falta" onclick="toggleStatus('${a.id}','falta')" ${jaFez?'disabled':''}>✗ Falta</button>
+        </div>
+        ${jaFez?'<span class="badge badge-verde" style="margin-left:8px">✓ Lançado</span>':''}
+      </div>`;
+    }).join('')}</div>
+  </div>`;
+}
+
+function toggleStatus(alunoId, status) {
+  const el = document.getElementById('freq-'+alunoId);
+  el.querySelector('.btn-presente').classList.toggle('selecionado', status==='presente');
+  el.querySelector('.btn-falta').classList.toggle('selecionado', status==='falta');
+}
+
+async function salvarFrequencias() {
+  if (!periodoAtualPreceptor || !preceptorAtual) return;
+  const hoje = new Date().toISOString().split('T')[0];
+  const alunos = document.querySelectorAll('[data-aluno]');
+  const registros = [];
+  for (const el of alunos) {
+    const alunoId = el.dataset.aluno;
+    const presente = el.querySelector('.btn-presente').classList.contains('selecionado');
+    const falta = el.querySelector('.btn-falta').classList.contains('selecionado');
+    if (!presente && !falta) { alert('Marque presente ou falta para todos os alunos.'); return; }
+    registros.push({
+      periodo_id: periodoAtualPreceptor.id,
+      aluno_id: alunoId,
+      preceptor_id: preceptorAtual.id,
+      data: hoje,
+      status: presente ? 'presente' : 'falta',
+      hora_entrada: document.getElementById('entrada-'+alunoId)?.value || null,
+      hora_saida: document.getElementById('saida-'+alunoId)?.value || null,
+    });
+  }
+  const { error } = await sb.from('frequencias').insert(registros);
+  if (error) { alert('Erro ao salvar: ' + error.message); return; }
+  document.getElementById('msg-sucesso-freq').style.display = 'block';
+  carregarAlunosFrequencia();
+}
+
+// ===== AVALIAÇÃO =====
+async function carregarSelectAlunos() {
+  if (!periodoAtualPreceptor) return;
+  const { data } = await sb.from('periodo_alunos').select('*, alunos(*)').eq('periodo_id', periodoAtualPreceptor.id);
+  const sel = document.getElementById('select-aluno-aval');
+  sel.innerHTML = data?.map(i=>`<option value="${i.alunos.id}">${i.alunos.nome_completo}</option>`).join('') || '';
+  if (data?.length) document.getElementById('nome-aluno-aval').textContent = data[0].alunos.nome_completo;
+}
+
+function calcTotal() {
+  let total = 0;
+  for (let i=1; i<=20; i++) { total += parseFloat(document.getElementById('n'+i)?.value||0); }
+  document.getElementById('nota-total').textContent = total.toFixed(1).replace('.',',');
+}
+
+async function salvarAvaliacao() {
+  const alunoId = document.getElementById('select-aluno-aval').value;
+  if (!alunoId || !preceptorAtual || !periodoAtualPreceptor) return;
+  const vals = {};
+  for (let i=1; i<=20; i++) vals['n'+i] = parseFloat(document.getElementById('n'+i).value||0);
+  const nota = parseFloat(document.getElementById('nota-total').textContent.replace(',','.'));
+  const { error } = await sb.from('avaliacoes').upsert({
+    periodo_id: periodoAtualPreceptor.id, aluno_id: alunoId, preceptor_id: preceptorAtual.id,
+    resp_etica_1:vals.n1, resp_etica_2:vals.n2, resp_etica_3:vals.n3, resp_etica_4:vals.n4,
+    colab_1:vals.n5, colab_2:vals.n6, colab_3:vals.n7, colab_4:vals.n8,
+    tec_teorico_1:vals.n9, tec_teorico_2:vals.n10, tec_teorico_3:vals.n11,
+    tec_pratico_1:vals.n12, tec_pratico_2:vals.n13, tec_pratico_3:vals.n14, tec_pratico_4:vals.n15, tec_pratico_5:vals.n16,
+    ed_saude_1:vals.n17, ed_saude_2:vals.n18,
+    lideranca_1:vals.n19, lideranca_2:vals.n20,
+    nota_final: nota, finalizada: true
+  });
+  if (error) { alert('Erro: ' + error.message); return; }
+  alert('Avaliação salva com sucesso! Nota: ' + nota.toFixed(1));
+}
+
+// ===== FREQUÊNCIAS (SUPERVISORA) =====
+async function carregarFrequencias() {
+  const { data } = await sb.from('frequencias').select('*, alunos(nome_completo), preceptores(nome_completo)').order('created_at', {ascending:false}).limit(50);
+  const el = document.getElementById('lista-frequencias');
+  if (!data || data.length === 0) { el.innerHTML = '<div class="vazio">Nenhuma frequência registrada ainda.</div>'; return; }
+  el.innerHTML = `<table><thead><tr><th>Aluno</th><th>Data</th><th>Status</th><th>Entrada</th><th>Saída</th><th>Preceptor</th><th>Registrado em</th></tr></thead><tbody>${
+    data.map(f=>`<tr>
+      <td><b>${f.alunos?.nome_completo}</b></td>
+      <td>${formatarData(f.data)}</td>
+      <td><span class="badge ${f.status==='presente'?'badge-verde':f.status==='falta_abonada'?'badge-laranja':'badge-vermelho'}">${f.status.replace('_',' ')}</span></td>
+      <td>${f.hora_entrada||'—'}</td><td>${f.hora_saida||'—'}</td>
+      <td>${f.preceptores?.nome_completo}</td>
+      <td style="font-size:11px;color:var(--cinza-texto)">${new Date(f.created_at).toLocaleString('pt-BR')}</td>
+    </tr>`).join('')
+  }</tbody></table>`;
+}
+
+// ===== AVALIAÇÕES (SUPERVISORA) =====
+async function carregarAvaliacoes() {
+  const { data } = await sb.from('avaliacoes').select('*, alunos(nome_completo), preceptores(nome_completo), periodos(*, campos(instituicao,setor))').order('created_at', {ascending:false});
+  const el = document.getElementById('lista-avaliacoes');
+  if (!data || data.length === 0) { el.innerHTML = '<div class="vazio">Nenhuma avaliação finalizada ainda.</div>'; return; }
+  el.innerHTML = `<table><thead><tr><th>Aluno</th><th>Campo</th><th>Preceptor</th><th>Nota Final</th><th>Status</th></tr></thead><tbody>${
+    data.map(a=>`<tr>
+      <td><b>${a.alunos?.nome_completo}</b></td>
+      <td>${a.periodos?.campos?.instituicao||'—'}</td>
+      <td>${a.preceptores?.nome_completo}</td>
+      <td><b style="font-size:16px;color:var(--verde)">${a.nota_final?.toFixed(1).replace('.',',')}</b></td>
+      <td><span class="badge ${a.finalizada?'badge-verde':'badge-cinza'}">${a.finalizada?'Finalizada':'Rascunho'}</span></td>
+    </tr>`).join('')
+  }</tbody></table>`;
+}
+
+// ===== AUDITORIA =====
+async function carregarAuditoria() {
+  const { data } = await sb.from('frequencias').select('*, alunos(nome_completo), preceptores(nome_completo)').order('created_at', {ascending:false}).limit(100);
+  const el = document.getElementById('lista-auditoria');
+  if (!data || data.length === 0) { el.innerHTML = '<div class="vazio">Nenhum registro ainda.</div>'; return; }
+  el.innerHTML = data.map(f=>`<div class="log-item">
+    <div class="log-dot ${f.status==='presente'?'verde':f.status==='falta_abonada'?'laranja':'vermelho'}"></div>
+    <div class="log-texto"><b>${f.preceptores?.nome_completo}</b> lançou <b>${f.status.toUpperCase()}</b> para ${f.alunos?.nome_completo} · ${formatarData(f.data)}${f.hora_entrada?' · Entrada '+f.hora_entrada:''}</div>
+    <div class="log-tempo">${new Date(f.created_at).toLocaleString('pt-BR')}</div>
+  </div>`).join('');
+}
+
+// ===== NAVEGAÇÃO =====
+function irPara(id) {
+  document.querySelectorAll('.tela').forEach(t=>t.classList.remove('ativa'));
+  document.getElementById(id).classList.add('ativa');
+}
+
+function mostrarPagina(id, el) {
+  document.querySelectorAll('#tela-supervisora [id^="pagina-"]').forEach(p=>{ p.style.display='none'; p.style.flexDirection=''; });
+  const pag = document.getElementById('pagina-'+id);
+  pag.style.display='flex'; pag.style.flexDirection='column';
+  document.querySelectorAll('#tela-supervisora .nav-item').forEach(n=>n.classList.remove('ativo'));
+  if(el) el.classList.add('ativo');
+  // Carregar dados da página
+  if(id==='alunos') carregarAlunos();
+  else if(id==='preceptores') carregarPreceptores();
+  else if(id==='campos') carregarCampos();
+  else if(id==='periodos') carregarPeriodos();
+  else if(id==='frequencias') carregarFrequencias();
+  else if(id==='avaliacoes') carregarAvaliacoes();
+  else if(id==='auditoria') carregarAuditoria();
+}
+
+function mostrarPaginaPrec(id, el) {
+  document.querySelectorAll('#tela-preceptor [id^="prec-"]').forEach(p=>{ p.style.display='none'; p.style.flexDirection=''; });
+  const pag = document.getElementById(id);
+  pag.style.display='flex'; pag.style.flexDirection='column';
+  document.querySelectorAll('#tela-preceptor .nav-item').forEach(n=>n.classList.remove('ativo'));
+  if(el) el.classList.add('ativo');
+  if(id==='prec-aval') carregarSelectAlunos();
+  if(id==='prec-hist') carregarHistoricoPreceptor();
+}
+
+async function carregarHistoricoPreceptor() {
+  if (!preceptorAtual) return;
+  const { data } = await sb.from('frequencias').select('*, alunos(nome_completo)').eq('preceptor_id', preceptorAtual.id).order('created_at', {ascending:false}).limit(30);
+  const el = document.getElementById('lista-hist-prec');
+  if (!data || data.length === 0) { el.innerHTML = '<div class="vazio">Nenhum lançamento ainda.</div>'; return; }
+  el.innerHTML = `<div>${data.map(f=>`<div class="log-item">
+    <div class="log-dot ${f.status==='presente'?'verde':'vermelho'}"></div>
+    <div class="log-texto"><b>${f.status==='presente'?'Presença':'Falta'}</b> registrada — ${f.alunos?.nome_completo} · ${formatarData(f.data)}</div>
+    <div class="log-tempo">${new Date(f.created_at).toLocaleString('pt-BR')}</div>
+  </div>`).join('')}</div>`;
+}
+
+function abrirModal(id) {
+  if(id==='modal-novo-periodo') { abrirModalPeriodo(); return; }
+  document.getElementById(id).classList.add('ativo');
+}
+function fecharModal(id) { document.getElementById(id).classList.remove('ativo'); }
+
+function formatarData(d) {
+  if (!d) return '—';
+  const [y,m,dia] = d.split('-');
+  return `${dia}/${m}/${y}`;
+}
+
+// Init páginas
+document.querySelectorAll('#tela-supervisora [id^="pagina-"]').forEach(p=>p.style.display='none');
+document.getElementById('pagina-painel').style.cssText='display:flex;flex-direction:column';
+document.querySelectorAll('#tela-preceptor [id^="prec-"]').forEach(p=>p.style.display='none');
+document.getElementById('prec-freq').style.cssText='display:flex;flex-direction:column';
+</script>
+</body>
+</html>
