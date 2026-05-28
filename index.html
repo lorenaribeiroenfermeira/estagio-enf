@@ -1606,6 +1606,11 @@ async function gerarRelatorioMEC() {
 
       <div class="rodape">
         <div class="assinatura">
+          <div style="background:#FFF0E3;border:1px solid #E87722;border-radius:6px;padding:8px 16px;margin-bottom:8px;font-size:10px;color:#c45f0a;text-align:center">
+            ✅ Assinado digitalmente por<br>
+            <b>${aval.preceptores?.nome_completo||'Preceptor(a)'}</b><br>
+            em ${new Date(aval.created_at).toLocaleString('pt-BR')}
+          </div>
           <div class="linha-assinatura"></div>
           <div><b>${aval.preceptores?.nome_completo||'Preceptor(a)'}</b></div>
           <div style="font-size:10px;color:#666">COREN ${aval.preceptores?.coren||'—'}</div>
