@@ -1360,7 +1360,7 @@ async function carregarFrequencias() {
       <td><span class="badge ${f.status==='presente'?'badge-verde':f.status==='falta_abonada'?'badge-laranja':'badge-vermelho'}">${f.status.replace('_',' ')}</span></td>
       <td>${f.hora_entrada||'—'}</td><td>${f.hora_saida||'—'}</td>
       <td>${f.preceptores?.nome_completo}</td>
-      <td style="font-size:11px;color:var(--cinza-texto)">${new Date(f.created_at).toLocaleString('pt-BR')}</td>
+      <td style="font-size:11px;color:var(--cinza-texto)">${new Date(f.created_at).toLocaleString('pt-BR', {timeZone:'America/Sao_Paulo'})}</td>
     </tr>`).join('')
   }</tbody></table>`;
 }
@@ -1389,7 +1389,7 @@ async function carregarAuditoria() {
   el.innerHTML = data.map(f=>`<div class="log-item">
     <div class="log-dot ${f.status==='presente'?'verde':f.status==='falta_abonada'?'laranja':'vermelho'}"></div>
     <div class="log-texto"><b>${f.preceptores?.nome_completo}</b> lançou <b>${f.status.toUpperCase()}</b> para ${f.alunos?.nome_completo} · ${formatarData(f.data)}${f.hora_entrada?' · Entrada '+f.hora_entrada:''}</div>
-    <div class="log-tempo">${new Date(f.created_at).toLocaleString('pt-BR')}</div>
+    <div class="log-tempo">${new Date(f.created_at).toLocaleString('pt-BR', {timeZone:'America/Sao_Paulo'})}</div>
   </div>`).join('');
 }
 
@@ -1433,7 +1433,7 @@ async function carregarHistoricoPreceptor() {
   el.innerHTML = `<div>${data.map(f=>`<div class="log-item">
     <div class="log-dot ${f.status==='presente'?'verde':'vermelho'}"></div>
     <div class="log-texto"><b>${f.status==='presente'?'Presença':'Falta'}</b> registrada — ${f.alunos?.nome_completo} · ${formatarData(f.data)}</div>
-    <div class="log-tempo">${new Date(f.created_at).toLocaleString('pt-BR')}</div>
+    <div class="log-tempo">${new Date(f.created_at).toLocaleString('pt-BR', {timeZone:'America/Sao_Paulo'})}</div>
   </div>`).join('')}</div>`;
 }
 
@@ -1604,29 +1604,15 @@ async function gerarRelatorioMEC() {
         </table>
       </div>
 
-      <div class="rodape">
-        <div class="assinatura">
-          <div style="background:#FFF0E3;border:1px solid #E87722;border-radius:6px;padding:8px 16px;margin-bottom:8px;font-size:10px;color:#c45f0a;text-align:center">
-            ✅ Assinado digitalmente por<br>
-            <b>${aval.preceptores?.nome_completo||'Preceptor(a)'}</b><br>
-            em ${new Date(aval.created_at).toLocaleString('pt-BR')}
+      <div class="rodape" style="justify-content:center">
+        <div class="assinatura" style="max-width:340px">
+          <div style="background:#FFF0E3;border:1px solid #E87722;border-radius:8px;padding:12px 20px;margin-bottom:8px;font-size:11px;color:#c45f0a;text-align:center">
+            ✅ <b>Assinado digitalmente por</b><br>
+            <span style="font-size:13px"><b>${aval.preceptores?.nome_completo||'Preceptor(a)'}</b></span><br>
+            COREN ${aval.preceptores?.coren||'—'}<br>
+            <span style="font-size:10px;color:#888">em ${new Date(aval.created_at).toLocaleString('pt-BR', {timeZone:'America/Sao_Paulo'})}</span>
           </div>
-          <div class="linha-assinatura"></div>
-          <div><b>${aval.preceptores?.nome_completo||'Preceptor(a)'}</b></div>
-          <div style="font-size:10px;color:#666">COREN ${aval.preceptores?.coren||'—'}</div>
-          <div style="font-size:10px;color:#666">Assinatura do(a) Preceptor(a)</div>
-        </div>
-        <div class="assinatura">
-          <div class="linha-assinatura"></div>
-          <div><b>Lorena Ribeiro</b></div>
-          <div style="font-size:10px;color:#666">Supervisora de Estágio</div>
-          <div style="font-size:10px;color:#666">Assinatura da Supervisora</div>
-        </div>
-        <div class="assinatura">
-          <div class="linha-assinatura"></div>
-          <div><b>${aval.alunos?.nome_completo||'Aluno(a)'}</b></div>
-          <div style="font-size:10px;color:#666">Matrícula: ${aval.alunos?.matricula||'—'}</div>
-          <div style="font-size:10px;color:#666">Assinatura do(a) Aluno(a)</div>
+          <div style="font-size:10px;color:#888;text-align:center">Este documento possui validade legal conforme registro no sistema EstágioEnf.<br>Registro imutável gravado com data, hora e IP de acesso.</div>
         </div>
       </div>
     </div>`;
