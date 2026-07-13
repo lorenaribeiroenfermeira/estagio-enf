@@ -877,7 +877,7 @@ tr:hover td { background:var(--creme); }
       </div>
 
       <!-- MEUS DOCUMENTOS -->
-      <div id="aluno-docs" style="display:none">
+      <div id="aluno-docs" style="display:none;flex:1;flex-direction:column">
         <div class="topbar"><div class="topbar-titulo">Meus Documentos</div></div>
         <div class="pagina">
           <div id="aluno-docs-lista"><div class="loading"><div class="spinner"></div> Carregando documentos...</div></div>
@@ -885,7 +885,7 @@ tr:hover td { background:var(--creme); }
       </div>
 
       <!-- MINHA ESCALA -->
-      <div id="aluno-escala" style="display:none">
+      <div id="aluno-escala" style="display:none;flex:1;flex-direction:column">
         <div class="topbar"><div class="topbar-titulo">Minha Escala</div></div>
         <div class="pagina">
           <div id="aluno-escala-conteudo"><div class="loading"><div class="spinner"></div> Carregando escala...</div></div>
@@ -893,7 +893,7 @@ tr:hover td { background:var(--creme); }
       </div>
 
       <!-- FAQ -->
-      <div id="aluno-faq" style="display:none">
+      <div id="aluno-faq" style="display:none;flex:1;flex-direction:column">
         <div class="topbar"><div class="topbar-titulo">Perguntas Frequentes</div></div>
         <div class="pagina">
           <div id="aluno-faq-lista"><div class="loading"><div class="spinner"></div> Carregando...</div></div>
@@ -1967,7 +1967,7 @@ async function entrarComoAluno() {
     if(el) { el.style.display='none'; el.style.flexDirection=''; }
   });
   const dados = document.getElementById('aluno-dados');
-  if(dados) { dados.style.display='flex'; dados.style.flexDirection='column'; }
+  if(dados) { dados.style.cssText = 'display:flex;flex-direction:column;flex:1;'; }
 
   // Busca cadastro do aluno
   const { data } = await sb.from('alunos_cadastro').select('*').eq('user_id', usuarioAtual.id).single();
@@ -2159,10 +2159,10 @@ function toggleFaq(el) {
 function mostrarPaginaAluno(id, el) {
   ['aluno-dados','aluno-docs','aluno-escala','aluno-faq'].forEach(p => {
     const el2 = document.getElementById(p);
-    if(el2) { el2.style.display='none'; el2.style.flexDirection=''; }
+    if(el2) { el2.style.display='none'; }
   });
   const pag = document.getElementById(id);
-  if(pag) { pag.style.display='flex'; pag.style.flexDirection='column'; }
+  if(pag) { pag.style.cssText = 'display:flex;flex-direction:column;flex:1;'; }
   document.querySelectorAll('#tela-aluno .nav-item').forEach(n=>n.classList.remove('ativo'));
   if(el) el.classList.add('ativo');
   if(id==='aluno-docs') carregarDocsAluno();
