@@ -2007,35 +2007,45 @@ async function entrarComoAluno() {
 }
 
 async function salvarDadosAluno() {
-  if (!document.getElementById('aluno-lgpd').checked) { alert('Você precisa aceitar o termo de consentimento LGPD.'); return; }
-  if (!document.getElementById('aluno-matricula-confirm').checked) { alert('Confirme que está matriculado na disciplina de estágio.'); return; }
+  const lgpd = document.getElementById('aluno-lgpd');
+  const matricula = document.getElementById('aluno-matricula-confirm');
+  if (!lgpd?.checked) { alert('Você precisa aceitar o termo de consentimento LGPD.'); return; }
+  if (!matricula?.checked) { alert('Confirme que está matriculado na disciplina de estágio.'); return; }
+  
+  const get = (id) => document.getElementById(id)?.value?.trim() || null;
+  const getCheck = (id) => document.getElementById(id)?.checked || false;
+  
   const { error } = await sb.from('alunos_cadastro').update({
-    nome_completo: document.getElementById('aluno-nome-cad').value.trim(),
-    ra: document.getElementById('aluno-ra').value.trim(),
-    cpf: document.getElementById('aluno-cpf-cad').value.trim(),
-    data_nascimento: document.getElementById('aluno-nasc-cad').value,
-    email: document.getElementById('aluno-email-cad').value.trim(),
-    ddd: document.getElementById('aluno-ddd-cad').value.trim(),
-    telefone: document.getElementById('aluno-tel-cad').value.trim(),
-    endereco: document.getElementById('aluno-end-cad').value.trim(),
-    regiao_administrativa: document.getElementById('aluno-regiao-cad').value.trim(),
-    modalidade: document.getElementById('aluno-modalidade-cad').value,
-    semestre: document.getElementById('aluno-semestre-cad').value,
-    turno_matriculado: document.getElementById('aluno-turno-mat').value,
-    turno_preferencia: document.getElementById('aluno-turno-pref').value,
-    extensao_passe: document.getElementById('aluno-passe').checked,
-    consentimento_lgpd: document.getElementById('aluno-lgpd').checked,
+    nome_completo: get('aluno-nome-cad'),
+    cpf: get('aluno-cpf-cad'),
+    data_nascimento: get('aluno-nasc-cad') || null,
+    email: get('aluno-email-cad'),
+    ddd: get('aluno-ddd-cad'),
+    telefone: get('aluno-tel-cad'),
+    endereco: get('aluno-end-cad'),
+    regiao_administrativa: get('aluno-regiao-cad'),
+    modalidade: get('aluno-modalidade-cad'),
+    semestre: get('aluno-semestre-cad'),
+    turno_matriculado: get('aluno-turno-mat'),
+    turno_preferencia: get('aluno-turno-pref'),
+    extensao_passe: getCheck('aluno-passe'),
+    consentimento_lgpd: getCheck('aluno-lgpd'),
   }).eq('user_id', usuarioAtual.id);
-  if (error) { alert('Erro: ' + error.message); return; }
-  const nome = document.getElementById('aluno-nome-cad').value.trim();
+  
+  if (error) { alert('Erro ao salvar: ' + error.message); return; }
+  
+  const nome = get('aluno-nome-cad');
   if (nome) {
-    document.getElementById('nome-aluno-logado').textContent = nome;
-    document.getElementById('avatar-aluno').textContent = nome.split(' ').slice(0,2).map(n=>n[0]).join('');
+    const nomeEl = document.getElementById('nome-aluno-logado');
+    const avatarEl = document.getElementById('avatar-aluno');
+    if(nomeEl) nomeEl.textContent = nome;
+    if(avatarEl) avatarEl.textContent = nome.split(' ').slice(0,2).map(n=>n[0]).join('');
   }
+  
   // Vai automaticamente para documentos
-  const navDocs = document.querySelector('#tela-aluno .nav-item:nth-child(2)');
-  mostrarPaginaAluno('aluno-docs', navDocs);
-  // Mostra mensagem de sucesso
+  mostrarPaginaAluno('aluno-docs', document.querySelector('#tela-aluno .nav-item:nth-child(2)'));
+  
+  // Mensagem de sucesso
   const msg = document.createElement('div');
   msg.style.cssText = 'position:fixed;top:20px;right:20px;background:var(--verde);color:white;padding:14px 20px;border-radius:10px;font-size:14px;font-weight:600;z-index:999;box-shadow:0 4px 12px rgba(0,0,0,0.15)';
   msg.textContent = '✅ Dados salvos! Agora envie seus documentos.';
