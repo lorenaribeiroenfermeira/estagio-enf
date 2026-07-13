@@ -281,6 +281,7 @@ tr:hover td { background:var(--creme); }
       <select id="tipo-acesso">
         <option value="supervisora">Supervisora de Estágio</option>
         <option value="preceptor">Preceptor(a)</option>
+        <option value="aluno">Aluno(a) — Anhanguera Asa Norte</option>
       </select>
     </div>
     <div class="campo-form">
@@ -293,6 +294,7 @@ tr:hover td { background:var(--creme); }
     </div>
     <button class="btn-login" onclick="fazerLogin()">Entrar →</button>
     <p class="login-link">Preceptor novo? <a href="#" onclick="irPara('tela-cadastro-preceptor')">Faça seu cadastro aqui</a></p>
+    <p class="login-link" style="margin-top:8px">Aluno? <a href="#" onclick="irPara('tela-cadastro-aluno')">Crie seu acesso aqui</a></p>
   </div>
 </div>
 
@@ -333,7 +335,14 @@ tr:hover td { background:var(--creme); }
           <div class="nav-item" onclick="mostrarPagina('avaliacoes', this)"><span class="nav-icon">⭐</span> Avaliações</div>
         </div>
         <div class="nav-grupo">
+          <div class="nav-grupo-titulo">Alunos</div>
+          <div class="nav-item" onclick="mostrarPagina('cadastros-alunos', this)"><span class="nav-icon">🎓</span> Cadastros de Alunos</div>
+          <div class="nav-item" onclick="mostrarPagina('escala', this)"><span class="nav-icon">📅</span> Escala de Campos</div>
+          <div class="nav-item" onclick="mostrarPagina('faq', this)"><span class="nav-icon">❓</span> FAQ</div>
+        </div>
+        <div class="nav-grupo">
           <div class="nav-grupo-titulo">Sistema</div>
+          <div class="nav-item" onclick="mostrarPagina('notificacoes', this)" id="nav-notif"><span class="nav-icon">🔔</span> Notificações <span id="badge-notif" style="display:none;background:#e74c3c;color:white;border-radius:10px;padding:1px 6px;font-size:10px;margin-left:4px">0</span></div>
           <div class="nav-item" onclick="mostrarPagina('auditoria', this)"><span class="nav-icon">🔍</span> Log de Auditoria</div>
         </div>
       </div>
@@ -455,6 +464,65 @@ tr:hover td { background:var(--creme); }
           <div class="secao">
             <div class="secao-header"><div class="secao-titulo">Registro de todas as ações</div><div class="secao-sub">Data, hora e usuário de cada lançamento</div></div>
             <div id="lista-auditoria"><div class="loading"><div class="spinner"></div> Carregando...</div></div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- CADASTROS DE ALUNOS -->
+      <div id="pagina-cadastros-alunos" style="display:none">
+        <div class="topbar">
+          <div class="topbar-titulo">Cadastros de Alunos</div>
+          <div class="topbar-acoes">
+            <button class="btn btn-secundario" onclick="copiarLinkCadastroAluno()">📤 Copiar link de cadastro</button>
+          </div>
+        </div>
+        <div class="pagina">
+          <div class="secao">
+            <div class="secao-header"><div class="secao-titulo">Alunos cadastrados no sistema</div></div>
+            <div id="lista-cadastros-alunos"><div class="loading"><div class="spinner"></div> Carregando...</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ESCALA -->
+      <div id="pagina-escala" style="display:none">
+        <div class="topbar">
+          <div class="topbar-titulo">Escala de Campos</div>
+          <div class="topbar-acoes">
+            <button class="btn btn-primario" onclick="abrirModal('modal-nova-escala')">+ Adicionar aluno à escala</button>
+            <button class="btn btn-verde" onclick="publicarEscala()">📢 Publicar escala</button>
+          </div>
+        </div>
+        <div class="pagina">
+          <div class="secao">
+            <div class="secao-header"><div class="secao-titulo">Escala de campos por aluno</div><div class="secao-sub">Alunos só visualizam após publicação</div></div>
+            <div id="lista-escala"><div class="loading"><div class="spinner"></div> Carregando...</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <div id="pagina-faq" style="display:none">
+        <div class="topbar">
+          <div class="topbar-titulo">FAQ — Perguntas Frequentes</div>
+          <div class="topbar-acoes"><button class="btn btn-primario" onclick="abrirModal('modal-nova-faq')">+ Nova pergunta</button></div>
+        </div>
+        <div class="pagina">
+          <div class="secao">
+            <div class="secao-header"><div class="secao-titulo">Perguntas cadastradas</div><div class="secao-sub">Visíveis para todos os alunos logados</div></div>
+            <div id="lista-faq"><div class="loading"><div class="spinner"></div> Carregando...</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOTIFICAÇÕES -->
+      <div id="pagina-notificacoes" style="display:none">
+        <div class="topbar"><div class="topbar-titulo">Notificações</div></div>
+        <div class="pagina">
+          <div class="secao">
+            <div class="secao-header"><div class="secao-titulo">Pendências de frequência</div><div class="secao-sub">Preceptores que não lançaram frequência</div></div>
+            <div id="lista-notificacoes"><div class="loading"><div class="spinner"></div> Carregando...</div></div>
           </div>
         </div>
       </div>
@@ -691,7 +759,219 @@ tr:hover td { background:var(--creme); }
   </div>
 </div>
 
+
+<!-- ===== TELA ALUNO ===== -->
+<div id="tela-aluno" class="tela">
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <div class="logo-icon" style="width:36px;height:36px;font-size:16px">E</div>
+          <div class="logo-text">
+            <span class="main" style="font-size:15px;color:var(--preto)">EstágioEnf</span>
+            <span class="sub" style="font-size:10px">Área do Aluno</span>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-perfil">
+        <div class="perfil-info">
+          <div class="perfil-avatar" id="avatar-aluno" style="background:var(--verde)">A</div>
+          <div>
+            <div class="perfil-nome" id="nome-aluno-logado">Aluno</div>
+            <div class="perfil-cargo" id="status-aluno-logado">Cadastro pendente</div>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-nav">
+        <div class="nav-grupo">
+          <div class="nav-item ativo" onclick="mostrarPaginaAluno('aluno-dados', this)"><span class="nav-icon">👤</span> Meus Dados</div>
+          <div class="nav-item" onclick="mostrarPaginaAluno('aluno-docs', this)"><span class="nav-icon">📎</span> Meus Documentos</div>
+          <div class="nav-item" onclick="mostrarPaginaAluno('aluno-escala', this)"><span class="nav-icon">📅</span> Minha Escala</div>
+          <div class="nav-item" onclick="mostrarPaginaAluno('aluno-faq', this)"><span class="nav-icon">❓</span> FAQ</div>
+        </div>
+      </div>
+      <div class="sidebar-rodape"><button class="btn-sair" onclick="fazerLogout()">↩ Sair</button></div>
+    </nav>
+    <div class="conteudo">
+
+      <!-- MEUS DADOS -->
+      <div id="aluno-dados">
+        <div class="topbar"><div class="topbar-titulo">Meus Dados</div><div class="topbar-acoes"><button class="btn btn-primario" onclick="salvarDadosAluno()">💾 Salvar dados</button></div></div>
+        <div class="pagina">
+          <div id="aluno-pendencia-doc" style="display:none;background:#FEE8EC;border:1px solid #f5aaaa;border-radius:10px;padding:14px 18px;font-size:13px;color:#c0392b;margin-bottom:20px">
+            ⚠️ <b>Documentação pendente!</b> Acesse a aba "Meus Documentos" para verificar o que precisa ser reenviado.
+          </div>
+
+          <!-- LGPD -->
+          <div class="secao" style="margin-bottom:20px">
+            <div class="secao-header"><div class="secao-titulo">Termo de Consentimento LGPD</div></div>
+            <div style="padding:20px 24px;font-size:13px;line-height:1.7;color:var(--cinza-texto)">
+              Declaro estar ciente e concordo com a coleta, armazenamento e uso dos meus dados pessoais para fins relacionados ao programa de estágio da Faculdade Anhanguera Asa Norte/Brasília-DF. Os dados serão utilizados para gerenciamento do programa, comunicação e cumprimento de obrigações legais, sendo mantidos pelo tempo necessário conforme exigido por lei.
+              <div style="margin-top:12px;display:flex;align-items:center;gap:8px">
+                <input type="checkbox" id="aluno-lgpd" style="width:16px;height:16px;accent-color:var(--laranja)">
+                <label for="aluno-lgpd" style="font-weight:600;color:var(--preto)">Li e concordo com os termos acima *</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="secao">
+            <div class="secao-header"><div class="secao-titulo">Dados Institucionais</div></div>
+            <div style="padding:20px 24px">
+              <div style="background:var(--amarelo-claro);border:1px solid #F5D98B;border-radius:8px;padding:12px 16px;font-size:13px;margin-bottom:16px">
+                ⚠️ <b>Atenção:</b> Certifique-se de que está matriculado na disciplina de estágio correspondente ao seu semestre. O estágio só será validado após confirmação da matrícula.
+                <div style="margin-top:8px;display:flex;align-items:center;gap:8px">
+                  <input type="checkbox" id="aluno-matricula-confirm" style="width:16px;height:16px;accent-color:var(--laranja)">
+                  <label for="aluno-matricula-confirm" style="font-weight:600">Confirmo que estou matriculado na disciplina de estágio *</label>
+                </div>
+              </div>
+              <div class="form-grid">
+                <div class="form-grupo"><label class="form-label">Modalidade *</label><select class="form-select" id="aluno-modalidade-cad"><option value="">Selecione</option><option value="presencial">Presencial</option><option value="semipresencial">Semipresencial</option></select></div>
+                <div class="form-grupo"><label class="form-label">Semestre atual *</label><select class="form-select" id="aluno-semestre-cad"><option value="">Selecione</option><option value="9">9º semestre</option><option value="10">10º semestre</option></select></div>
+              </div>
+              <div class="form-grid">
+                <div class="form-grupo"><label class="form-label">Turno matriculado *</label><select class="form-select" id="aluno-turno-mat"><option value="">Selecione</option><option value="matutino">Matutino</option><option value="noturno">Noturno</option><option value="semipresencial">Semipresencial</option></select></div>
+                <div class="form-grupo"><label class="form-label">Turno de preferência para estágio *</label><select class="form-select" id="aluno-turno-pref"><option value="">Selecione</option><option value="matutino">Matutino</option><option value="vespertino">Vespertino</option></select></div>
+              </div>
+              <div style="background:var(--azul-claro);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--azul);margin-top:-8px;margin-bottom:16px">
+                ℹ️ O turno de preferência será considerado, mas não garantido. A alocação depende das vagas disponíveis em cada campo de estágio.
+              </div>
+            </div>
+          </div>
+
+          <div class="secao">
+            <div class="secao-header"><div class="secao-titulo">Dados Pessoais</div></div>
+            <div style="padding:20px 24px">
+              <div class="form-grupo"><label class="form-label">Nome completo *</label><input class="form-input" id="aluno-nome-cad" placeholder="Nome completo"></div>
+              <div class="form-grid">
+                <div class="form-grupo"><label class="form-label">RA (Registro do Aluno) *</label><input class="form-input" id="aluno-ra" placeholder="RA"></div>
+                <div class="form-grupo"><label class="form-label">CPF *</label><input class="form-input" id="aluno-cpf-cad" placeholder="000.000.000-00"></div>
+              </div>
+              <div class="form-grupo"><label class="form-label">Data de nascimento *</label><input class="form-input" id="aluno-nasc-cad" type="date"></div>
+              <div class="form-grupo"><label class="form-label">E-mail (mesmo do GOV) *</label><input class="form-input" id="aluno-email-cad" type="email" placeholder="seu@email.com"><div style="font-size:11px;color:var(--cinza-texto);margin-top:4px">⚠️ Use o mesmo e-mail cadastrado na sua conta GOV. E-mails divergentes podem invalidar o estágio.</div></div>
+              <div class="form-grid">
+                <div class="form-grupo"><label class="form-label">DDD *</label><input class="form-input" id="aluno-ddd-cad" placeholder="61" style="max-width:80px"></div>
+                <div class="form-grupo"><label class="form-label">Telefone *</label><input class="form-input" id="aluno-tel-cad" placeholder="99999-9999"></div>
+              </div>
+              <div class="form-grupo"><label class="form-label">Endereço residencial *</label><input class="form-input" id="aluno-end-cad" placeholder="Rua, número, complemento"></div>
+              <div class="form-grupo"><label class="form-label">Região administrativa / Cidade-Estado *</label><input class="form-input" id="aluno-regiao-cad" placeholder="Ex: Planaltina/Brasília-DF"></div>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+                <input type="checkbox" id="aluno-passe" style="width:16px;height:16px;accent-color:var(--laranja)">
+                <label for="aluno-passe" style="font-size:13px">Preciso de declaração de extensão de passe estudantil</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MEUS DOCUMENTOS -->
+      <div id="aluno-docs" style="display:none">
+        <div class="topbar"><div class="topbar-titulo">Meus Documentos</div></div>
+        <div class="pagina">
+          <div id="aluno-docs-lista"><div class="loading"><div class="spinner"></div> Carregando documentos...</div></div>
+        </div>
+      </div>
+
+      <!-- MINHA ESCALA -->
+      <div id="aluno-escala" style="display:none">
+        <div class="topbar"><div class="topbar-titulo">Minha Escala</div></div>
+        <div class="pagina">
+          <div id="aluno-escala-conteudo"><div class="loading"><div class="spinner"></div> Carregando escala...</div></div>
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <div id="aluno-faq" style="display:none">
+        <div class="topbar"><div class="topbar-titulo">Perguntas Frequentes</div></div>
+        <div class="pagina">
+          <div id="aluno-faq-lista"><div class="loading"><div class="spinner"></div> Carregando...</div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===== CADASTRO ALUNO ===== -->
+<div id="tela-cadastro-aluno" class="tela">
+  <div style="background:linear-gradient(135deg,#FFF8F0,#FFE8CC);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px">
+    <div style="background:white;border-radius:24px;width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(232,119,34,0.15)">
+      <div style="padding:32px 36px 24px;border-bottom:1px solid var(--cinza-claro)">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+          <div class="logo-icon">E</div>
+          <div class="logo-text"><span class="main">EstágioEnf</span><span class="sub">Anhanguera Asa Norte · Enfermagem</span></div>
+        </div>
+        <div class="modal-titulo">Cadastro do Aluno</div>
+        <div class="modal-sub">Crie seu acesso ao sistema de estágio</div>
+      </div>
+      <div style="padding:28px 36px">
+        <div id="cad-aluno-erro" class="login-erro"></div>
+        <div class="form-grupo"><label class="form-label">E-mail *</label><input class="form-input" id="cad-aluno-email" type="email" placeholder="seu@email.com"></div>
+        <div class="form-grid">
+          <div class="form-grupo"><label class="form-label">Senha *</label><input class="form-input" id="cad-aluno-senha" type="password" placeholder="Mínimo 6 caracteres"></div>
+          <div class="form-grupo"><label class="form-label">Confirmar senha *</label><input class="form-input" id="cad-aluno-senha2" type="password"></div>
+        </div>
+        <button class="btn btn-primario" style="width:100%;padding:14px;font-size:15px;margin-top:8px" onclick="cadastrarAluno()">Criar acesso →</button>
+        <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--cinza-texto)">Já tem acesso? <a href="#" onclick="irPara('tela-login')" style="color:var(--laranja-escuro);text-decoration:none">Fazer login</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- MODAIS -->
+<!-- MODAL FAQ -->
+<div id="modal-nova-faq" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header"><div><div class="modal-titulo" id="faq-modal-titulo">Nova Pergunta</div></div><button class="btn-fechar" onclick="fecharModal('modal-nova-faq')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grupo"><label class="form-label">Pergunta *</label><input class="form-input" id="faq-pergunta" placeholder="Ex: Qual é o uniforme obrigatório?"></div>
+      <div class="form-grupo"><label class="form-label">Resposta *</label><textarea class="form-textarea" id="faq-resposta" style="min-height:120px" placeholder="Digite a resposta completa..."></textarea></div>
+      <div class="form-grupo"><label class="form-label">Ordem de exibição</label><input class="form-input" id="faq-ordem" type="number" value="0" min="0"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secundario" onclick="fecharModal('modal-nova-faq')">Cancelar</button>
+      <button class="btn btn-primario" onclick="salvarFaq()">Salvar pergunta</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ESCALA -->
+<div id="modal-nova-escala" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header"><div><div class="modal-titulo">Adicionar à Escala</div></div><button class="btn-fechar" onclick="fecharModal('modal-nova-escala')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grupo"><label class="form-label">Aluno *</label><select class="form-select" id="escala-aluno"></select></div>
+      <div class="form-grupo"><label class="form-label">Campo de estágio *</label><input class="form-input" id="escala-campo" placeholder="Ex: Hospital de Base"></div>
+      <div class="form-grupo"><label class="form-label">Setor *</label><input class="form-input" id="escala-setor" placeholder="Ex: Cardiologia"></div>
+      <div class="form-grupo"><label class="form-label">Preceptor *</label><input class="form-input" id="escala-preceptor" placeholder="Nome do preceptor"></div>
+      <div class="form-grupo"><label class="form-label">Turno *</label><select class="form-select" id="escala-turno"><option value="matutino">Matutino</option><option value="vespertino">Vespertino</option><option value="noturno">Noturno</option></select></div>
+      <div class="form-grid">
+        <div class="form-grupo"><label class="form-label">Data início *</label><input class="form-input" id="escala-inicio" type="date"></div>
+        <div class="form-grupo"><label class="form-label">Data fim *</label><input class="form-input" id="escala-fim" type="date"></div>
+      </div>
+      <div class="form-grupo"><label class="form-label">Semestre *</label><input class="form-input" id="escala-semestre" placeholder="Ex: 2026.2"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secundario" onclick="fecharModal('modal-nova-escala')">Cancelar</button>
+      <button class="btn btn-primario" onclick="salvarEscala()">Adicionar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL REJEITAR DOCUMENTO ALUNO -->
+<div id="modal-rejeitar-doc" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header"><div><div class="modal-titulo">Rejeitar Documento</div><div class="modal-sub" id="rejeitar-doc-nome"></div></div><button class="btn-fechar" onclick="fecharModal('modal-rejeitar-doc')">✕</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="rejeitar-doc-id">
+      <div class="form-grupo"><label class="form-label">Motivo da rejeição *</label><textarea class="form-textarea" id="rejeitar-motivo" placeholder="Ex: Foto ilegível, documento cortado, etc..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secundario" onclick="fecharModal('modal-rejeitar-doc')">Cancelar</button>
+      <button class="btn btn-vermelho" onclick="confirmarRejeicaoDoc()">Rejeitar documento</button>
+    </div>
+  </div>
+</div>
+
 <div id="modal-novo-aluno" class="modal-overlay">
   <div class="modal">
     <div class="modal-header"><div><div class="modal-titulo">Cadastrar Aluno</div></div><button class="btn-fechar" onclick="fecharModal('modal-novo-aluno')">✕</button></div>
@@ -794,9 +1074,12 @@ let alunoEditandoId = null;
 
 // ===== INICIALIZAÇÃO =====
 window.addEventListener('load', async () => {
-  // Verifica se é link de cadastro de preceptor
   if (window.location.hash === '#cadastro') {
     irPara('tela-cadastro-preceptor');
+    return;
+  }
+  if (window.location.hash === '#cadastro-aluno') {
+    irPara('tela-cadastro-aluno');
     return;
   }
   const { data: { session } } = await sb.auth.getSession();
@@ -829,6 +1112,13 @@ async function definirPerfil() {
     irPara('tela-supervisora');
     carregarDashboard();
   } else {
+    // Verifica se é aluno (pelo tipo selecionado ou pelo cadastro)
+    const tipoSel = document.getElementById('tipo-acesso')?.value;
+    const { data: alunoData } = await sb.from('alunos_cadastro').select('*').eq('user_id', usuarioAtual.id).single();
+    if (alunoData || tipoSel === 'aluno') {
+      await entrarComoAluno();
+      return;
+    }
     // Preceptor
     const { data } = await sb.from('preceptores').select('*').eq('user_id', usuarioAtual.id).single();
     if (data) {
@@ -1413,6 +1703,10 @@ function mostrarPagina(id, el) {
   else if(id==='frequencias') carregarFrequencias();
   else if(id==='avaliacoes') carregarAvaliacoes();
   else if(id==='auditoria') carregarAuditoria();
+  else if(id==='cadastros-alunos') carregarCadastrosAlunos();
+  else if(id==='escala') carregarEscala();
+  else if(id==='faq') carregarFaq();
+  else if(id==='notificacoes') carregarNotificacoes();
 }
 
 function mostrarPaginaPrec(id, el) {
@@ -1438,7 +1732,8 @@ async function carregarHistoricoPreceptor() {
 }
 
 function abrirModal(id) {
-  if(id==='modal-novo-periodo') { abrirModalPeriodo(); return; } // já abre dentro da função
+  if(id==='modal-novo-periodo') { abrirModalPeriodo(); return; }
+  if(id==='modal-nova-escala') { abrirModalEscala(); return; }
   if(id==='modal-novo-campo') {
     campoEditandoId = null;
     document.getElementById('campo-inst').value = '';
@@ -1626,6 +1921,550 @@ async function gerarRelatorioMEC() {
   janela.document.close();
   janela.onload = () => janela.print();
 }
+
+
+// =============================================
+// CADASTRO E LOGIN DO ALUNO
+// =============================================
+let alunoLogadoId = null;
+
+async function cadastrarAluno() {
+  const email = document.getElementById('cad-aluno-email').value.trim();
+  const senha = document.getElementById('cad-aluno-senha').value;
+  const senha2 = document.getElementById('cad-aluno-senha2').value;
+  const erro = document.getElementById('cad-aluno-erro');
+  erro.style.display = 'none';
+  if (!email || !senha) { erro.textContent = 'Preencha e-mail e senha.'; erro.style.display = 'block'; return; }
+  if (senha !== senha2) { erro.textContent = 'As senhas não coincidem.'; erro.style.display = 'block'; return; }
+  if (senha.length < 6) { erro.textContent = 'Senha mínima de 6 caracteres.'; erro.style.display = 'block'; return; }
+  const { data, error } = await sb.auth.signUp({ email, password: senha });
+  if (error) { erro.textContent = error.message; erro.style.display = 'block'; return; }
+  // Cria registro inicial do aluno
+  await sb.from('alunos_cadastro').insert({ user_id: data.user.id, email, status: 'pendente' });
+  alert('Acesso criado! Agora complete seus dados e envie os documentos.');
+  usuarioAtual = data.user;
+  await entrarComoAluno();
+}
+
+async function entrarComoAluno() {
+  // Busca cadastro do aluno
+  const { data } = await sb.from('alunos_cadastro').select('*').eq('user_id', usuarioAtual.id).single();
+  if (data) {
+    alunoLogadoId = data.id;
+    document.getElementById('nome-aluno-logado').textContent = data.nome_completo || 'Complete seus dados';
+    document.getElementById('avatar-aluno').textContent = data.nome_completo ? data.nome_completo.split(' ').slice(0,2).map(n=>n[0]).join('') : 'A';
+    const statusTexto = { 'pendente': 'Cadastro pendente', 'em_analise': 'Em análise', 'aprovado': 'Aprovado', 'doc_pendente': 'Documentação pendente' };
+    document.getElementById('status-aluno-logado').textContent = statusTexto[data.status] || data.status;
+    // Preenche formulário
+    if (data.nome_completo) document.getElementById('aluno-nome-cad').value = data.nome_completo;
+    if (data.ra) document.getElementById('aluno-ra').value = data.ra;
+    if (data.cpf) document.getElementById('aluno-cpf-cad').value = data.cpf;
+    if (data.data_nascimento) document.getElementById('aluno-nasc-cad').value = data.data_nascimento;
+    if (data.email) document.getElementById('aluno-email-cad').value = data.email;
+    if (data.ddd) document.getElementById('aluno-ddd-cad').value = data.ddd;
+    if (data.telefone) document.getElementById('aluno-tel-cad').value = data.telefone;
+    if (data.endereco) document.getElementById('aluno-end-cad').value = data.endereco;
+    if (data.regiao_administrativa) document.getElementById('aluno-regiao-cad').value = data.regiao_administrativa;
+    if (data.modalidade) document.getElementById('aluno-modalidade-cad').value = data.modalidade;
+    if (data.semestre) document.getElementById('aluno-semestre-cad').value = data.semestre;
+    if (data.turno_matriculado) document.getElementById('aluno-turno-mat').value = data.turno_matriculado;
+    if (data.turno_preferencia) document.getElementById('aluno-turno-pref').value = data.turno_preferencia;
+    if (data.consentimento_lgpd) document.getElementById('aluno-lgpd').checked = data.consentimento_lgpd;
+    if (data.extensao_passe) document.getElementById('aluno-passe').checked = data.extensao_passe;
+    // Mostra pendência de documento
+    if (data.status === 'doc_pendente') {
+      document.getElementById('aluno-pendencia-doc').style.display = 'block';
+    }
+  }
+  irPara('tela-aluno');
+  // Init páginas do aluno
+  document.querySelectorAll('#tela-aluno [id^="aluno-"]').forEach(p => { if(p.tagName === 'DIV' && p.id !== 'aluno-pendencia-doc' && p.id !== 'aluno-lgpd' && p.id !== 'aluno-matricula-confirm' && p.id !== 'aluno-passe') { if(['aluno-dados','aluno-docs','aluno-escala','aluno-faq'].includes(p.id)) p.style.display='none'; } });
+  document.getElementById('aluno-dados').style.display = 'flex';
+  document.getElementById('aluno-dados').style.flexDirection = 'column';
+}
+
+async function salvarDadosAluno() {
+  if (!document.getElementById('aluno-lgpd').checked) { alert('Você precisa aceitar o termo de consentimento LGPD.'); return; }
+  if (!document.getElementById('aluno-matricula-confirm').checked) { alert('Confirme que está matriculado na disciplina de estágio.'); return; }
+  const { error } = await sb.from('alunos_cadastro').update({
+    nome_completo: document.getElementById('aluno-nome-cad').value.trim(),
+    ra: document.getElementById('aluno-ra').value.trim(),
+    cpf: document.getElementById('aluno-cpf-cad').value.trim(),
+    data_nascimento: document.getElementById('aluno-nasc-cad').value,
+    email: document.getElementById('aluno-email-cad').value.trim(),
+    ddd: document.getElementById('aluno-ddd-cad').value.trim(),
+    telefone: document.getElementById('aluno-tel-cad').value.trim(),
+    endereco: document.getElementById('aluno-end-cad').value.trim(),
+    regiao_administrativa: document.getElementById('aluno-regiao-cad').value.trim(),
+    modalidade: document.getElementById('aluno-modalidade-cad').value,
+    semestre: document.getElementById('aluno-semestre-cad').value,
+    turno_matriculado: document.getElementById('aluno-turno-mat').value,
+    turno_preferencia: document.getElementById('aluno-turno-pref').value,
+    extensao_passe: document.getElementById('aluno-passe').checked,
+    consentimento_lgpd: document.getElementById('aluno-lgpd').checked,
+  }).eq('user_id', usuarioAtual.id);
+  if (error) { alert('Erro: ' + error.message); return; }
+  alert('Dados salvos com sucesso!');
+  const nome = document.getElementById('aluno-nome-cad').value.trim();
+  if (nome) document.getElementById('nome-aluno-logado').textContent = nome;
+}
+
+// Documentos do aluno
+async function carregarDocsAluno() {
+  if (!alunoLogadoId) return;
+  const { data } = await sb.from('alunos_documentos').select('*').eq('aluno_id', alunoLogadoId);
+  const el = document.getElementById('aluno-docs-lista');
+  const tipos = [
+    { id: 'foto_3x4', label: 'Foto 3x4', aviso: '⚠️ Certifique-se que a foto está legível, com fundo claro, pose reta e sem efeitos.' },
+    { id: 'cartao_vacina', label: 'Cartão de Vacina (frente e verso)', aviso: '' },
+    { id: 'termo_compromisso', label: 'Termo de Compromisso de Estágio (assinado pelo GOV)', aviso: '' },
+  ];
+  const docsExistentes = {};
+  data?.forEach(d => docsExistentes[d.tipo] = d);
+
+  el.innerHTML = tipos.map(tipo => {
+    const doc = docsExistentes[tipo.id];
+    const statusBadge = doc ? (
+      doc.status === 'aprovado' ? '<span class="badge badge-verde">✓ Aprovado</span>' :
+      doc.status === 'rejeitado' ? `<span class="badge badge-vermelho">✗ Rejeitado</span><div style="font-size:12px;color:#e74c3c;margin-top:4px">Motivo: ${doc.motivo_rejeicao||'—'}</div>` :
+      '<span class="badge badge-laranja">⏳ Aguardando análise</span>'
+    ) : '<span class="badge badge-cinza">Não enviado</span>';
+
+    return `<div style="background:white;border:1px solid var(--cinza-medio);border-radius:12px;padding:20px;margin-bottom:12px">
+      <div style="font-weight:600;font-size:14px;margin-bottom:6px">${tipo.label}</div>
+      ${tipo.aviso ? `<div style="background:var(--amarelo-claro);border-radius:6px;padding:8px 12px;font-size:12px;color:#8a6200;margin-bottom:10px">${tipo.aviso}</div>` : ''}
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        ${statusBadge}
+        ${doc?.status !== 'aprovado' ? `<input type="file" id="doc-${tipo.id}" accept=".pdf,.jpg,.jpeg,.png" style="font-size:12px">
+        <button class="btn btn-primario" style="padding:6px 14px;font-size:12px" onclick="enviarDocAluno('${tipo.id}')">📤 Enviar</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function enviarDocAluno(tipo) {
+  const input = document.getElementById('doc-' + tipo);
+  if (!input?.files.length) { alert('Selecione um arquivo primeiro.'); return; }
+  const file = input.files[0];
+  const path = `${alunoLogadoId}/${tipo}-${Date.now()}-${file.name}`;
+  const { data: upload, error: errUp } = await sb.storage.from('documentos-alunos').upload(path, file, { upsert: true });
+  if (errUp) { alert('Erro no upload: ' + errUp.message); return; }
+  const url = sb.storage.from('documentos-alunos').getPublicUrl(path).data.publicUrl;
+  // Verifica se já existe
+  const { data: existing } = await sb.from('alunos_documentos').select('id').eq('aluno_id', alunoLogadoId).eq('tipo', tipo).single();
+  if (existing) {
+    await sb.from('alunos_documentos').update({ url, status: 'aguardando', motivo_rejeicao: null }).eq('id', existing.id);
+  } else {
+    await sb.from('alunos_documentos').insert({ aluno_id: alunoLogadoId, tipo, url, status: 'aguardando' });
+  }
+  alert('Documento enviado com sucesso! Aguarde a análise da supervisora.');
+  carregarDocsAluno();
+}
+
+// Escala do aluno
+async function carregarEscalaAluno() {
+  if (!alunoLogadoId) return;
+  const { data } = await sb.from('escala').select('*').eq('aluno_cadastro_id', alunoLogadoId).eq('publicada', true);
+  const el = document.getElementById('aluno-escala-conteudo');
+  if (!data || data.length === 0) {
+    el.innerHTML = `<div style="text-align:center;padding:60px 20px">
+      <div style="font-size:48px;margin-bottom:16px">📅</div>
+      <div style="font-size:16px;font-weight:600;margin-bottom:8px">Escala ainda não disponível</div>
+      <div style="font-size:13px;color:var(--cinza-texto)">A supervisora ainda não publicou sua escala de campo. Você será notificado quando estiver disponível.</div>
+    </div>`;
+    return;
+  }
+  el.innerHTML = data.map(e => `
+    <div style="background:white;border:1px solid var(--cinza-medio);border-radius:16px;padding:24px;margin-bottom:16px">
+      <div style="font-family:'DM Serif Display',serif;font-size:20px;margin-bottom:16px;color:var(--laranja)">${e.semestre || '—'}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div style="background:var(--cinza-claro);border-radius:8px;padding:12px"><div style="font-size:10px;text-transform:uppercase;color:var(--cinza-texto)">Campo</div><div style="font-weight:600">${e.campo}</div></div>
+        <div style="background:var(--cinza-claro);border-radius:8px;padding:12px"><div style="font-size:10px;text-transform:uppercase;color:var(--cinza-texto)">Setor</div><div style="font-weight:600">${e.setor||'—'}</div></div>
+        <div style="background:var(--cinza-claro);border-radius:8px;padding:12px"><div style="font-size:10px;text-transform:uppercase;color:var(--cinza-texto)">Preceptor</div><div style="font-weight:600">${e.preceptor||'—'}</div></div>
+        <div style="background:var(--cinza-claro);border-radius:8px;padding:12px"><div style="font-size:10px;text-transform:uppercase;color:var(--cinza-texto)">Turno</div><div style="font-weight:600">${e.turno||'—'}</div></div>
+        <div style="background:var(--cinza-claro);border-radius:8px;padding:12px"><div style="font-size:10px;text-transform:uppercase;color:var(--cinza-texto)">Início</div><div style="font-weight:600">${formatarData(e.data_inicio)}</div></div>
+        <div style="background:var(--cinza-claro);border-radius:8px;padding:12px"><div style="font-size:10px;text-transform:uppercase;color:var(--cinza-texto)">Término</div><div style="font-weight:600">${formatarData(e.data_fim)}</div></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// FAQ do aluno
+async function carregarFaqAluno() {
+  const { data } = await sb.from('faq').select('*').eq('ativo', true).order('ordem');
+  const el = document.getElementById('aluno-faq-lista');
+  if (!data || data.length === 0) { el.innerHTML = '<div class="vazio">Nenhuma pergunta cadastrada ainda.</div>'; return; }
+  el.innerHTML = data.map(f => `
+    <div style="background:white;border:1px solid var(--cinza-medio);border-radius:12px;margin-bottom:10px;overflow:hidden">
+      <div onclick="toggleFaq(this)" style="padding:16px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:14px">
+        ${f.pergunta}
+        <span style="color:var(--laranja);font-size:18px;flex-shrink:0;margin-left:12px">+</span>
+      </div>
+      <div style="display:none;padding:0 20px 16px;font-size:13px;color:var(--cinza-texto);line-height:1.7">${f.resposta}</div>
+    </div>
+  `).join('');
+}
+
+function toggleFaq(el) {
+  const resp = el.nextElementSibling;
+  const icone = el.querySelector('span');
+  resp.style.display = resp.style.display === 'none' ? 'block' : 'none';
+  icone.textContent = resp.style.display === 'block' ? '−' : '+';
+}
+
+function mostrarPaginaAluno(id, el) {
+  ['aluno-dados','aluno-docs','aluno-escala','aluno-faq'].forEach(p => {
+    const el2 = document.getElementById(p);
+    if(el2) { el2.style.display='none'; el2.style.flexDirection=''; }
+  });
+  const pag = document.getElementById(id);
+  if(pag) { pag.style.display='flex'; pag.style.flexDirection='column'; }
+  document.querySelectorAll('#tela-aluno .nav-item').forEach(n=>n.classList.remove('ativo'));
+  if(el) el.classList.add('ativo');
+  if(id==='aluno-docs') carregarDocsAluno();
+  if(id==='aluno-escala') carregarEscalaAluno();
+  if(id==='aluno-faq') carregarFaqAluno();
+}
+
+function copiarLinkCadastroAluno() {
+  const link = window.location.origin + window.location.pathname + '#cadastro-aluno';
+  navigator.clipboard.writeText(link);
+  alert('Link copiado! Envie para os alunos se cadastrarem.');
+}
+
+// =============================================
+// FAQ — SUPERVISORA
+// =============================================
+let faqEditandoId = null;
+
+async function carregarFaq() {
+  const { data } = await sb.from('faq').select('*').order('ordem');
+  const el = document.getElementById('lista-faq');
+  if (!data || data.length === 0) { el.innerHTML = '<div class="vazio">Nenhuma pergunta cadastrada.</div>'; return; }
+  el.innerHTML = `<table><thead><tr><th>Ordem</th><th>Pergunta</th><th>Status</th><th></th></tr></thead><tbody>${
+    data.map(f => `<tr>
+      <td>${f.ordem}</td>
+      <td><b>${f.pergunta}</b><br><span style="font-size:12px;color:var(--cinza-texto)">${f.resposta.substring(0,80)}...</span></td>
+      <td><span class="badge ${f.ativo?'badge-verde':'badge-cinza'}">${f.ativo?'Ativo':'Inativo'}</span></td>
+      <td style="display:flex;gap:6px">
+        <button class="btn-tabela" onclick="editarFaq('${f.id}','${f.pergunta.replace(/'/g,"\'")}','${f.resposta.replace(/'/g,"\'").replace(/
+/g,' ')}',${f.ordem})">✏️</button>
+        <button class="btn-tabela" style="color:#e74c3c;border-color:#e74c3c" onclick="excluirFaq('${f.id}')">🗑️</button>
+      </td>
+    </tr>`).join('')
+  }</tbody></table>`;
+}
+
+async function salvarFaq() {
+  const pergunta = document.getElementById('faq-pergunta').value.trim();
+  const resposta = document.getElementById('faq-resposta').value.trim();
+  const ordem = parseInt(document.getElementById('faq-ordem').value) || 0;
+  if (!pergunta || !resposta) { alert('Preencha pergunta e resposta.'); return; }
+  if (faqEditandoId) {
+    await sb.from('faq').update({ pergunta, resposta, ordem }).eq('id', faqEditandoId);
+    faqEditandoId = null;
+  } else {
+    await sb.from('faq').insert({ pergunta, resposta, ordem });
+  }
+  fecharModal('modal-nova-faq');
+  carregarFaq();
+}
+
+function editarFaq(id, pergunta, resposta, ordem) {
+  faqEditandoId = id;
+  document.getElementById('faq-pergunta').value = pergunta;
+  document.getElementById('faq-resposta').value = resposta;
+  document.getElementById('faq-ordem').value = ordem;
+  document.getElementById('faq-modal-titulo').textContent = 'Editar Pergunta';
+  document.getElementById('modal-nova-faq').classList.add('ativo');
+}
+
+async function editarFaqBtn(id) {
+  const { data } = await sb.from('faq').select('*').eq('id', id).single();
+  if (!data) return;
+  editarFaq(data.id, data.pergunta, data.resposta, data.ordem);
+}
+
+async function excluirFaq(id) {
+  if (!confirm('Excluir esta pergunta?')) return;
+  await sb.from('faq').delete().eq('id', id);
+  carregarFaq();
+}
+
+// =============================================
+// ESCALA — SUPERVISORA
+// =============================================
+async function carregarEscala() {
+  const { data } = await sb.from('escala').select('*, alunos_cadastro(nome_completo)').order('created_at', {ascending:false});
+  const el = document.getElementById('lista-escala');
+  if (!data || data.length === 0) { el.innerHTML = '<div class="vazio">Nenhum aluno na escala ainda.</div>'; return; }
+  el.innerHTML = `<table><thead><tr><th>Aluno</th><th>Campo</th><th>Preceptor</th><th>Turno</th><th>Período</th><th>Status</th><th></th></tr></thead><tbody>${
+    data.map(e => `<tr>
+      <td><b>${e.alunos_cadastro?.nome_completo||'—'}</b></td>
+      <td>${e.campo} · ${e.setor||''}</td>
+      <td>${e.preceptor||'—'}</td>
+      <td>${e.turno||'—'}</td>
+      <td>${formatarData(e.data_inicio)} – ${formatarData(e.data_fim)}</td>
+      <td><span class="badge ${e.publicada?'badge-verde':'badge-cinza'}">${e.publicada?'Publicada':'Rascunho'}</span></td>
+      <td><button class="btn-tabela" style="color:#e74c3c;border-color:#e74c3c" onclick="excluirEscala('${e.id}')">🗑️</button></td>
+    </tr>`).join('')
+  }</tbody></table>`;
+}
+
+async function abrirModalEscala() {
+  const { data } = await sb.from('alunos_cadastro').select('id, nome_completo').order('nome_completo');
+  document.getElementById('escala-aluno').innerHTML = data?.map(a=>`<option value="${a.id}">${a.nome_completo||a.id}</option>`).join('') || '';
+  document.getElementById('modal-nova-escala').classList.add('ativo');
+}
+
+async function salvarEscala() {
+  const alunoId = document.getElementById('escala-aluno').value;
+  const campo = document.getElementById('escala-campo').value.trim();
+  if (!alunoId || !campo) { alert('Preencha os campos obrigatórios.'); return; }
+  await sb.from('escala').insert({
+    aluno_cadastro_id: alunoId,
+    campo,
+    setor: document.getElementById('escala-setor').value.trim(),
+    preceptor: document.getElementById('escala-preceptor').value.trim(),
+    turno: document.getElementById('escala-turno').value,
+    data_inicio: document.getElementById('escala-inicio').value,
+    data_fim: document.getElementById('escala-fim').value,
+    semestre: document.getElementById('escala-semestre').value.trim(),
+    publicada: false,
+  });
+  fecharModal('modal-nova-escala');
+  carregarEscala();
+}
+
+async function excluirEscala(id) {
+  if (!confirm('Remover este aluno da escala?')) return;
+  await sb.from('escala').delete().eq('id', id);
+  carregarEscala();
+}
+
+async function publicarEscala() {
+  if (!confirm('Publicar a escala? Os alunos poderão ver suas alocações.')) return;
+  await sb.from('escala').update({ publicada: true }).eq('publicada', false);
+  alert('Escala publicada com sucesso! Os alunos já podem visualizar.');
+  carregarEscala();
+}
+
+// =============================================
+// CADASTROS DE ALUNOS — SUPERVISORA
+// =============================================
+async function carregarCadastrosAlunos() {
+  const { data } = await sb.from('alunos_cadastro').select('*, alunos_documentos(tipo, status)').order('created_at', {ascending:false});
+  const el = document.getElementById('lista-cadastros-alunos');
+  if (!data || data.length === 0) { el.innerHTML = '<div class="vazio">Nenhum aluno cadastrado ainda.</div>'; return; }
+  el.innerHTML = `<table><thead><tr><th>Nome</th><th>RA</th><th>Semestre</th><th>Modalidade</th><th>Turno pref.</th><th>Documentos</th><th>Status</th><th></th></tr></thead><tbody>${
+    data.map(a => {
+      const totalDocs = a.alunos_documentos?.length || 0;
+      const docsOk = a.alunos_documentos?.filter(d=>d.status==='aprovado').length || 0;
+      const docsRej = a.alunos_documentos?.filter(d=>d.status==='rejeitado').length || 0;
+      return `<tr>
+        <td><b>${a.nome_completo||'—'}</b><br><span style="font-size:11px;color:var(--cinza-texto)">${a.email||''}</span></td>
+        <td>${a.ra||'—'}</td>
+        <td>${a.semestre||'—'}º</td>
+        <td><span class="badge ${a.modalidade==='presencial'?'badge-azul':'badge-cinza'}">${a.modalidade||'—'}</span></td>
+        <td>${a.turno_preferencia||'—'}</td>
+        <td><span class="badge badge-verde">${docsOk} ok</span> ${docsRej>0?`<span class="badge badge-vermelho">${docsRej} rej.</span>`:''} ${totalDocs-docsOk-docsRej>0?`<span class="badge badge-laranja">${totalDocs-docsOk-docsRej} pend.</span>`:''}</td>
+        <td><span class="badge ${a.status==='aprovado'?'badge-verde':a.status==='doc_pendente'?'badge-vermelho':'badge-laranja'}">${a.status||'pendente'}</span></td>
+        <td><button class="btn-tabela" onclick="verDocumentosAluno('${a.id}','${(a.nome_completo||'').replace(/'/g,"\'")}')">Ver docs</button></td>
+      </tr>`;
+    }).join('')
+  }</tbody></table>`;
+}
+
+async function verDocAlunoPorId(alunoId) {
+  const { data: aluno } = await sb.from('alunos_cadastro').select('nome_completo').eq('id', alunoId).single();
+  await verDocumentosAluno(alunoId, aluno?.nome_completo || 'Aluno');
+}
+
+async function verDocumentosAluno(alunoId, nome) {
+  const { data } = await sb.from('alunos_documentos').select('*').eq('aluno_id', alunoId);
+  const tiposLabel = { foto_3x4: 'Foto 3x4', cartao_vacina: 'Cartão de Vacina', termo_compromisso: 'Termo de Compromisso' };
+  const lista = data?.map(d => `
+    <div style="border:1px solid var(--cinza-medio);border-radius:8px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+      <div>
+        <div style="font-weight:600;font-size:13px">${tiposLabel[d.tipo]||d.tipo}</div>
+        <span class="badge ${d.status==='aprovado'?'badge-verde':d.status==='rejeitado'?'badge-vermelho':'badge-laranja'}" style="margin-top:4px">${d.status}</span>
+        ${d.motivo_rejeicao?`<div style="font-size:11px;color:#e74c3c;margin-top:4px">${d.motivo_rejeicao}</div>`:''}
+      </div>
+      <div style="display:flex;gap:6px">
+        ${d.url?`<a href="${d.url}" target="_blank" class="btn-tabela">👁️ Ver</a>`:''}
+        ${d.status!=='aprovado'?`<button class="btn-tabela" style="color:var(--verde);border-color:var(--verde)" onclick="aprovarDoc('${d.id}')">✓ Aprovar</button>`:''}
+        ${d.status!=='rejeitado'?`<button class="btn-tabela" style="color:#e74c3c;border-color:#e74c3c" onclick="abrirRejeicao('${d.id}','${tiposLabel[d.tipo]||d.tipo}')">✗ Rejeitar</button>`:''}
+      </div>
+    </div>
+  `).join('') || '<div class="vazio">Nenhum documento enviado ainda.</div>';
+  
+  // Usa alert com info + abre modal personalizado
+  document.getElementById('modal-rejeitar-doc').setAttribute('data-aluno-id', alunoId);
+  // Mostra num modal simples
+  const modal = document.createElement('div');
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:300;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)';
+  modal.innerHTML = `<div style="background:white;border-radius:20px;width:560px;max-height:80vh;overflow-y:auto">
+    <div style="padding:24px 28px 16px;border-bottom:1px solid var(--cinza-claro);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:white">
+      <div style="font-family:'DM Serif Display',serif;font-size:20px">Documentos — ${nome}</div>
+      <button onclick="this.closest('[style]').remove()" style="background:var(--cinza-claro);border:none;border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:16px">✕</button>
+    </div>
+    <div style="padding:20px 28px">${lista}</div>
+  </div>`;
+  document.body.appendChild(modal);
+}
+
+async function aprovarDoc(docId) {
+  await sb.from('alunos_documentos').update({ status: 'aprovado', motivo_rejeicao: null }).eq('id', docId);
+  alert('Documento aprovado!');
+  document.querySelector('[style*="position:fixed;inset:0"]')?.remove();
+  carregarCadastrosAlunos();
+}
+
+function abrirRejeicao(docId, docNome) {
+  document.getElementById('rejeitar-doc-id').value = docId;
+  document.getElementById('rejeitar-doc-nome').textContent = docNome;
+  document.getElementById('rejeitar-motivo').value = '';
+  document.getElementById('modal-rejeitar-doc').classList.add('ativo');
+}
+
+async function confirmarRejeicaoDoc() {
+  const docId = document.getElementById('rejeitar-doc-id').value;
+  const motivo = document.getElementById('rejeitar-motivo').value.trim();
+  if (!motivo) { alert('Informe o motivo da rejeição.'); return; }
+  await sb.from('alunos_documentos').update({ status: 'rejeitado', motivo_rejeicao: motivo }).eq('id', docId);
+  // Atualiza status do aluno para doc_pendente
+  const { data: doc } = await sb.from('alunos_documentos').select('aluno_id').eq('id', docId).single();
+  if (doc) await sb.from('alunos_cadastro').update({ status: 'doc_pendente' }).eq('id', doc.aluno_id);
+  fecharModal('modal-rejeitar-doc');
+  document.querySelector('[style*="position:fixed;inset:0"]')?.remove();
+  carregarCadastrosAlunos();
+  alert('Documento rejeitado. O aluno será notificado ao fazer login.');
+}
+
+// =============================================
+// NOTIFICAÇÕES DE FREQUÊNCIA — SUPERVISORA
+// =============================================
+async function carregarNotificacoes() {
+  const ontem = new Date();
+  ontem.setDate(ontem.getDate() - 1);
+  const ontemStr = ontem.toISOString().split('T')[0];
+  const hoje = new Date().toISOString().split('T')[0];
+  
+  // Busca períodos ativos
+  const { data: periodos } = await sb.from('periodos')
+    .select('*, preceptores(id, nome_completo), campos(instituicao, setor)')
+    .lte('data_inicio', hoje)
+    .gte('data_fim', hoje);
+  
+  if (!periodos || periodos.length === 0) {
+    document.getElementById('lista-notificacoes').innerHTML = '<div class="vazio">Nenhum período ativo no momento.</div>';
+    return;
+  }
+
+  const pendentes = [];
+  for (const p of periodos) {
+    const { data: freqOntem } = await sb.from('frequencias')
+      .select('id')
+      .eq('periodo_id', p.id)
+      .eq('data', ontemStr)
+      .limit(1);
+    if (!freqOntem || freqOntem.length === 0) {
+      pendentes.push(p);
+    }
+  }
+
+  // Atualiza badge no menu
+  const badge = document.getElementById('badge-notif');
+  if (badge) {
+    badge.textContent = pendentes.length;
+    badge.style.display = pendentes.length > 0 ? 'inline' : 'none';
+  }
+
+  const el = document.getElementById('lista-notificacoes');
+  if (pendentes.length === 0) {
+    el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--verde)">✅ Todos os preceptores estão em dia com os lançamentos!</div>';
+    return;
+  }
+
+  el.innerHTML = pendentes.map(p => `
+    <div style="display:flex;align-items:center;gap:16px;padding:16px 24px;border-bottom:1px solid var(--cinza-claro)">
+      <div style="width:8px;height:8px;border-radius:50%;background:#e74c3c;flex-shrink:0"></div>
+      <div style="flex:1">
+        <b>${p.preceptores?.nome_completo||'—'}</b> não lançou frequência de <b>${ontem.toLocaleDateString('pt-BR')}</b>
+        <div style="font-size:12px;color:var(--cinza-texto);margin-top:2px">${p.campos?.instituicao||'—'} · ${p.campos?.setor||'—'}</div>
+      </div>
+      <span class="badge badge-vermelho">⚠️ Pendente</span>
+    </div>
+  `).join('');
+}
+
+// Verificar notificações ao carregar dashboard
+const _carregarDashboardOriginal = carregarDashboard;
+async function carregarDashboard() {
+  await _carregarDashboardOriginal();
+  await carregarNotificacoes();
+}
+
+// =============================================
+// BLOQUEIO DO PRECEPTOR SE ONTEM NÃO FOI LANÇADO
+// =============================================
+async function verificarBloqueioFrequencia() {
+  if (!periodoAtualPreceptor || !preceptorAtual) return false;
+  const ontem = new Date();
+  ontem.setDate(ontem.getDate() - 1);
+  const diaSemana = ontem.getDay();
+  // Não bloqueia se ontem foi sábado (6) ou domingo (0)
+  if (diaSemana === 0 || diaSemana === 6) return false;
+  const ontemStr = ontem.toISOString().split('T')[0];
+  // Verifica se ontem estava dentro do período
+  if (ontemStr < periodoAtualPreceptor.data_inicio) return false;
+  const { data } = await sb.from('frequencias')
+    .select('id')
+    .eq('periodo_id', periodoAtualPreceptor.id)
+    .eq('data', ontemStr)
+    .limit(1);
+  return !data || data.length === 0;
+}
+
+// Sobrescrever carregarAlunosFrequencia para incluir bloqueio
+const _carregarAlunosOriginal = carregarAlunosFrequencia;
+async function carregarAlunosFrequencia() {
+  const bloqueado = await verificarBloqueioFrequencia();
+  if (bloqueado) {
+    const ontem = new Date();
+    ontem.setDate(ontem.getDate() - 1);
+    document.getElementById('lista-freq-alunos').innerHTML = `
+      <div style="background:#FEE8EC;border:1px solid #f5aaaa;border-radius:12px;padding:24px;text-align:center">
+        <div style="font-size:32px;margin-bottom:12px">⛔</div>
+        <div style="font-size:16px;font-weight:600;color:#c0392b;margin-bottom:8px">Lançamento bloqueado</div>
+        <div style="font-size:13px;color:#c0392b;margin-bottom:16px">Você não registrou a frequência do dia <b>${ontem.toLocaleDateString('pt-BR')}</b>.<br>Regularize o lançamento anterior para continuar.</div>
+        <button class="btn" style="background:#c0392b;color:white" onclick="lancarFrequenciaRetroativa('${ontem.toISOString().split('T')[0]}')">📝 Lançar frequência de ${ontem.toLocaleDateString('pt-BR')}</button>
+      </div>`;
+    return;
+  }
+  await _carregarAlunosOriginal();
+}
+
+async function lancarFrequenciaRetroativa(data) {
+  if (!periodoAtualPreceptor) return;
+  const { data: pa } = await sb.from('periodo_alunos').select('*, alunos(*)').eq('periodo_id', periodoAtualPreceptor.id);
+  if (!pa || pa.length === 0) { alert('Nenhum aluno vinculado.'); return; }
+  const registros = pa.map(item => ({
+    periodo_id: periodoAtualPreceptor.id,
+    aluno_id: item.alunos.id,
+    preceptor_id: preceptorAtual.id,
+    data: data,
+    status: 'presente',
+  }));
+  const { error } = await sb.from('frequencias').insert(registros);
+  if (error) { alert('Erro: ' + error.message); return; }
+  alert('Frequência retroativa lançada como PRESENTE. Ajuste individualmente se necessário.');
+  carregarAlunosFrequencia();
+}
+
+// =============================================
+// INICIALIZAÇÃO — hash #cadastro-aluno
+// =============================================
 
 // Init páginas
 document.querySelectorAll('#tela-supervisora [id^="pagina-"]').forEach(p=>p.style.display='none');
