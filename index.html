@@ -1960,40 +1960,50 @@ async function cadastrarAluno() {
 }
 
 async function entrarComoAluno() {
+  irPara('tela-aluno');
+  // Init páginas do aluno
+  ['aluno-docs','aluno-escala','aluno-faq'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) { el.style.display='none'; el.style.flexDirection=''; }
+  });
+  const dados = document.getElementById('aluno-dados');
+  if(dados) { dados.style.display='flex'; dados.style.flexDirection='column'; }
+
   // Busca cadastro do aluno
   const { data } = await sb.from('alunos_cadastro').select('*').eq('user_id', usuarioAtual.id).single();
   if (data) {
     alunoLogadoId = data.id;
-    document.getElementById('nome-aluno-logado').textContent = data.nome_completo || 'Complete seus dados';
-    document.getElementById('avatar-aluno').textContent = data.nome_completo ? data.nome_completo.split(' ').slice(0,2).map(n=>n[0]).join('') : 'A';
+    const nomeEl = document.getElementById('nome-aluno-logado');
+    const avatarEl = document.getElementById('avatar-aluno');
+    const statusEl = document.getElementById('status-aluno-logado');
+    if(nomeEl) nomeEl.textContent = data.nome_completo || 'Complete seus dados';
+    if(avatarEl) avatarEl.textContent = data.nome_completo ? data.nome_completo.split(' ').slice(0,2).map(n=>n[0]).join('') : 'A';
     const statusTexto = { 'pendente': 'Cadastro pendente', 'em_analise': 'Em análise', 'aprovado': 'Aprovado', 'doc_pendente': 'Documentação pendente' };
-    document.getElementById('status-aluno-logado').textContent = statusTexto[data.status] || data.status;
-    // Preenche formulário
-    if (data.nome_completo) document.getElementById('aluno-nome-cad').value = data.nome_completo;
-    if (data.ra) document.getElementById('aluno-ra').value = data.ra;
-    if (data.cpf) document.getElementById('aluno-cpf-cad').value = data.cpf;
-    if (data.data_nascimento) document.getElementById('aluno-nasc-cad').value = data.data_nascimento;
-    if (data.email) document.getElementById('aluno-email-cad').value = data.email;
-    if (data.ddd) document.getElementById('aluno-ddd-cad').value = data.ddd;
-    if (data.telefone) document.getElementById('aluno-tel-cad').value = data.telefone;
-    if (data.endereco) document.getElementById('aluno-end-cad').value = data.endereco;
-    if (data.regiao_administrativa) document.getElementById('aluno-regiao-cad').value = data.regiao_administrativa;
-    if (data.modalidade) document.getElementById('aluno-modalidade-cad').value = data.modalidade;
-    if (data.semestre) document.getElementById('aluno-semestre-cad').value = data.semestre;
-    if (data.turno_matriculado) document.getElementById('aluno-turno-mat').value = data.turno_matriculado;
-    if (data.turno_preferencia) document.getElementById('aluno-turno-pref').value = data.turno_preferencia;
-    if (data.consentimento_lgpd) document.getElementById('aluno-lgpd').checked = data.consentimento_lgpd;
-    if (data.extensao_passe) document.getElementById('aluno-passe').checked = data.extensao_passe;
+    if(statusEl) statusEl.textContent = statusTexto[data.status] || data.status;
+    // Preenche formulário com segurança
+    const set = (id, val) => { const el = document.getElementById(id); if(el && val) el.value = val; };
+    const check = (id, val) => { const el = document.getElementById(id); if(el) el.checked = !!val; };
+    set('aluno-nome-cad', data.nome_completo);
+    set('aluno-cpf-cad', data.cpf);
+    set('aluno-nasc-cad', data.data_nascimento);
+    set('aluno-email-cad', data.email);
+    set('aluno-ddd-cad', data.ddd);
+    set('aluno-tel-cad', data.telefone);
+    set('aluno-end-cad', data.endereco);
+    set('aluno-regiao-cad', data.regiao_administrativa);
+    set('aluno-modalidade-cad', data.modalidade);
+    set('aluno-semestre-cad', data.semestre);
+    set('aluno-turno-mat', data.turno_matriculado);
+    set('aluno-turno-pref', data.turno_preferencia);
+    check('aluno-lgpd', data.consentimento_lgpd);
+    check('aluno-passe', data.extensao_passe);
     // Mostra pendência de documento
-    if (data.status === 'doc_pendente') {
-      document.getElementById('aluno-pendencia-doc').style.display = 'block';
-    }
+    const pendEl = document.getElementById('aluno-pendencia-doc');
+    if(pendEl && data.status === 'doc_pendente') pendEl.style.display = 'block';
+  } else {
+    // Cria registro inicial se não existir
+    await sb.from('alunos_cadastro').insert({ user_id: usuarioAtual.id, email: usuarioAtual.email, status: 'pendente' });
   }
-  irPara('tela-aluno');
-  // Init páginas do aluno
-  document.querySelectorAll('#tela-aluno [id^="aluno-"]').forEach(p => { if(p.tagName === 'DIV' && p.id !== 'aluno-pendencia-doc' && p.id !== 'aluno-lgpd' && p.id !== 'aluno-matricula-confirm' && p.id !== 'aluno-passe') { if(['aluno-dados','aluno-docs','aluno-escala','aluno-faq'].includes(p.id)) p.style.display='none'; } });
-  document.getElementById('aluno-dados').style.display = 'flex';
-  document.getElementById('aluno-dados').style.flexDirection = 'column';
 }
 
 async function salvarDadosAluno() {
