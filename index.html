@@ -2147,8 +2147,7 @@ async function carregarFaq() {
       <td><b>${f.pergunta}</b><br><span style="font-size:12px;color:var(--cinza-texto)">${f.resposta.substring(0,80)}...</span></td>
       <td><span class="badge ${f.ativo?'badge-verde':'badge-cinza'}">${f.ativo?'Ativo':'Inativo'}</span></td>
       <td style="display:flex;gap:6px">
-        <button class="btn-tabela" onclick="editarFaq('${f.id}','${f.pergunta.replace(/'/g,"\'")}','${f.resposta.replace(/'/g,"\'").replace(/
-/g,' ')}',${f.ordem})">✏️</button>
+        <button class="btn-tabela" onclick="editarFaqBtn('${f.id}')">✏️</button>
         <button class="btn-tabela" style="color:#e74c3c;border-color:#e74c3c" onclick="excluirFaq('${f.id}')">🗑️</button>
       </td>
     </tr>`).join('')
