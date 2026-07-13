@@ -817,11 +817,13 @@ tr:hover td { background:var(--creme); }
           <div class="secao">
             <div class="secao-header"><div class="secao-titulo">Dados Institucionais</div></div>
             <div style="padding:20px 24px">
-              <div style="background:var(--amarelo-claro);border:1px solid #F5D98B;border-radius:8px;padding:12px 16px;font-size:13px;margin-bottom:16px">
-                ⚠️ <b>Atenção:</b> Certifique-se de que está matriculado na disciplina de estágio correspondente ao seu semestre. O estágio só será validado após confirmação da matrícula.
-                <div style="margin-top:8px;display:flex;align-items:center;gap:8px">
-                  <input type="checkbox" id="aluno-matricula-confirm" style="width:16px;height:16px;accent-color:var(--laranja)">
-                  <label for="aluno-matricula-confirm" style="font-weight:600">Confirmo que estou matriculado na disciplina de estágio *</label>
+              <div style="background:var(--amarelo-claro);border:2px solid var(--amarelo);border-radius:10px;padding:16px 18px;font-size:13px;margin-bottom:16px;line-height:1.7">
+                ⚠️ <b>Atenção: Verifique sua matrícula antes de continuar!</b><br><br>
+                Certifique-se de que você está devidamente matriculado na disciplina de estágio correspondente ao seu semestre.<br>
+                <b>O estágio só será validado após confirmação da matrícula na disciplina.</b> Caso não esteja matriculado, procure a secretaria acadêmica antes de prosseguir.
+                <div style="margin-top:12px;display:flex;align-items:flex-start;gap:10px;background:white;border-radius:8px;padding:12px">
+                  <input type="checkbox" id="aluno-matricula-confirm" style="width:18px;height:18px;accent-color:var(--laranja);flex-shrink:0;margin-top:2px">
+                  <label for="aluno-matricula-confirm" style="font-weight:600;font-size:13px;cursor:pointer">Confirmo que estou devidamente matriculado na disciplina de estágio correspondente ao meu semestre *</label>
                 </div>
               </div>
               <div class="form-grid">
@@ -832,8 +834,9 @@ tr:hover td { background:var(--creme); }
                 <div class="form-grupo"><label class="form-label">Turno matriculado *</label><select class="form-select" id="aluno-turno-mat"><option value="">Selecione</option><option value="matutino">Matutino</option><option value="noturno">Noturno</option><option value="semipresencial">Semipresencial</option></select></div>
                 <div class="form-grupo"><label class="form-label">Turno de preferência para estágio *</label><select class="form-select" id="aluno-turno-pref"><option value="">Selecione</option><option value="matutino">Matutino</option><option value="vespertino">Vespertino</option></select></div>
               </div>
-              <div style="background:var(--azul-claro);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--azul);margin-top:-8px;margin-bottom:16px">
-                ℹ️ O turno de preferência será considerado, mas não garantido. A alocação depende das vagas disponíveis em cada campo de estágio.
+              <div style="background:var(--azul-claro);border:1px solid #c5d8ef;border-radius:8px;padding:14px 16px;font-size:13px;color:var(--azul);margin-top:-8px;margin-bottom:16px;line-height:1.6">
+                ℹ️ <b>Importante:</b> O turno de preferência será considerado, mas <b>não é garantido</b>.<br>
+                A alocação depende das vagas disponíveis em cada campo de estágio. Todos os alunos precisam ser alocados e nem sempre será possível atender à primeira escolha.
               </div>
             </div>
           </div>
@@ -847,16 +850,22 @@ tr:hover td { background:var(--creme); }
                 <div class="form-grupo"><label class="form-label">CPF *</label><input class="form-input" id="aluno-cpf-cad" placeholder="000.000.000-00"></div>
               </div>
               <div class="form-grupo"><label class="form-label">Data de nascimento *</label><input class="form-input" id="aluno-nasc-cad" type="date"></div>
-              <div class="form-grupo"><label class="form-label">E-mail (mesmo do GOV) *</label><input class="form-input" id="aluno-email-cad" type="email" placeholder="seu@email.com"><div style="font-size:11px;color:var(--cinza-texto);margin-top:4px">⚠️ Use o mesmo e-mail cadastrado na sua conta GOV. E-mails divergentes podem invalidar o estágio.</div></div>
-              <div class="form-grid">
-                <div class="form-grupo"><label class="form-label">DDD *</label><input class="form-input" id="aluno-ddd-cad" placeholder="61" style="max-width:80px"></div>
+              <div class="form-grupo"><label class="form-label">E-mail (mesmo do GOV) *</label><input class="form-input" id="aluno-email-cad" type="email" placeholder="seu@email.com"><div style="background:#FEE8EC;border:1px solid #f5aaaa;border-radius:8px;padding:12px 14px;font-size:13px;color:#c0392b;margin-top:8px;line-height:1.6">
+  ⚠️ <b>Atenção!</b> Use o mesmo e-mail cadastrado na sua conta GOV.br.<br>
+  E-mails divergentes podem <b>invalidar o seu estágio</b>.
+</div></div>
+              <div style="display:grid;grid-template-columns:90px 1fr;gap:8px">
+                <div class="form-grupo"><label class="form-label">DDD *</label><input class="form-input" id="aluno-ddd-cad" placeholder="61" style="text-align:center"></div>
                 <div class="form-grupo"><label class="form-label">Telefone *</label><input class="form-input" id="aluno-tel-cad" placeholder="99999-9999"></div>
               </div>
               <div class="form-grupo"><label class="form-label">Endereço residencial *</label><input class="form-input" id="aluno-end-cad" placeholder="Rua, número, complemento"></div>
               <div class="form-grupo"><label class="form-label">Região administrativa / Cidade-Estado *</label><input class="form-input" id="aluno-regiao-cad" placeholder="Ex: Planaltina/Brasília-DF"></div>
-              <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
-                <input type="checkbox" id="aluno-passe" style="width:16px;height:16px;accent-color:var(--laranja)">
-                <label for="aluno-passe" style="font-size:13px">Preciso de declaração de extensão de passe estudantil</label>
+              <div style="background:var(--cinza-claro);border:1px solid var(--cinza-medio);border-radius:10px;padding:14px 16px;margin-top:12px;display:flex;align-items:flex-start;gap:10px">
+                <input type="checkbox" id="aluno-passe" style="width:18px;height:18px;accent-color:var(--laranja);flex-shrink:0;margin-top:2px">
+                <label for="aluno-passe" style="font-size:13px;cursor:pointer;line-height:1.6">
+                  <b>Preciso de declaração de extensão de passe estudantil</b><br>
+                  <span style="color:var(--cinza-texto);font-size:12px">A declaração será enviada para o e-mail informado acima. Verifique se o e-mail está correto.</span>
+                </label>
               </div>
             </div>
           </div>
