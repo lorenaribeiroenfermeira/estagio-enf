@@ -366,55 +366,62 @@ tr:hover td { background:#FDFCFA; }
   width:280px; background:linear-gradient(180deg, var(--navy) 0%, var(--navy-2) 100%);
   border-right:none; box-shadow:2px 0 24px rgba(11,27,52,0.18);
 }
-#tela-aluno .sidebar-header { padding:26px 22px 20px; border-bottom:1px solid rgba(255,255,255,0.1); background:transparent; }
-#tela-aluno .sidebar-logo { gap:10px; }
+/* ---- sidebar header compacto ---- */
+#tela-aluno .sidebar-header { padding:14px 18px 12px; border-bottom:1px solid rgba(255,255,255,0.1); background:transparent; }
+#tela-aluno .sidebar-logo { gap:8px; }
 #tela-aluno .sidebar-logo .logo-icon { display:none; }
-#tela-aluno .sid-cone { width:0; height:0; border-left:9px solid transparent; border-right:9px solid transparent; border-bottom:18px solid var(--laranja); flex-shrink:0; }
-#tela-aluno .sidebar-logo .logo-text .main { color:white; font-size:16px; }
-#tela-aluno .sidebar-sub { color:rgba(255,255,255,0.55); font-size:11px; letter-spacing:0.04em; margin-top:8px; line-height:1.5; }
-#tela-aluno .sidebar-sub b { color:rgba(255,255,255,0.8); font-weight:600; }
+#tela-aluno .sid-cone { width:0; height:0; border-left:8px solid transparent; border-right:8px solid transparent; border-bottom:15px solid var(--laranja); flex-shrink:0; }
+#tela-aluno .sidebar-logo .logo-text .main { color:white; font-size:15px; }
+#tela-aluno .sidebar-sub { color:rgba(255,255,255,0.5); font-size:10px; letter-spacing:0.03em; margin-top:3px; line-height:1.4; }
+#tela-aluno .sidebar-sub b { color:rgba(255,255,255,0.75); font-weight:600; }
 
-#tela-aluno .sidebar-perfil { padding:20px 22px; border-bottom:1px solid rgba(255,255,255,0.1); text-align:center; }
-#tela-aluno .perfil-info { flex-direction:column; align-items:center; }
+/* ---- perfil compacto (horizontal) ---- */
+#tela-aluno .sidebar-perfil { padding:10px 14px 12px; border-bottom:1px solid rgba(255,255,255,0.1); }
+#tela-aluno .perfil-info { flex-direction:row; align-items:center; gap:10px; flex-wrap:wrap; }
 #tela-aluno .perfil-avatar {
-  width:64px; height:64px; border-radius:50%; font-size:22px; margin-bottom:12px;
-  box-shadow:0 4px 16px rgba(232,119,34,0.4), 0 0 0 3px rgba(255,255,255,0.1);
+  width:40px; height:40px; border-radius:50%; font-size:14px; margin-bottom:0; flex-shrink:0;
+  box-shadow:0 2px 8px rgba(232,119,34,0.35), 0 0 0 2px rgba(255,255,255,0.1);
 }
-#tela-aluno .perfil-nome { color:white; font-size:15px; text-align:center; }
-#tela-aluno .perfil-cargo { color:rgba(255,255,255,0.5); text-align:center; }
+#tela-aluno .perfil-texto { flex:1; min-width:0; }
+#tela-aluno .perfil-nome { color:white; font-size:13px; font-weight:700; text-align:left; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+#tela-aluno .perfil-cargo { color:rgba(255,255,255,0.5); text-align:left; font-size:10.5px; }
 #tela-aluno .perfil-badge-sem {
-  display:inline-block; margin-top:10px; background:rgba(232,119,34,0.18); color:var(--laranja);
-  border:1px solid rgba(232,119,34,0.4); border-radius:20px; padding:4px 14px; font-size:11.5px; font-weight:700;
+  display:inline-block; margin-top:0; background:rgba(232,119,34,0.18); color:var(--laranja);
+  border:1px solid rgba(232,119,34,0.4); border-radius:20px; padding:2px 10px; font-size:10px; font-weight:700;
 }
-#tela-aluno .perfil-meta { text-align:left; margin-top:16px; display:flex; flex-direction:column; gap:10px; }
-#tela-aluno .perfil-meta-linha { font-size:12px; }
-#tela-aluno .perfil-meta-linha .lbl { color:rgba(255,255,255,0.45); display:block; font-size:10px; letter-spacing:0.06em; text-transform:uppercase; margin-bottom:2px; }
-#tela-aluno .perfil-meta-linha .val { color:rgba(255,255,255,0.9); font-weight:600; font-size:12.5px; }
+#tela-aluno .perfil-meta { text-align:left; margin-top:8px; display:flex; flex-direction:column; gap:4px; }
+#tela-aluno .perfil-meta-linha { font-size:11px; }
+#tela-aluno .perfil-meta-linha .lbl { color:rgba(255,255,255,0.4); display:inline; font-size:10px; letter-spacing:0.04em; text-transform:uppercase; }
+#tela-aluno .perfil-meta-linha .val { color:rgba(255,255,255,0.85); font-weight:600; font-size:11px; margin-left:4px; }
 #tela-aluno .status-pill {
-  display:flex; align-items:center; justify-content:center; gap:7px; margin-top:14px;
-  background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.14); border-radius:20px;
-  padding:7px 12px; font-size:12px; font-weight:600; color:rgba(255,255,255,0.85);
+  display:inline-flex; align-items:center; gap:6px; margin-top:6px;
+  background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12); border-radius:20px;
+  padding:4px 10px; font-size:11px; font-weight:600; color:rgba(255,255,255,0.85);
 }
-#tela-aluno .status-pill .dot { width:7px; height:7px; border-radius:50%; background:#8a94a3; flex-shrink:0; }
-#tela-aluno .status-pill.ativo .dot { background:#3ED598; box-shadow:0 0 0 3px rgba(62,213,152,0.25); }
-#tela-aluno .status-pill.pendente .dot { background:var(--amarelo); box-shadow:0 0 0 3px rgba(245,166,35,0.25); }
+#tela-aluno .status-pill .dot { width:6px; height:6px; border-radius:50%; background:#8a94a3; flex-shrink:0; }
+#tela-aluno .status-pill.ativo .dot { background:#3ED598; box-shadow:0 0 0 2px rgba(62,213,152,0.2); }
+#tela-aluno .status-pill.pendente .dot { background:var(--amarelo); box-shadow:0 0 0 2px rgba(245,166,35,0.2); }
 #tela-aluno .status-pill.finalizado .dot { background:#8a94a3; }
 
-#tela-aluno .sidebar-nav { padding:14px 12px; }
-#tela-aluno .nav-item { color:rgba(255,255,255,0.65); font-weight:500; position:relative; padding-left:16px; }
-#tela-aluno .nav-item svg { width:17px; height:17px; flex-shrink:0; }
+/* ---- nav itens compactos ---- */
+#tela-aluno .sidebar-nav { padding:6px 10px; flex:1; overflow:hidden; }
+#tela-aluno .nav-item {
+  color:rgba(255,255,255,0.65); font-weight:500; position:relative;
+  padding:8px 12px 8px 14px; margin-bottom:1px; font-size:13px;
+}
+#tela-aluno .nav-item svg { width:15px; height:15px; flex-shrink:0; }
 #tela-aluno .nav-item:hover { background:rgba(255,255,255,0.06); color:white; transform:translateX(3px); }
 #tela-aluno .nav-item.ativo {
   background:rgba(232,119,34,0.14); color:white; box-shadow:inset 0 0 0 1px rgba(232,119,34,0.25);
 }
 #tela-aluno .nav-item.ativo::before {
-  content:''; position:absolute; left:0; top:8px; bottom:8px; width:3px; border-radius:3px;
-  background:var(--laranja); box-shadow:0 0 10px rgba(232,119,34,0.7);
+  content:''; position:absolute; left:0; top:6px; bottom:6px; width:3px; border-radius:3px;
+  background:var(--laranja); box-shadow:0 0 8px rgba(232,119,34,0.6);
 }
-#tela-aluno .sidebar-rodape { padding:16px 20px 20px; border-top:1px solid rgba(255,255,255,0.1); }
-#tela-aluno .btn-sair { background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.75); width:100%; justify-content:center; display:flex; gap:8px; align-items:center; border-radius:12px; padding:11px; font-size:13px; font-weight:600; border:none; cursor:pointer; transition:all 0.15s; }
+#tela-aluno .sidebar-rodape { padding:10px 14px 14px; border-top:1px solid rgba(255,255,255,0.1); }
+#tela-aluno .btn-sair { background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.75); width:100%; justify-content:center; display:flex; gap:8px; align-items:center; border-radius:10px; padding:9px; font-size:12.5px; font-weight:600; border:none; cursor:pointer; transition:all 0.15s; }
 #tela-aluno .btn-sair:hover { background:rgba(255,255,255,0.12); color:white; }
-#tela-aluno .btn-sair svg { width:15px; height:15px; }
+#tela-aluno .btn-sair svg { width:14px; height:14px; }
 
 /* Header premium */
 #tela-aluno .conteudo { background:var(--cinza-claro); }
@@ -1109,13 +1116,15 @@ tr:hover td { background:#FDFCFA; }
       <div class="sidebar-perfil">
         <div class="perfil-info">
           <div class="perfil-avatar" id="avatar-aluno" style="background:var(--verde)">A</div>
-          <div class="perfil-nome" id="nome-aluno-logado">Aluno</div>
-          <div class="perfil-cargo" id="ra-aluno-logado">RA: —</div>
+          <div class="perfil-texto">
+            <div class="perfil-nome" id="nome-aluno-logado">Aluno</div>
+            <div class="perfil-cargo" id="ra-aluno-logado">RA: —</div>
+          </div>
           <span class="perfil-badge-sem" id="semestre-aluno-logado">—</span>
         </div>
         <div class="perfil-meta">
-          <div class="perfil-meta-linha"><span class="lbl">Campo de Estágio</span><span class="val" id="campo-aluno-logado">Ainda não definido</span></div>
-          <div class="perfil-meta-linha"><span class="lbl">Preceptor(a)</span><span class="val" id="preceptor-aluno-logado">Ainda não definido</span></div>
+          <div class="perfil-meta-linha"><span class="lbl">Campo:</span><span class="val" id="campo-aluno-logado">Não definido</span></div>
+          <div class="perfil-meta-linha"><span class="lbl">Preceptor(a):</span><span class="val" id="preceptor-aluno-logado">Não definido</span></div>
         </div>
         <div class="status-pill pendente" id="status-aluno-logado"><span class="dot"></span>Cadastro pendente</div>
       </div>
