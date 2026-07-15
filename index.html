@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EstágioEnf — Anhanguera Asa Norte</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -356,6 +357,182 @@ tr:hover td { background:#FDFCFA; }
 .spinner { width:20px; height:20px; border:2px solid var(--cinza-medio); border-top-color:var(--laranja); border-radius:50%; animation:spin 0.8s linear infinite; }
 @keyframes spin { to { transform:rotate(360deg); } }
 .vazio { text-align:center; padding:40px; color:var(--cinza-texto); font-size:14px; }
+
+/* ============================================================
+   ÁREA DO ALUNO — shell premium (escopado em #tela-aluno,
+   não afeta os painéis de supervisora/preceptor)
+   ============================================================ */
+#tela-aluno .sidebar {
+  width:280px; background:linear-gradient(180deg, var(--navy) 0%, var(--navy-2) 100%);
+  border-right:none; box-shadow:2px 0 24px rgba(11,27,52,0.18);
+}
+#tela-aluno .sidebar-header { padding:26px 22px 20px; border-bottom:1px solid rgba(255,255,255,0.1); background:transparent; }
+#tela-aluno .sidebar-logo { gap:10px; }
+#tela-aluno .sidebar-logo .logo-icon { display:none; }
+#tela-aluno .sid-cone { width:0; height:0; border-left:9px solid transparent; border-right:9px solid transparent; border-bottom:18px solid var(--laranja); flex-shrink:0; }
+#tela-aluno .sidebar-logo .logo-text .main { color:white; font-size:16px; }
+#tela-aluno .sidebar-sub { color:rgba(255,255,255,0.55); font-size:11px; letter-spacing:0.04em; margin-top:8px; line-height:1.5; }
+#tela-aluno .sidebar-sub b { color:rgba(255,255,255,0.8); font-weight:600; }
+
+#tela-aluno .sidebar-perfil { padding:20px 22px; border-bottom:1px solid rgba(255,255,255,0.1); text-align:center; }
+#tela-aluno .perfil-info { flex-direction:column; align-items:center; }
+#tela-aluno .perfil-avatar {
+  width:64px; height:64px; border-radius:50%; font-size:22px; margin-bottom:12px;
+  box-shadow:0 4px 16px rgba(232,119,34,0.4), 0 0 0 3px rgba(255,255,255,0.1);
+}
+#tela-aluno .perfil-nome { color:white; font-size:15px; text-align:center; }
+#tela-aluno .perfil-cargo { color:rgba(255,255,255,0.5); text-align:center; }
+#tela-aluno .perfil-badge-sem {
+  display:inline-block; margin-top:10px; background:rgba(232,119,34,0.18); color:var(--laranja);
+  border:1px solid rgba(232,119,34,0.4); border-radius:20px; padding:4px 14px; font-size:11.5px; font-weight:700;
+}
+#tela-aluno .perfil-meta { text-align:left; margin-top:16px; display:flex; flex-direction:column; gap:10px; }
+#tela-aluno .perfil-meta-linha { font-size:12px; }
+#tela-aluno .perfil-meta-linha .lbl { color:rgba(255,255,255,0.45); display:block; font-size:10px; letter-spacing:0.06em; text-transform:uppercase; margin-bottom:2px; }
+#tela-aluno .perfil-meta-linha .val { color:rgba(255,255,255,0.9); font-weight:600; font-size:12.5px; }
+#tela-aluno .status-pill {
+  display:flex; align-items:center; justify-content:center; gap:7px; margin-top:14px;
+  background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.14); border-radius:20px;
+  padding:7px 12px; font-size:12px; font-weight:600; color:rgba(255,255,255,0.85);
+}
+#tela-aluno .status-pill .dot { width:7px; height:7px; border-radius:50%; background:#8a94a3; flex-shrink:0; }
+#tela-aluno .status-pill.ativo .dot { background:#3ED598; box-shadow:0 0 0 3px rgba(62,213,152,0.25); }
+#tela-aluno .status-pill.pendente .dot { background:var(--amarelo); box-shadow:0 0 0 3px rgba(245,166,35,0.25); }
+#tela-aluno .status-pill.finalizado .dot { background:#8a94a3; }
+
+#tela-aluno .sidebar-nav { padding:14px 12px; }
+#tela-aluno .nav-item { color:rgba(255,255,255,0.65); font-weight:500; position:relative; padding-left:16px; }
+#tela-aluno .nav-item svg { width:17px; height:17px; flex-shrink:0; }
+#tela-aluno .nav-item:hover { background:rgba(255,255,255,0.06); color:white; transform:translateX(3px); }
+#tela-aluno .nav-item.ativo {
+  background:rgba(232,119,34,0.14); color:white; box-shadow:inset 0 0 0 1px rgba(232,119,34,0.25);
+}
+#tela-aluno .nav-item.ativo::before {
+  content:''; position:absolute; left:0; top:8px; bottom:8px; width:3px; border-radius:3px;
+  background:var(--laranja); box-shadow:0 0 10px rgba(232,119,34,0.7);
+}
+#tela-aluno .sidebar-rodape { padding:16px 20px 20px; border-top:1px solid rgba(255,255,255,0.1); }
+#tela-aluno .btn-sair { background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.75); width:100%; justify-content:center; display:flex; gap:8px; align-items:center; border-radius:12px; padding:11px; font-size:13px; font-weight:600; border:none; cursor:pointer; transition:all 0.15s; }
+#tela-aluno .btn-sair:hover { background:rgba(255,255,255,0.12); color:white; }
+#tela-aluno .btn-sair svg { width:15px; height:15px; }
+
+/* Header premium */
+#tela-aluno .conteudo { background:var(--cinza-claro); }
+#tela-aluno .header-aluno {
+  display:flex; align-items:center; justify-content:space-between; gap:20px;
+  background:rgba(255,255,255,0.85); backdrop-filter:blur(12px); border-bottom:1px solid var(--cinza-medio);
+  padding:16px 32px; position:sticky; top:0; z-index:50;
+}
+#tela-aluno .header-breadcrumb { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--cinza-texto); }
+#tela-aluno .header-breadcrumb svg { width:15px; height:15px; opacity:0.6; }
+#tela-aluno .header-breadcrumb .sep { opacity:0.4; }
+#tela-aluno .header-breadcrumb .atual { color:var(--preto); font-weight:700; }
+#tela-aluno .header-acoes { display:flex; align-items:center; gap:14px; }
+#tela-aluno .header-busca { display:flex; align-items:center; gap:8px; background:var(--cinza-claro); border:1.5px solid transparent; border-radius:12px; padding:9px 14px; width:230px; transition:all 0.2s; }
+#tela-aluno .header-busca:focus-within { border-color:var(--laranja); background:white; box-shadow:0 0 0 4px rgba(232,119,34,0.1); }
+#tela-aluno .header-busca svg { width:15px; height:15px; opacity:0.45; flex-shrink:0; }
+#tela-aluno .header-busca input { border:none; outline:none; background:transparent; font-family:'DM Sans',sans-serif; font-size:13.5px; width:100%; }
+#tela-aluno .header-icone-btn { position:relative; background:var(--cinza-claro); border:none; width:38px; height:38px; border-radius:11px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.15s; }
+#tela-aluno .header-icone-btn:hover { background:var(--cinza-medio); }
+#tela-aluno .header-icone-btn svg { width:17px; height:17px; color:var(--preto); }
+#tela-aluno .header-badge { position:absolute; top:-4px; right:-4px; background:var(--laranja); color:white; font-size:9.5px; font-weight:700; border-radius:10px; padding:1px 5px; min-width:16px; text-align:center; }
+#tela-aluno .header-perfil-mini { display:flex; align-items:center; gap:8px; cursor:pointer; position:relative; padding:4px 6px; border-radius:10px; transition:background 0.15s; }
+#tela-aluno .header-perfil-mini:hover { background:var(--cinza-claro); }
+#tela-aluno .header-perfil-mini svg { width:15px; height:15px; opacity:0.6; }
+#tela-aluno .mini-avatar { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,var(--laranja),var(--amarelo)); color:white; font-size:12.5px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+#tela-aluno .menu-perfil-aluno { display:none; position:absolute; top:46px; right:0; background:white; border-radius:14px; box-shadow:var(--sombra-hover); border:1px solid var(--cinza-medio); min-width:180px; overflow:hidden; z-index:60; }
+#tela-aluno .menu-perfil-aluno.aberto { display:block; }
+#tela-aluno .menu-perfil-aluno a { display:flex; align-items:center; gap:10px; padding:12px 16px; font-size:13.5px; color:var(--preto); cursor:pointer; transition:background 0.15s; }
+#tela-aluno .menu-perfil-aluno a:hover { background:var(--cinza-claro); }
+#tela-aluno .menu-perfil-aluno a svg { width:15px; height:15px; opacity:0.6; }
+
+/* Corpo com painel lateral direito */
+#tela-aluno .corpo-aluno { display:flex; align-items:flex-start; gap:24px; padding:28px 32px; }
+#tela-aluno .corpo-principal { flex:1; min-width:0; }
+#tela-aluno .pagina { padding:0; }
+#tela-aluno .painel-lateral-aluno { width:300px; flex-shrink:0; display:flex; flex-direction:column; gap:20px; }
+@media (max-width:1180px) { #tela-aluno .painel-lateral-aluno { display:none; } }
+
+/* Cards de resumo (KPIs) */
+#tela-aluno .kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+#tela-aluno .kpi-card { background:white; border-radius:18px; padding:20px 20px 18px; box-shadow:var(--sombra-card); }
+#tela-aluno .kpi-topo { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+#tela-aluno .kpi-icone { width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+#tela-aluno .kpi-icone svg { width:19px; height:19px; }
+#tela-aluno .kpi-icone.laranja { background:var(--laranja-claro); color:var(--laranja-escuro); }
+#tela-aluno .kpi-icone.azul { background:var(--azul-claro); color:var(--azul); }
+#tela-aluno .kpi-icone.verde { background:var(--verde-claro); color:var(--verde); }
+#tela-aluno .kpi-icone.roxo { background:var(--roxo-claro); color:var(--roxo); }
+#tela-aluno .kpi-label { font-size:12px; color:var(--cinza-texto); font-weight:600; }
+#tela-aluno .kpi-valor { font-family:'DM Serif Display',serif; font-size:26px; color:var(--preto); margin:2px 0 3px; }
+#tela-aluno .kpi-sub { font-size:11.5px; color:var(--cinza-texto); }
+#tela-aluno .kpi-barra { height:5px; border-radius:4px; background:var(--cinza-claro); margin-top:12px; overflow:hidden; }
+#tela-aluno .kpi-barra span { display:block; height:100%; border-radius:4px; }
+@media (max-width:900px) { #tela-aluno .kpis { grid-template-columns:1fr 1fr; } }
+
+/* Cards de dados */
+#tela-aluno .card-dados { background:white; border-radius:18px; box-shadow:var(--sombra-card); margin-bottom:20px; overflow:hidden; }
+#tela-aluno .card-dados-header { display:flex; align-items:center; gap:10px; padding:20px 24px; border-bottom:1px solid var(--cinza-claro); }
+#tela-aluno .card-dados-header .ico { width:34px; height:34px; border-radius:10px; background:var(--laranja-claro); color:var(--laranja-escuro); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+#tela-aluno .card-dados-header .ico svg { width:16px; height:16px; }
+#tela-aluno .card-dados-header .titulo { font-family:'DM Serif Display',serif; font-size:17px; }
+#tela-aluno .card-dados-body { padding:20px 24px; }
+#tela-aluno .cards-2col { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+@media (max-width:900px) { #tela-aluno .cards-2col { grid-template-columns:1fr; } }
+
+/* Alert moderno (matrícula) */
+#tela-aluno .alert-moderno { display:flex; gap:16px; background:linear-gradient(135deg,#FFF8F0,#FFF1E2); border:1px solid rgba(232,119,34,0.25); border-radius:18px; padding:20px 24px; margin-bottom:20px; }
+#tela-aluno .alert-moderno .ico { width:40px; height:40px; border-radius:12px; background:rgba(232,119,34,0.15); color:var(--laranja-escuro); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+#tela-aluno .alert-moderno .ico svg { width:19px; height:19px; }
+#tela-aluno .alert-badge { display:inline-block; background:var(--laranja); color:white; font-size:10.5px; font-weight:700; padding:3px 10px; border-radius:10px; letter-spacing:0.04em; margin-left:10px; vertical-align:middle; }
+#tela-aluno .alert-check { margin-top:12px; display:flex; align-items:flex-start; gap:10px; background:white; border-radius:10px; padding:12px 14px; }
+
+/* Checkbox moderno */
+#tela-aluno .check-moderno { appearance:none; width:20px; height:20px; border-radius:6px; border:2px solid var(--cinza-medio); flex-shrink:0; cursor:pointer; display:grid; place-content:center; transition:all 0.15s; margin-top:1px; }
+#tela-aluno .check-moderno:checked { background:var(--laranja); border-color:var(--laranja); }
+#tela-aluno .check-moderno:checked::after { content:'✓'; color:white; font-size:13px; font-weight:700; }
+
+/* Progress ring */
+#tela-aluno .painel-card { background:white; border-radius:18px; box-shadow:var(--sombra-card); padding:22px; }
+#tela-aluno .painel-card-titulo { font-family:'DM Serif Display',serif; font-size:16px; margin-bottom:16px; }
+#tela-aluno .progress-ring-wrap { display:flex; align-items:center; gap:16px; }
+#tela-aluno .progress-ring-txt { font-family:'DM Serif Display',serif; font-size:13.5px; line-height:1.5; color:var(--cinza-texto); }
+#tela-aluno .progress-ring-txt b { color:var(--laranja-escuro); font-family:'DM Sans',sans-serif; }
+#tela-aluno .progress-ring-link { display:inline-block; margin-top:8px; font-size:12.5px; color:var(--laranja-escuro); font-weight:600; text-decoration:none; }
+
+/* Timeline jornada */
+#tela-aluno .timeline-jornada { display:flex; flex-direction:column; }
+#tela-aluno .tl-item { display:flex; gap:12px; position:relative; padding-bottom:20px; }
+#tela-aluno .tl-item:last-child { padding-bottom:0; }
+#tela-aluno .tl-item::before { content:''; position:absolute; left:9px; top:22px; bottom:0; width:2px; background:var(--cinza-medio); }
+#tela-aluno .tl-item:last-child::before { display:none; }
+#tela-aluno .tl-dot { width:20px; height:20px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; z-index:1; background:var(--cinza-claro); color:var(--cinza-texto); }
+#tela-aluno .tl-dot svg { width:11px; height:11px; }
+#tela-aluno .tl-item.feito .tl-dot { background:var(--verde); color:white; }
+#tela-aluno .tl-item.atual .tl-dot { background:var(--laranja); color:white; box-shadow:0 0 0 4px rgba(232,119,34,0.18); }
+#tela-aluno .tl-texto .titulo { font-size:13px; font-weight:700; color:var(--preto); }
+#tela-aluno .tl-item:not(.feito):not(.atual) .tl-texto .titulo { color:var(--cinza-texto); font-weight:600; }
+#tela-aluno .tl-texto .sub { font-size:11.5px; color:var(--cinza-texto); margin-top:1px; }
+
+/* Central de ajuda card */
+#tela-aluno .ajuda-card-ico { width:44px; height:44px; border-radius:12px; background:var(--roxo-claro); color:var(--roxo); display:flex; align-items:center; justify-content:center; margin-bottom:12px; }
+#tela-aluno .ajuda-card-ico svg { width:20px; height:20px; }
+
+/* Barra fixa de ações */
+#tela-aluno .acoes-fixas { position:sticky; bottom:0; background:linear-gradient(to top, var(--cinza-claro) 75%, transparent); padding:20px 0 4px; margin-top:8px; display:flex; justify-content:flex-end; gap:10px; }
+
+/* Placeholder "em construção" */
+#tela-aluno .placeholder-page { background:white; border-radius:18px; box-shadow:var(--sombra-card); padding:64px 40px; text-align:center; }
+#tela-aluno .placeholder-page .ico { width:64px; height:64px; border-radius:50%; background:var(--laranja-claro); color:var(--laranja-escuro); display:flex; align-items:center; justify-content:center; margin:0 auto 20px; }
+#tela-aluno .placeholder-page .ico svg { width:28px; height:28px; }
+#tela-aluno .placeholder-page h2 { font-family:'DM Serif Display',serif; font-size:22px; margin-bottom:8px; }
+#tela-aluno .placeholder-page p { color:var(--cinza-texto); font-size:14px; max-width:420px; margin:0 auto; line-height:1.7; }
+
+/* Central de dúvidas — busca */
+#tela-aluno .duvidas-busca { position:relative; margin-bottom:22px; }
+#tela-aluno .duvidas-busca svg { position:absolute; left:18px; top:50%; transform:translateY(-50%); width:18px; height:18px; opacity:0.4; }
+#tela-aluno .duvidas-busca input { width:100%; padding:16px 18px 16px 48px; border-radius:14px; border:2px solid var(--cinza-medio); font-family:'DM Sans',sans-serif; font-size:15px; outline:none; background:white; transition:all 0.2s; }
+#tela-aluno .duvidas-busca input:focus { border-color:var(--laranja); box-shadow:0 0 0 4px rgba(232,119,34,0.1); }
 </style>
 </head>
 <body>
@@ -924,143 +1101,316 @@ tr:hover td { background:#FDFCFA; }
     <nav class="sidebar">
       <div class="sidebar-header">
         <div class="sidebar-logo">
-          <div class="logo-icon" style="width:36px;height:36px;font-size:16px">E</div>
-          <div class="logo-text">
-            <span class="main" style="font-size:15px;color:var(--preto)">EstágioEnf</span>
-            <span class="sub" style="font-size:10px">Área do Aluno</span>
-          </div>
+          <span class="sid-cone"></span>
+          <div class="logo-text"><span class="main">Anhanguera</span></div>
         </div>
+        <div class="sidebar-sub"><b>Curso de Enfermagem</b><br>Área do Aluno</div>
       </div>
       <div class="sidebar-perfil">
         <div class="perfil-info">
           <div class="perfil-avatar" id="avatar-aluno" style="background:var(--verde)">A</div>
-          <div>
-            <div class="perfil-nome" id="nome-aluno-logado">Aluno</div>
-            <div class="perfil-cargo" id="status-aluno-logado">Cadastro pendente</div>
-          </div>
+          <div class="perfil-nome" id="nome-aluno-logado">Aluno</div>
+          <div class="perfil-cargo" id="ra-aluno-logado">RA: —</div>
+          <span class="perfil-badge-sem" id="semestre-aluno-logado">—</span>
         </div>
+        <div class="perfil-meta">
+          <div class="perfil-meta-linha"><span class="lbl">Campo de Estágio</span><span class="val" id="campo-aluno-logado">Ainda não definido</span></div>
+          <div class="perfil-meta-linha"><span class="lbl">Preceptor(a)</span><span class="val" id="preceptor-aluno-logado">Ainda não definido</span></div>
+        </div>
+        <div class="status-pill pendente" id="status-aluno-logado"><span class="dot"></span>Cadastro pendente</div>
       </div>
       <div class="sidebar-nav">
         <div class="nav-grupo">
-          <div class="nav-item ativo" onclick="mostrarPaginaAluno('aluno-dados', this)"><span class="nav-icon">👤</span> Meus Dados</div>
-          <div class="nav-item" onclick="mostrarPaginaAluno('aluno-docs', this)"><span class="nav-icon">📎</span> Meus Documentos</div>
-          <div class="nav-item" onclick="mostrarPaginaAluno('aluno-escala', this)"><span class="nav-icon">📅</span> Minha Escala</div>
-          <div class="nav-item" onclick="mostrarPaginaAluno('aluno-faq', this)"><span class="nav-icon">❓</span> FAQ</div>
+          <div class="nav-item ativo" data-page="aluno-dashboard" onclick="mostrarPaginaAluno('aluno-dashboard', this)"><i data-lucide="home"></i> Dashboard</div>
+          <div class="nav-item" data-page="aluno-dados" onclick="mostrarPaginaAluno('aluno-dados', this)"><i data-lucide="user"></i> Meus Dados</div>
+          <div class="nav-item" data-page="aluno-docs" onclick="mostrarPaginaAluno('aluno-docs', this)"><i data-lucide="file-text"></i> Documentos</div>
+          <div class="nav-item" data-page="aluno-escala" onclick="mostrarPaginaAluno('aluno-escala', this)"><i data-lucide="calendar"></i> Minha Escala</div>
+          <div class="nav-item" data-page="aluno-diario" onclick="mostrarPaginaAluno('aluno-diario', this)"><i data-lucide="book-open"></i> Diário de Campo</div>
+          <div class="nav-item" data-page="aluno-avaliacoes" onclick="mostrarPaginaAluno('aluno-avaliacoes', this)"><i data-lucide="star"></i> Avaliações</div>
+          <div class="nav-item" data-page="aluno-central" onclick="mostrarPaginaAluno('aluno-central', this)"><i data-lucide="message-square"></i> Central de Comunicação</div>
+          <div class="nav-item" data-page="aluno-faq" onclick="mostrarPaginaAluno('aluno-faq', this)"><i data-lucide="help-circle"></i> Central Inteligente de Dúvidas</div>
+          <div class="nav-item" data-page="aluno-campo" onclick="mostrarPaginaAluno('aluno-campo', this)"><i data-lucide="map-pin"></i> Campo de Estágio</div>
+          <div class="nav-item" data-page="aluno-config" onclick="mostrarPaginaAluno('aluno-config', this)"><i data-lucide="settings"></i> Configurações</div>
         </div>
       </div>
-      <div class="sidebar-rodape"><button class="btn-sair" onclick="fazerLogout()">↩ Sair</button></div>
+      <div class="sidebar-rodape"><button class="btn-sair" onclick="fazerLogout()"><i data-lucide="log-out"></i> Sair</button></div>
     </nav>
     <div class="conteudo">
 
-      <!-- MEUS DADOS -->
-      <div id="aluno-dados" style="display:flex;flex-direction:column;flex:1">
-        <div class="topbar"><div class="topbar-titulo">Meus Dados</div></div>
-        <div class="pagina">
-          <div id="aluno-pendencia-doc" style="display:none;background:#FEE8EC;border:1px solid #f5aaaa;border-radius:10px;padding:14px 18px;font-size:13px;color:#c0392b;margin-bottom:20px">
-            ⚠️ <b>Documentação pendente!</b> Acesse a aba "Meus Documentos" para verificar o que precisa ser reenviado.
+      <!-- HEADER PREMIUM -->
+      <div class="header-aluno">
+        <div class="header-breadcrumb"><i data-lucide="graduation-cap"></i> Área do Aluno <span class="sep">›</span> <span class="atual" id="aluno-titulo-pagina">Dashboard</span></div>
+        <div class="header-acoes">
+          <div class="header-busca"><i data-lucide="search"></i><input placeholder="Buscar no sistema..." id="aluno-busca-global"></div>
+          <button class="header-icone-btn" title="Notificações"><i data-lucide="bell"></i><span class="header-badge" id="aluno-header-badge" style="display:none">0</span></button>
+          <div class="header-perfil-mini" onclick="event.stopPropagation(); document.getElementById('menu-perfil-aluno').classList.toggle('aberto')">
+            <div class="mini-avatar" id="avatar-aluno-header">A</div>
+            <i data-lucide="chevron-down"></i>
+            <div class="menu-perfil-aluno" id="menu-perfil-aluno">
+              <a onclick="mostrarPaginaAluno('aluno-dados', document.querySelector('#tela-aluno .nav-item[data-page=aluno-dados]'))"><i data-lucide="user"></i> Meus Dados</a>
+              <a onclick="mostrarPaginaAluno('aluno-config', document.querySelector('#tela-aluno .nav-item[data-page=aluno-config]'))"><i data-lucide="settings"></i> Configurações</a>
+              <a onclick="fazerLogout()"><i data-lucide="log-out"></i> Sair</a>
+            </div>
           </div>
+        </div>
+      </div>
 
-          <!-- LGPD -->
-          <div class="secao" style="margin-bottom:20px">
-            <div class="secao-header"><div class="secao-titulo">Termo de Consentimento LGPD</div></div>
-            <div style="padding:20px 24px;font-size:13px;line-height:1.7;color:var(--cinza-texto)">
-              Declaro estar ciente e concordo com a coleta, armazenamento e uso dos meus dados pessoais para fins relacionados ao programa de estágio da Faculdade Anhanguera Asa Norte/Brasília-DF. Os dados serão utilizados para gerenciamento do programa, comunicação e cumprimento de obrigações legais, sendo mantidos pelo tempo necessário conforme exigido por lei.
-              <div style="margin-top:12px;display:flex;align-items:center;gap:8px">
-                <input type="checkbox" id="aluno-lgpd" style="width:16px;height:16px;accent-color:var(--laranja)">
-                <label for="aluno-lgpd" style="font-weight:600;color:var(--preto)">Li e concordo com os termos acima *</label>
+      <div class="corpo-aluno">
+        <div class="corpo-principal">
+
+          <!-- DASHBOARD -->
+          <div id="aluno-dashboard" style="display:flex;flex-direction:column">
+            <div style="margin-bottom:22px">
+              <div style="font-family:'DM Serif Display',serif;font-size:26px" id="aluno-dash-saudacao">Olá! 👋</div>
+              <div style="color:var(--cinza-texto);font-size:14px;margin-top:4px">Aqui está um resumo do seu estágio.</div>
+            </div>
+            <div class="kpis" id="aluno-kpis">
+              <div class="kpi-card">
+                <div class="kpi-topo"><div class="kpi-icone laranja"><i data-lucide="clipboard-check"></i></div><div class="kpi-label">Status do Cadastro</div></div>
+                <div class="kpi-valor" id="kpi-status-cadastro">—</div>
+                <div class="kpi-sub">Situação atual do seu perfil</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-topo"><div class="kpi-icone verde"><i data-lucide="file-check-2"></i></div><div class="kpi-label">Documentos Enviados</div></div>
+                <div class="kpi-valor" id="kpi-docs">0 / 3</div>
+                <div class="kpi-sub" id="kpi-docs-sub">em conformidade</div>
+                <div class="kpi-barra"><span id="kpi-docs-barra" style="width:0%;background:var(--verde)"></span></div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-topo"><div class="kpi-icone azul"><i data-lucide="calendar-days"></i></div><div class="kpi-label">Próximo Plantão</div></div>
+                <div class="kpi-valor" id="kpi-plantao" style="font-size:19px">—</div>
+                <div class="kpi-sub" id="kpi-plantao-sub">nenhuma escala publicada</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-topo"><div class="kpi-icone roxo"><i data-lucide="trending-up"></i></div><div class="kpi-label">Etapas Concluídas</div></div>
+                <div class="kpi-valor" id="kpi-etapas">0 / 6</div>
+                <div class="kpi-sub">da jornada do estágio</div>
+                <div class="kpi-barra"><span id="kpi-etapas-barra" style="width:0%;background:var(--laranja)"></span></div>
+              </div>
+            </div>
+            <div class="card-dados">
+              <div class="card-dados-header"><div class="ico"><i data-lucide="info"></i></div><div class="titulo">Bem-vindo(a) ao EstágioEnf</div></div>
+              <div class="card-dados-body" style="font-size:14px;color:var(--cinza-texto);line-height:1.8">
+                Use o menu à esquerda para completar seu cadastro, enviar documentos, acompanhar sua escala e registrar seu diário de campo. Acompanhe seu progresso no painel ao lado. Se tiver dúvidas, acesse a <b>Central Inteligente de Dúvidas</b> ou a <b>Central de Comunicação</b>.
               </div>
             </div>
           </div>
 
-          <div class="secao">
-            <div class="secao-header"><div class="secao-titulo">Dados Institucionais</div></div>
-            <div style="padding:20px 24px">
-              <div style="background:var(--amarelo-claro);border:2px solid var(--amarelo);border-radius:10px;padding:16px 18px;font-size:13px;margin-bottom:16px;line-height:1.7">
-                ⚠️ <b>Atenção: Verifique sua matrícula antes de continuar!</b><br><br>
-                Certifique-se de que você está devidamente matriculado na disciplina de estágio correspondente ao seu semestre.<br>
-                <b>O estágio só será validado após confirmação da matrícula na disciplina.</b> Caso não esteja matriculado, procure a secretaria acadêmica antes de prosseguir.
-                <div style="margin-top:12px;display:flex;align-items:flex-start;gap:10px;background:white;border-radius:8px;padding:12px">
-                  <input type="checkbox" id="aluno-matricula-confirm" style="width:18px;height:18px;accent-color:var(--laranja);flex-shrink:0;margin-top:2px">
+          <!-- MEUS DADOS -->
+          <div id="aluno-dados" style="display:none;flex-direction:column">
+            <div id="aluno-pendencia-doc" style="display:none;background:#FEE8EC;border:1px solid #f5aaaa;border-radius:14px;padding:16px 20px;font-size:13px;color:#c0392b;margin-bottom:20px">
+              ⚠️ <b>Documentação pendente!</b> Acesse "Documentos" para verificar o que precisa ser reenviado.
+            </div>
+
+            <div class="kpis" style="grid-template-columns:1fr 1fr">
+              <div class="kpi-card" style="grid-column:span 2">
+                <div style="font-family:'DM Serif Display',serif;font-size:19px;margin-bottom:4px">Meus Dados</div>
+                <div style="color:var(--cinza-texto);font-size:13.5px">Atualize suas informações pessoais, acadêmicas e documentos.</div>
+              </div>
+            </div>
+
+            <div class="cards-2col">
+              <!-- Informações Pessoais -->
+              <div class="card-dados">
+                <div class="card-dados-header"><div class="ico"><i data-lucide="user"></i></div><div class="titulo">Informações Pessoais</div></div>
+                <div class="card-dados-body">
+                  <div class="form-grupo"><label class="form-label">Nome completo *</label><input class="form-input" id="aluno-nome-cad" placeholder="Nome completo"></div>
+                  <div class="form-grupo"><label class="form-label">CPF *</label><input class="form-input" id="aluno-cpf-cad" placeholder="000.000.000-00"></div>
+                  <div class="form-grupo"><label class="form-label">Data de nascimento *</label><input class="form-input" id="aluno-nasc-cad" type="date"></div>
+                  <div class="form-grupo"><label class="form-label">Telefone *</label>
+                    <div style="display:grid;grid-template-columns:70px 1fr;gap:8px">
+                      <input class="form-input" id="aluno-ddd-cad" placeholder="DDD" style="text-align:center">
+                      <input class="form-input" id="aluno-tel-cad" placeholder="99999-9999">
+                    </div>
+                  </div>
+                  <div class="form-grupo"><label class="form-label">E-mail (mesmo do GOV) *</label><input class="form-input" id="aluno-email-cad" type="email" placeholder="seu@email.com">
+                    <div style="background:#FEE8EC;border-radius:8px;padding:10px 12px;font-size:12px;color:#c0392b;margin-top:8px;line-height:1.6">⚠️ Use o mesmo e-mail cadastrado na sua conta GOV.br. E-mails divergentes podem invalidar o seu estágio.</div>
+                  </div>
+                  <div class="form-grupo"><label class="form-label">Endereço residencial *</label><input class="form-input" id="aluno-end-cad" placeholder="Rua, número, complemento"></div>
+                  <div class="form-grupo"><label class="form-label">Região administrativa / Cidade-Estado *</label><input class="form-input" id="aluno-regiao-cad" placeholder="Ex: Planaltina/Brasília-DF"></div>
+                </div>
+              </div>
+
+              <!-- Dados Acadêmicos -->
+              <div class="card-dados">
+                <div class="card-dados-header"><div class="ico"><i data-lucide="graduation-cap"></i></div><div class="titulo">Dados Acadêmicos</div></div>
+                <div class="card-dados-body">
+                  <div class="form-grupo"><label class="form-label">RA *</label><input class="form-input" id="aluno-ra-cad" placeholder="Seu Registro Acadêmico"></div>
+                  <div class="form-grupo"><label class="form-label">Semestre atual *</label><select class="form-select" id="aluno-semestre-cad"><option value="">Selecione</option><option value="9">9º semestre</option><option value="10">10º semestre</option></select></div>
+                  <div class="form-grupo"><label class="form-label">Modalidade *</label><select class="form-select" id="aluno-modalidade-cad"><option value="">Selecione</option><option value="presencial">Presencial</option><option value="semipresencial">Semipresencial</option></select></div>
+                  <div class="form-grupo"><label class="form-label">Turno matriculado *</label><select class="form-select" id="aluno-turno-mat"><option value="">Selecione</option><option value="matutino">Matutino</option><option value="noturno">Noturno</option><option value="semipresencial">Semipresencial</option></select></div>
+                  <div class="form-grupo"><label class="form-label">Turno de preferência para estágio *</label><select class="form-select" id="aluno-turno-pref"><option value="">Selecione</option><option value="matutino">Matutino</option><option value="vespertino">Vespertino</option></select>
+                    <div style="background:var(--azul-claro);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--azul);margin-top:8px;line-height:1.6">ℹ️ O turno de preferência será considerado, mas não é garantido — depende das vagas disponíveis.</div>
+                  </div>
+                  <div style="background:var(--cinza-claro);border-radius:12px;padding:16px;display:flex;align-items:flex-start;gap:12px;margin-top:8px">
+                    <input type="checkbox" id="aluno-passe" class="check-moderno">
+                    <label for="aluno-passe" style="cursor:pointer;line-height:1.6;font-size:13px">
+                      <b>Preciso de declaração de extensão de passe estudantil</b><br>
+                      <span style="color:var(--cinza-texto);font-size:12px">Enviada ao e-mail informado acima.</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="cards-2col">
+              <!-- Contato de Emergência -->
+              <div class="card-dados">
+                <div class="card-dados-header"><div class="ico"><i data-lucide="phone-call"></i></div><div class="titulo">Contato de Emergência</div></div>
+                <div class="card-dados-body">
+                  <div class="form-grupo"><label class="form-label">Nome</label><input class="form-input" id="aluno-emerg-nome" placeholder="Nome completo"></div>
+                  <div class="form-grupo"><label class="form-label">Telefone</label><input class="form-input" id="aluno-emerg-tel" placeholder="(61) 99999-9999"></div>
+                  <div class="form-grupo"><label class="form-label">Parentesco</label><input class="form-input" id="aluno-emerg-parentesco" placeholder="Ex: Mãe, Pai, Cônjuge"></div>
+                </div>
+              </div>
+
+              <!-- LGPD -->
+              <div class="card-dados">
+                <div class="card-dados-header"><div class="ico"><i data-lucide="shield-check"></i></div><div class="titulo">Termo de Consentimento LGPD</div></div>
+                <div class="card-dados-body">
+                  <p style="font-size:13px;color:var(--cinza-texto);line-height:1.7;margin-bottom:14px">A Faculdade Anhanguera preza pela segurança e privacidade dos seus dados pessoais, conforme a Lei Geral de Proteção de Dados (LGPD - Lei 13.709/2018).</p>
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+                    <input type="checkbox" id="aluno-lgpd" class="check-moderno">
+                    <label for="aluno-lgpd" style="font-weight:600;font-size:13.5px;cursor:pointer">Li e concordo com os termos acima *</label>
+                  </div>
+                  <button type="button" class="btn btn-secundario" onclick="document.getElementById('modal-lgpd-completo').classList.add('ativo')">Visualizar termo completo</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Confirmação de Matrícula -->
+            <div class="alert-moderno">
+              <div class="ico"><i data-lucide="alert-triangle"></i></div>
+              <div style="flex:1">
+                <div style="font-weight:700;font-size:14.5px">Confirmação de Matrícula e Validação do Estágio<span class="alert-badge">Atenção</span></div>
+                <p style="font-size:13px;color:var(--cinza-texto);margin-top:6px;line-height:1.7">Certifique-se de que você está devidamente matriculado na disciplina de estágio correspondente ao seu semestre. O estágio só será validado após confirmação da matrícula na disciplina.</p>
+                <div class="alert-check">
+                  <input type="checkbox" id="aluno-matricula-confirm" class="check-moderno">
                   <label for="aluno-matricula-confirm" style="font-weight:600;font-size:13px;cursor:pointer">Confirmo que estou devidamente matriculado na disciplina de estágio correspondente ao meu semestre *</label>
                 </div>
               </div>
-              <div class="form-grid">
-                <div class="form-grupo"><label class="form-label">Modalidade *</label><select class="form-select" id="aluno-modalidade-cad"><option value="">Selecione</option><option value="presencial">Presencial</option><option value="semipresencial">Semipresencial</option></select></div>
-                <div class="form-grupo"><label class="form-label">Semestre atual *</label><select class="form-select" id="aluno-semestre-cad"><option value="">Selecione</option><option value="9">9º semestre</option><option value="10">10º semestre</option></select></div>
-              </div>
-              <div class="form-grid">
-                <div class="form-grupo"><label class="form-label">Turno matriculado *</label><select class="form-select" id="aluno-turno-mat"><option value="">Selecione</option><option value="matutino">Matutino</option><option value="noturno">Noturno</option><option value="semipresencial">Semipresencial</option></select></div>
-                <div class="form-grupo"><label class="form-label">Turno de preferência para estágio *</label><select class="form-select" id="aluno-turno-pref"><option value="">Selecione</option><option value="matutino">Matutino</option><option value="vespertino">Vespertino</option></select></div>
-              </div>
-              <div style="background:var(--azul-claro);border:1px solid #c5d8ef;border-radius:8px;padding:14px 16px;font-size:13px;color:var(--azul);margin-top:-8px;margin-bottom:16px;line-height:1.6">
-                ℹ️ <b>Importante:</b> O turno de preferência será considerado, mas <b>não é garantido</b>.<br>
-                A alocação depende das vagas disponíveis em cada campo de estágio. Todos os alunos precisam ser alocados e nem sempre será possível atender à primeira escolha.
-              </div>
+            </div>
+
+            <div class="acoes-fixas">
+              <button class="btn btn-secundario" onclick="mostrarPaginaAluno('aluno-dashboard', document.querySelector('#tela-aluno .nav-item[data-page=aluno-dashboard]'))">Cancelar</button>
+              <button class="btn btn-primario" style="padding:14px 28px" onclick="salvarDadosAluno()"><i data-lucide="save" style="width:16px;height:16px"></i> Salvar alterações</button>
             </div>
           </div>
 
-          <div class="secao">
-            <div class="secao-header"><div class="secao-titulo">Dados Pessoais</div></div>
-            <div style="padding:20px 24px">
-              <div class="form-grupo"><label class="form-label">Nome completo *</label><input class="form-input" id="aluno-nome-cad" placeholder="Nome completo"></div>
-              <div class="form-grupo"><label class="form-label">CPF *</label><input class="form-input" id="aluno-cpf-cad" placeholder="000.000.000-00"></div>
-              <div class="form-grupo"><label class="form-label">Data de nascimento *</label><input class="form-input" id="aluno-nasc-cad" type="date"></div>
-              <div class="form-grupo"><label class="form-label">E-mail (mesmo do GOV) *</label><input class="form-input" id="aluno-email-cad" type="email" placeholder="seu@email.com"><div style="background:#FEE8EC;border:1px solid #f5aaaa;border-radius:8px;padding:12px 14px;font-size:13px;color:#c0392b;margin-top:8px;line-height:1.6">
-  ⚠️ <b>Atenção!</b> Use o mesmo e-mail cadastrado na sua conta GOV.br.<br>
-  E-mails divergentes podem <b>invalidar o seu estágio</b>.
-</div></div>
-              <div style="display:grid;grid-template-columns:90px 1fr;gap:8px">
-                <div class="form-grupo"><label class="form-label">DDD *</label><input class="form-input" id="aluno-ddd-cad" placeholder="61" style="text-align:center"></div>
-                <div class="form-grupo"><label class="form-label">Telefone *</label><input class="form-input" id="aluno-tel-cad" placeholder="99999-9999"></div>
-              </div>
-              <div class="form-grupo"><label class="form-label">Endereço residencial *</label><input class="form-input" id="aluno-end-cad" placeholder="Rua, número, complemento"></div>
-              <div class="form-grupo"><label class="form-label">Região administrativa / Cidade-Estado *</label><input class="form-input" id="aluno-regiao-cad" placeholder="Ex: Planaltina/Brasília-DF"></div>
-              <div style="background:var(--cinza-claro);border:2px solid var(--cinza-medio);border-radius:12px;padding:20px;margin-top:16px;display:flex;align-items:flex-start;gap:14px">
-                <input type="checkbox" id="aluno-passe" style="width:22px;height:22px;accent-color:var(--laranja);flex-shrink:0;margin-top:3px">
-                <label for="aluno-passe" style="cursor:pointer;line-height:1.7">
-                  <div style="font-size:15px;font-weight:600;margin-bottom:4px">Preciso de declaração de extensão de passe estudantil</div>
-                  <div style="color:var(--cinza-texto);font-size:13px">A declaração será enviada para o e-mail informado acima. Verifique se o e-mail está correto antes de marcar esta opção.</div>
-                </label>
-              </div>
+          <!-- MEUS DOCUMENTOS -->
+          <div id="aluno-docs" style="display:none;flex-direction:column">
+            <div id="aluno-docs-lista"><div class="loading"><div class="spinner"></div> Carregando documentos...</div></div>
+          </div>
+
+          <!-- MINHA ESCALA -->
+          <div id="aluno-escala" style="display:none;flex-direction:column">
+            <div id="aluno-escala-conteudo"><div class="loading"><div class="spinner"></div> Carregando escala...</div></div>
+          </div>
+
+          <!-- DIÁRIO DE CAMPO (placeholder) -->
+          <div id="aluno-diario" style="display:none;flex-direction:column">
+            <div class="placeholder-page">
+              <div class="ico"><i data-lucide="book-open"></i></div>
+              <h2>Diário de Campo</h2>
+              <p>Em breve você poderá registrar suas atividades, procedimentos e aprendizados de cada plantão aqui, com fotos, timeline e mapa de palavras. Essa página está em desenvolvimento.</p>
             </div>
           </div>
-        </div>
-          <!-- Botão salvar grande fixo no inferior -->
-          <div style="position:sticky;bottom:0;background:linear-gradient(to top, white 80%, transparent);padding:24px 0 8px;margin-top:24px;text-align:right">
-            <button onclick="salvarDadosAluno()" style="background:var(--laranja);color:white;border:none;border-radius:14px;padding:18px 40px;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(232,119,34,0.4);transition:all 0.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
-              💾 Salvar dados e continuar para documentos →
-            </button>
+
+          <!-- AVALIAÇÕES (placeholder) -->
+          <div id="aluno-avaliacoes" style="display:none;flex-direction:column">
+            <div class="placeholder-page">
+              <div class="ico"><i data-lucide="star"></i></div>
+              <h2>Avaliações</h2>
+              <p>Em breve você poderá avaliar seu campo de estágio (estrutura, equipe, acolhimento e orientação) por aqui. Essa página está em desenvolvimento.</p>
+            </div>
           </div>
-        </div>
-      </div>
 
-      <!-- MEUS DOCUMENTOS -->
-      <div id="aluno-docs" style="display:none;flex:1;flex-direction:column">
-        <div class="topbar"><div class="topbar-titulo">Meus Documentos</div></div>
-        <div class="pagina">
-          <div id="aluno-docs-lista"><div class="loading"><div class="spinner"></div> Carregando documentos...</div></div>
-        </div>
-      </div>
+          <!-- CENTRAL DE COMUNICAÇÃO (placeholder) -->
+          <div id="aluno-central" style="display:none;flex-direction:column">
+            <div class="placeholder-page">
+              <div class="ico"><i data-lucide="message-square"></i></div>
+              <h2>Central de Comunicação</h2>
+              <p>Em breve você poderá ver avisos da coordenação, enviar solicitações e acompanhar mensagens do preceptor por aqui. Essa página está em desenvolvimento.</p>
+            </div>
+          </div>
 
-      <!-- MINHA ESCALA -->
-      <div id="aluno-escala" style="display:none;flex:1;flex-direction:column">
-        <div class="topbar"><div class="topbar-titulo">Minha Escala</div></div>
-        <div class="pagina">
-          <div id="aluno-escala-conteudo"><div class="loading"><div class="spinner"></div> Carregando escala...</div></div>
-        </div>
-      </div>
+          <!-- CENTRAL INTELIGENTE DE DÚVIDAS (FAQ) -->
+          <div id="aluno-faq" style="display:none;flex-direction:column">
+            <div class="duvidas-busca">
+              <i data-lucide="search"></i>
+              <input placeholder="Pesquisar dúvidas frequentes..." id="aluno-faq-busca" oninput="filtrarFaqAluno(this.value)">
+            </div>
+            <div id="aluno-faq-lista"><div class="loading"><div class="spinner"></div> Carregando...</div></div>
+            <div class="card-dados" style="margin-top:8px;text-align:center;padding:32px 24px">
+              <div style="font-weight:700;font-size:15px;margin-bottom:6px">Não encontrou sua dúvida?</div>
+              <div style="color:var(--cinza-texto);font-size:13px;margin-bottom:16px">Entre em contato diretamente com a coordenação do curso.</div>
+              <button class="btn btn-primario" onclick="mostrarPaginaAluno('aluno-central', document.querySelector('#tela-aluno .nav-item[data-page=aluno-central]'))">Entrar em contato com a Coordenação</button>
+            </div>
+          </div>
 
-      <!-- FAQ -->
-      <div id="aluno-faq" style="display:none;flex:1;flex-direction:column">
-        <div class="topbar"><div class="topbar-titulo">Perguntas Frequentes</div></div>
-        <div class="pagina">
-          <div id="aluno-faq-lista"><div class="loading"><div class="spinner"></div> Carregando...</div></div>
-        </div>
-      </div>
+          <!-- CAMPO DE ESTÁGIO (placeholder) -->
+          <div id="aluno-campo" style="display:none;flex-direction:column">
+            <div class="placeholder-page">
+              <div class="ico"><i data-lucide="map-pin"></i></div>
+              <h2>Campo de Estágio</h2>
+              <p>Em breve você verá aqui os detalhes completos do seu campo de estágio: endereço, contatos, normas do local e horários. Essa página está em desenvolvimento.</p>
+            </div>
+          </div>
 
+          <!-- CONFIGURAÇÕES (placeholder) -->
+          <div id="aluno-config" style="display:none;flex-direction:column">
+            <div class="placeholder-page">
+              <div class="ico"><i data-lucide="settings"></i></div>
+              <h2>Configurações</h2>
+              <p>Em breve você poderá gerenciar preferências de notificação e segurança da sua conta por aqui. Essa página está em desenvolvimento.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- PAINEL LATERAL DIREITO -->
+        <aside class="painel-lateral-aluno" id="painel-lateral-aluno">
+          <div class="painel-card">
+            <div class="painel-card-titulo">Progresso do Estágio</div>
+            <div class="progress-ring-wrap">
+              <svg width="86" height="86" viewBox="0 0 86 86">
+                <circle cx="43" cy="43" r="36" fill="none" stroke="var(--cinza-claro)" stroke-width="9"/>
+                <circle id="aluno-progress-circle" cx="43" cy="43" r="36" fill="none" stroke="var(--laranja)" stroke-width="9" stroke-linecap="round" stroke-dasharray="226" stroke-dashoffset="226" transform="rotate(-90 43 43)"/>
+                <text x="43" y="49" text-anchor="middle" font-family="DM Serif Display, serif" font-size="19" fill="var(--preto)" id="aluno-progress-texto">0%</text>
+              </svg>
+              <div class="progress-ring-txt">Você concluiu <b id="aluno-progress-frase">0%</b> das etapas do estágio.</div>
+            </div>
+          </div>
+
+          <div class="painel-card">
+            <div class="painel-card-titulo">Jornada do Estágio</div>
+            <div class="timeline-jornada" id="aluno-jornada"></div>
+          </div>
+
+          <div class="painel-card">
+            <div class="ajuda-card-ico"><i data-lucide="life-buoy"></i></div>
+            <div class="painel-card-titulo" style="margin-bottom:6px">Central de Ajuda</div>
+            <div style="font-size:12.5px;color:var(--cinza-texto);line-height:1.6;margin-bottom:14px">Precisa de ajuda? Acesse nossa Central Inteligente de Dúvidas ou entre em contato com a coordenação.</div>
+            <button class="btn btn-secundario" style="width:100%;justify-content:center" onclick="mostrarPaginaAluno('aluno-faq', document.querySelector('#tela-aluno .nav-item[data-page=aluno-faq]'))">Acessar agora →</button>
+          </div>
+        </aside>
+      </div>
     </div>
   </div>
 </div>
+
+<!-- MODAL LGPD COMPLETO -->
+<div id="modal-lgpd-completo" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header"><div><div class="modal-titulo">Termo de Consentimento LGPD</div></div><button class="btn-fechar" onclick="fecharModal('modal-lgpd-completo')">✕</button></div>
+    <div class="modal-body" style="font-size:13.5px;line-height:1.8;color:var(--cinza-texto)">
+      Declaro estar ciente e concordo com a coleta, armazenamento e uso dos meus dados pessoais para fins relacionados ao programa de estágio da Faculdade Anhanguera Asa Norte/Brasília-DF. Os dados serão utilizados para gerenciamento do programa, comunicação e cumprimento de obrigações legais, sendo mantidos pelo tempo necessário conforme exigido pela Lei Geral de Proteção de Dados (Lei 13.709/2018).
+    </div>
+    <div class="modal-footer"><button class="btn btn-primario" onclick="fecharModal('modal-lgpd-completo')">Entendi</button></div>
+  </div>
+</div>
+
+
 
 <!-- ===== CADASTRO ALUNO ===== -->
 <div id="tela-cadastro-aluno" class="tela">
@@ -1259,6 +1609,11 @@ window.addEventListener('load', async () => {
     await definirPerfil();
   }
   document.getElementById('data-hoje-prec').textContent = '📅 ' + new Date().toLocaleDateString('pt-BR', {weekday:'long', day:'2-digit', month:'2-digit', year:'numeric'});
+  if (window.lucide) lucide.createIcons();
+});
+document.addEventListener('click', (e) => {
+  const menu = document.getElementById('menu-perfil-aluno');
+  if (menu && !e.target.closest('.header-perfil-mini')) menu.classList.remove('aberto');
 });
 
 // ===== AUTH =====
@@ -2117,31 +2472,54 @@ async function cadastrarAluno() {
   await entrarComoAluno();
 }
 
+const PAGINAS_ALUNO = ['aluno-dashboard','aluno-dados','aluno-docs','aluno-escala','aluno-diario','aluno-avaliacoes','aluno-central','aluno-faq','aluno-campo','aluno-config'];
+const TITULOS_PAGINA_ALUNO = { 'aluno-dashboard':'Dashboard', 'aluno-dados':'Meus Dados', 'aluno-docs':'Documentos', 'aluno-escala':'Minha Escala', 'aluno-diario':'Diário de Campo', 'aluno-avaliacoes':'Avaliações', 'aluno-central':'Central de Comunicação', 'aluno-faq':'Central Inteligente de Dúvidas', 'aluno-campo':'Campo de Estágio', 'aluno-config':'Configurações' };
+let alunoCadastroData = null;
+let alunoEscalaData = null;
+let alunoDocsData = null;
+let todasFaqAluno = [];
+
 async function entrarComoAluno() {
   irPara('tela-aluno');
-  // Init páginas do aluno
-  ['aluno-docs','aluno-escala','aluno-faq'].forEach(id => {
-    const el = document.getElementById(id);
-    if(el) { el.style.display='none'; el.style.flexDirection=''; }
-  });
-  const dados = document.getElementById('aluno-dados');
-  if(dados) { dados.style.cssText = 'display:flex;flex-direction:column;flex:1;'; }
+  mostrarPaginaAluno('aluno-dashboard', document.querySelector('#tela-aluno .nav-item[data-page="aluno-dashboard"]'));
+  if (window.lucide) lucide.createIcons();
 
   // Busca cadastro do aluno
   const { data } = await sb.from('alunos_cadastro').select('*').eq('user_id', usuarioAtual.id).single();
   if (data) {
     alunoLogadoId = data.id;
+    alunoCadastroData = data;
     const nomeEl = document.getElementById('nome-aluno-logado');
     const avatarEl = document.getElementById('avatar-aluno');
+    const avatarHeaderEl = document.getElementById('avatar-aluno-header');
+    const raEl = document.getElementById('ra-aluno-logado');
+    const semEl = document.getElementById('semestre-aluno-logado');
     const statusEl = document.getElementById('status-aluno-logado');
-    if(nomeEl) nomeEl.textContent = data.nome_completo || 'Complete seus dados';
-    if(avatarEl) avatarEl.textContent = data.nome_completo ? data.nome_completo.split(' ').slice(0,2).map(n=>n[0]).join('') : 'A';
-    const statusTexto = { 'pendente': 'Cadastro pendente', 'em_analise': 'Em análise', 'aprovado': 'Aprovado', 'doc_pendente': 'Documentação pendente' };
-    if(statusEl) statusEl.textContent = statusTexto[data.status] || data.status;
+    const nomeFmt = data.nome_completo || 'Complete seus dados';
+    const iniciais = data.nome_completo ? data.nome_completo.split(' ').slice(0,2).map(n=>n[0]).join('') : 'A';
+    if(nomeEl) nomeEl.textContent = nomeFmt;
+    if(avatarEl) avatarEl.textContent = iniciais;
+    if(avatarHeaderEl) avatarHeaderEl.textContent = iniciais;
+    if(raEl) raEl.textContent = data.ra ? ('RA: ' + data.ra) : 'RA: —';
+    if(semEl) semEl.textContent = data.semestre ? (data.semestre + 'º Semestre') : '—';
+    const dashSaud = document.getElementById('aluno-dash-saudacao');
+    if(dashSaud && data.nome_completo) dashSaud.textContent = 'Olá, ' + data.nome_completo.split(' ')[0] + '! 👋';
+
+    const statusTexto = { 'pendente': 'Cadastro pendente', 'em_analise': 'Em análise', 'aprovado': 'Ativo', 'doc_pendente': 'Documentação pendente' };
+    const statusClasse = { 'pendente': 'pendente', 'em_analise': 'pendente', 'aprovado': 'ativo', 'doc_pendente': 'pendente' };
+    if(statusEl) {
+      statusEl.querySelector('span:last-child')?.remove();
+      statusEl.innerHTML = '<span class="dot"></span>' + (statusTexto[data.status] || data.status || 'Pendente');
+      statusEl.className = 'status-pill ' + (statusClasse[data.status] || 'pendente');
+    }
+    const kpiStatus = document.getElementById('kpi-status-cadastro');
+    if(kpiStatus) kpiStatus.textContent = statusTexto[data.status] || data.status || 'Pendente';
+
     // Preenche formulário com segurança
     const set = (id, val) => { const el = document.getElementById(id); if(el && val) el.value = val; };
     const check = (id, val) => { const el = document.getElementById(id); if(el) el.checked = !!val; };
     set('aluno-nome-cad', data.nome_completo);
+    set('aluno-ra-cad', data.ra);
     set('aluno-cpf-cad', data.cpf);
     set('aluno-nasc-cad', data.data_nascimento);
     set('aluno-email-cad', data.email);
@@ -2153,15 +2531,107 @@ async function entrarComoAluno() {
     set('aluno-semestre-cad', data.semestre);
     set('aluno-turno-mat', data.turno_matriculado);
     set('aluno-turno-pref', data.turno_preferencia);
+    set('aluno-emerg-nome', data.contato_emergencia_nome);
+    set('aluno-emerg-tel', data.contato_emergencia_telefone);
+    set('aluno-emerg-parentesco', data.contato_emergencia_parentesco);
     check('aluno-lgpd', data.consentimento_lgpd);
     check('aluno-passe', data.extensao_passe);
+    check('aluno-matricula-confirm', data.matricula_confirmada);
     // Mostra pendência de documento
     const pendEl = document.getElementById('aluno-pendencia-doc');
-    if(pendEl && data.status === 'doc_pendente') pendEl.style.display = 'block';
+    if(pendEl) pendEl.style.display = data.status === 'doc_pendente' ? 'block' : 'none';
   } else {
     // Cria registro inicial se não existir
-    await sb.from('alunos_cadastro').insert({ user_id: usuarioAtual.id, email: usuarioAtual.email, status: 'pendente' });
+    const { data: novo } = await sb.from('alunos_cadastro').insert({ user_id: usuarioAtual.id, email: usuarioAtual.email, status: 'pendente' }).select().single();
+    alunoLogadoId = novo?.id;
+    alunoCadastroData = novo;
   }
+
+  // Busca escala publicada (também usada na sidebar e no KPI de próximo plantão)
+  if (alunoLogadoId) {
+    const { data: escala } = await sb.from('escala').select('*').eq('aluno_cadastro_id', alunoLogadoId).eq('publicada', true);
+    alunoEscalaData = escala || [];
+    const campoEl = document.getElementById('campo-aluno-logado');
+    const precEl = document.getElementById('preceptor-aluno-logado');
+    if (escala && escala.length > 0) {
+      const e = escala[0];
+      if(campoEl) campoEl.textContent = e.campo + (e.setor ? ' · ' + e.setor : '');
+      if(precEl) precEl.textContent = e.preceptor || 'Ainda não definido';
+    }
+    const { data: docs } = await sb.from('alunos_documentos').select('*').eq('aluno_id', alunoLogadoId);
+    alunoDocsData = docs || [];
+  }
+
+  atualizarKpisEJornada();
+  if (window.lucide) lucide.createIcons();
+}
+
+function atualizarKpisEJornada() {
+  const d = alunoCadastroData || {};
+  const docsAprovadosOuEnviados = (alunoDocsData || []).length;
+  const escalaPublicada = (alunoEscalaData || []).length > 0;
+
+  // KPI documentos
+  const kpiDocs = document.getElementById('kpi-docs');
+  const kpiDocsBarra = document.getElementById('kpi-docs-barra');
+  const kpiDocsSub = document.getElementById('kpi-docs-sub');
+  if (kpiDocs) kpiDocs.textContent = docsAprovadosOuEnviados + ' / 3';
+  if (kpiDocsBarra) kpiDocsBarra.style.width = Math.min(100, (docsAprovadosOuEnviados/3)*100) + '%';
+  if (kpiDocsSub) kpiDocsSub.textContent = docsAprovadosOuEnviados >= 3 ? 'todos enviados' : (3 - docsAprovadosOuEnviados) + ' pendente(s)';
+
+  // KPI próximo plantão
+  const kpiPlantao = document.getElementById('kpi-plantao');
+  const kpiPlantaoSub = document.getElementById('kpi-plantao-sub');
+  if (escalaPublicada) {
+    const e = alunoEscalaData[0];
+    if (kpiPlantao) kpiPlantao.textContent = formatarData(e.data_inicio);
+    if (kpiPlantaoSub) kpiPlantaoSub.textContent = (e.turno || e.campo || '—');
+  } else {
+    if (kpiPlantao) kpiPlantao.textContent = '—';
+    if (kpiPlantaoSub) kpiPlantaoSub.textContent = 'nenhuma escala publicada';
+  }
+
+  // Jornada do estágio (dados reais disponíveis hoje)
+  const passos = [
+    { titulo: 'Cadastro Realizado', feito: !!d.nome_completo, data: d.created_at },
+    { titulo: 'LGPD Aceita', feito: !!d.consentimento_lgpd, data: null },
+    { titulo: 'Documentos Enviados', feito: docsAprovadosOuEnviados >= 3, data: null },
+    { titulo: 'Escala Disponível', feito: escalaPublicada, data: null },
+    { titulo: 'Avaliação Parcial', feito: false, data: null },
+    { titulo: 'Estágio Concluído', feito: d.status === 'aprovado' && escalaPublicada, data: null },
+  ];
+  let atualEncontrado = false;
+  const concluidos = passos.filter(p=>p.feito).length;
+  const jornadaEl = document.getElementById('aluno-jornada');
+  if (jornadaEl) {
+    jornadaEl.innerHTML = passos.map(p => {
+      let classe = 'pendente';
+      if (p.feito) classe = 'feito';
+      else if (!atualEncontrado) { classe = 'atual'; atualEncontrado = true; }
+      const icone = classe === 'feito' ? 'check' : (classe === 'atual' ? 'loader' : 'circle');
+      return `<div class="tl-item ${classe}">
+        <div class="tl-dot"><i data-lucide="${icone}"></i></div>
+        <div class="tl-texto"><div class="titulo">${p.titulo}</div><div class="sub">${p.feito ? 'Concluído' : 'Pendente'}</div></div>
+      </div>`;
+    }).join('');
+  }
+
+  // Progresso circular
+  const pct = Math.round((concluidos / passos.length) * 100);
+  const circ = document.getElementById('aluno-progress-circle');
+  const txt = document.getElementById('aluno-progress-texto');
+  const frase = document.getElementById('aluno-progress-frase');
+  const perimetro = 2 * Math.PI * 36;
+  if (circ) circ.setAttribute('stroke-dashoffset', perimetro - (pct/100)*perimetro);
+  if (txt) txt.textContent = pct + '%';
+  if (frase) frase.textContent = pct + '%';
+
+  const kpiEtapas = document.getElementById('kpi-etapas');
+  const kpiEtapasBarra = document.getElementById('kpi-etapas-barra');
+  if (kpiEtapas) kpiEtapas.textContent = concluidos + ' / ' + passos.length;
+  if (kpiEtapasBarra) kpiEtapasBarra.style.width = pct + '%';
+
+  if (window.lucide) lucide.createIcons();
 }
 
 async function salvarDadosAluno() {
@@ -2169,12 +2639,13 @@ async function salvarDadosAluno() {
   const matricula = document.getElementById('aluno-matricula-confirm');
   if (!lgpd?.checked) { alert('Você precisa aceitar o termo de consentimento LGPD.'); return; }
   if (!matricula?.checked) { alert('Confirme que está matriculado na disciplina de estágio.'); return; }
-  
+
   const get = (id) => document.getElementById(id)?.value?.trim() || null;
   const getCheck = (id) => document.getElementById(id)?.checked || false;
-  
+
   const { error } = await sb.from('alunos_cadastro').update({
     nome_completo: get('aluno-nome-cad'),
+    ra: get('aluno-ra-cad'),
     cpf: get('aluno-cpf-cad'),
     data_nascimento: get('aluno-nasc-cad') || null,
     email: get('aluno-email-cad'),
@@ -2188,21 +2659,38 @@ async function salvarDadosAluno() {
     turno_preferencia: get('aluno-turno-pref'),
     extensao_passe: getCheck('aluno-passe'),
     consentimento_lgpd: getCheck('aluno-lgpd'),
+    matricula_confirmada: getCheck('aluno-matricula-confirm'),
+    contato_emergencia_nome: get('aluno-emerg-nome'),
+    contato_emergencia_telefone: get('aluno-emerg-tel'),
+    contato_emergencia_parentesco: get('aluno-emerg-parentesco'),
   }).eq('user_id', usuarioAtual.id);
-  
+
   if (error) { alert('Erro ao salvar: ' + error.message); return; }
-  
+
   const nome = get('aluno-nome-cad');
   if (nome) {
     const nomeEl = document.getElementById('nome-aluno-logado');
     const avatarEl = document.getElementById('avatar-aluno');
+    const avatarHeaderEl = document.getElementById('avatar-aluno-header');
+    const iniciais = nome.split(' ').slice(0,2).map(n=>n[0]).join('');
     if(nomeEl) nomeEl.textContent = nome;
-    if(avatarEl) avatarEl.textContent = nome.split(' ').slice(0,2).map(n=>n[0]).join('');
+    if(avatarEl) avatarEl.textContent = iniciais;
+    if(avatarHeaderEl) avatarHeaderEl.textContent = iniciais;
   }
-  
+  const raVal = get('aluno-ra-cad');
+  const raEl = document.getElementById('ra-aluno-logado');
+  if (raEl) raEl.textContent = raVal ? ('RA: ' + raVal) : 'RA: —';
+  const semVal = get('aluno-semestre-cad');
+  const semEl = document.getElementById('semestre-aluno-logado');
+  if (semEl && semVal) semEl.textContent = semVal + 'º Semestre';
+
+  // Atualiza estado local e recalcula jornada/progresso
+  if (alunoCadastroData) Object.assign(alunoCadastroData, { nome_completo: nome, ra: raVal, consentimento_lgpd: getCheck('aluno-lgpd') });
+  atualizarKpisEJornada();
+
   // Vai automaticamente para documentos
-  mostrarPaginaAluno('aluno-docs', document.querySelector('#tela-aluno .nav-item:nth-child(2)'));
-  
+  mostrarPaginaAluno('aluno-docs', document.querySelector('#tela-aluno .nav-item[data-page="aluno-docs"]'));
+
   // Mensagem de sucesso
   const msg = document.createElement('div');
   msg.style.cssText = 'position:fixed;top:20px;right:20px;background:var(--verde);color:white;padding:14px 20px;border-radius:10px;font-size:14px;font-weight:600;z-index:999;box-shadow:0 4px 12px rgba(0,0,0,0.15)';
@@ -2215,6 +2703,7 @@ async function salvarDadosAluno() {
 async function carregarDocsAluno() {
   if (!alunoLogadoId) return;
   const { data } = await sb.from('alunos_documentos').select('*').eq('aluno_id', alunoLogadoId);
+  alunoDocsData = data || [];
   const el = document.getElementById('aluno-docs-lista');
   const tipos = [
     { id: 'foto_3x4', label: 'Foto 3x4', aviso: '⚠️ Certifique-se que a foto está legível, com fundo claro, pose reta e sem efeitos.' },
@@ -2224,7 +2713,7 @@ async function carregarDocsAluno() {
   const docsExistentes = {};
   data?.forEach(d => docsExistentes[d.tipo] = d);
 
-  el.innerHTML = `<div>` + tipos.map(tipo => {
+  el.innerHTML = tipos.map(tipo => {
     const doc = docsExistentes[tipo.id];
     const statusBadge = doc ? (
       doc.status === 'aprovado' ? '<span class="badge badge-verde">✓ Aprovado</span>' :
@@ -2232,16 +2721,20 @@ async function carregarDocsAluno() {
       '<span class="badge badge-laranja">⏳ Aguardando análise</span>'
     ) : '<span class="badge badge-cinza">Não enviado</span>';
 
-    return `<div style="background:white;border:1px solid var(--cinza-medio);border-radius:12px;padding:20px;margin-bottom:12px">
-      <div style="font-weight:600;font-size:14px;margin-bottom:6px">${tipo.label}</div>
-      ${tipo.aviso ? `<div style="background:var(--amarelo-claro);border-radius:6px;padding:8px 12px;font-size:12px;color:#8a6200;margin-bottom:10px">${tipo.aviso}</div>` : ''}
-      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-        ${statusBadge}
-        ${doc?.status !== 'aprovado' ? `<input type="file" id="doc-${tipo.id}" accept=".pdf,.jpg,.jpeg,.png" style="font-size:12px">
-        <button class="btn btn-primario" style="padding:6px 14px;font-size:12px" onclick="enviarDocAluno('${tipo.id}')">📤 Enviar</button>` : ''}
+    return `<div class="card-dados" style="margin-bottom:14px">
+      <div class="card-dados-body">
+        <div style="font-weight:700;font-size:14.5px;margin-bottom:8px">${tipo.label}</div>
+        ${tipo.aviso ? `<div style="background:var(--amarelo-claro);border-radius:8px;padding:10px 14px;font-size:12px;color:#8a6200;margin-bottom:12px">${tipo.aviso}</div>` : ''}
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          ${statusBadge}
+          ${doc?.status !== 'aprovado' ? `<input type="file" id="doc-${tipo.id}" accept=".pdf,.jpg,.jpeg,.png" style="font-size:12px">
+          <button class="btn btn-primario" style="padding:8px 16px;font-size:12.5px" onclick="enviarDocAluno('${tipo.id}')">📤 Enviar</button>` : ''}
+        </div>
       </div>
     </div>`;
   }).join('');
+
+  atualizarKpisEJornada();
 }
 
 async function enviarDocAluno(tipo) {
@@ -2267,44 +2760,60 @@ async function enviarDocAluno(tipo) {
 async function carregarEscalaAluno() {
   if (!alunoLogadoId) return;
   const { data } = await sb.from('escala').select('*').eq('aluno_cadastro_id', alunoLogadoId).eq('publicada', true);
+  alunoEscalaData = data || [];
   const el = document.getElementById('aluno-escala-conteudo');
   if (!data || data.length === 0) {
-    el.innerHTML = `<div style="text-align:center;padding:60px 20px">
-      <div style="font-size:48px;margin-bottom:16px">📅</div>
-      <div style="font-size:16px;font-weight:600;margin-bottom:8px">Escala ainda não disponível</div>
+    el.innerHTML = `<div class="card-dados" style="text-align:center;padding:60px 20px">
+      <div style="font-size:40px;margin-bottom:16px">📅</div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:8px">Escala ainda não disponível</div>
       <div style="font-size:13px;color:var(--cinza-texto)">A supervisora ainda não publicou sua escala de campo. Você será notificado quando estiver disponível.</div>
     </div>`;
+    atualizarKpisEJornada();
     return;
   }
   el.innerHTML = data.map(e => `
-    <div style="background:white;border:1px solid var(--cinza-medio);border-radius:16px;padding:24px;margin-bottom:16px">
-      <div style="font-family:'DM Serif Display',serif;font-size:20px;margin-bottom:16px;color:var(--laranja)">${e.semestre || '—'}</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        <div style="background:var(--cinza-claro);border-radius:8px;padding:12px"><div style="font-size:10px;text-transform:uppercase;color:var(--cinza-texto)">Campo</div><div style="font-weight:600">${e.campo}</div></div>
-        <div style="background:var(--cinza-claro);border-radius:8px;padding:12px"><div style="font-size:10px;text-transform:uppercase;color:var(--cinza-texto)">Setor</div><div style="font-weight:600">${e.setor||'—'}</div></div>
-        <div style="background:var(--cinza-claro);border-radius:8px;padding:12px"><div style="font-size:10px;text-transform:uppercase;color:var(--cinza-texto)">Preceptor</div><div style="font-weight:600">${e.preceptor||'—'}</div></div>
-        <div style="background:var(--cinza-claro);border-radius:8px;padding:12px"><div style="font-size:10px;text-transform:uppercase;color:var(--cinza-texto)">Turno</div><div style="font-weight:600">${e.turno||'—'}</div></div>
-        <div style="background:var(--cinza-claro);border-radius:8px;padding:12px"><div style="font-size:10px;text-transform:uppercase;color:var(--cinza-texto)">Início</div><div style="font-weight:600">${formatarData(e.data_inicio)}</div></div>
-        <div style="background:var(--cinza-claro);border-radius:8px;padding:12px"><div style="font-size:10px;text-transform:uppercase;color:var(--cinza-texto)">Término</div><div style="font-weight:600">${formatarData(e.data_fim)}</div></div>
+    <div class="card-dados">
+      <div class="card-dados-body">
+        <div style="font-family:'DM Serif Display',serif;font-size:19px;margin-bottom:16px;color:var(--laranja)">${e.semestre || '—'}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div style="background:var(--cinza-claro);border-radius:10px;padding:12px"><div style="font-size:10px;text-transform:uppercase;color:var(--cinza-texto)">Campo</div><div style="font-weight:600">${e.campo}</div></div>
+          <div style="background:var(--cinza-claro);border-radius:10px;padding:12px"><div style="font-size:10px;text-transform:uppercase;color:var(--cinza-texto)">Setor</div><div style="font-weight:600">${e.setor||'—'}</div></div>
+          <div style="background:var(--cinza-claro);border-radius:10px;padding:12px"><div style="font-size:10px;text-transform:uppercase;color:var(--cinza-texto)">Preceptor</div><div style="font-weight:600">${e.preceptor||'—'}</div></div>
+          <div style="background:var(--cinza-claro);border-radius:10px;padding:12px"><div style="font-size:10px;text-transform:uppercase;color:var(--cinza-texto)">Turno</div><div style="font-weight:600">${e.turno||'—'}</div></div>
+          <div style="background:var(--cinza-claro);border-radius:10px;padding:12px"><div style="font-size:10px;text-transform:uppercase;color:var(--cinza-texto)">Início</div><div style="font-weight:600">${formatarData(e.data_inicio)}</div></div>
+          <div style="background:var(--cinza-claro);border-radius:10px;padding:12px"><div style="font-size:10px;text-transform:uppercase;color:var(--cinza-texto)">Término</div><div style="font-weight:600">${formatarData(e.data_fim)}</div></div>
+        </div>
       </div>
     </div>
   `).join('');
+  atualizarKpisEJornada();
 }
 
-// FAQ do aluno
+// Central Inteligente de Dúvidas (ex-FAQ)
 async function carregarFaqAluno() {
   const { data } = await sb.from('faq').select('*').eq('ativo', true).order('ordem');
+  todasFaqAluno = data || [];
+  renderizarFaqAluno(todasFaqAluno);
+}
+
+function renderizarFaqAluno(lista) {
   const el = document.getElementById('aluno-faq-lista');
-  if (!data || data.length === 0) { el.innerHTML = '<div class="vazio">Nenhuma pergunta cadastrada ainda.</div>'; return; }
-  el.innerHTML = data.map(f => `
-    <div style="background:white;border:1px solid var(--cinza-medio);border-radius:12px;margin-bottom:10px;overflow:hidden">
-      <div onclick="toggleFaq(this)" style="padding:16px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:14px">
+  if (!lista || lista.length === 0) { el.innerHTML = '<div class="vazio">Nenhuma pergunta encontrada.</div>'; return; }
+  el.innerHTML = lista.map(f => `
+    <div class="card-dados" style="margin-bottom:10px">
+      <div onclick="toggleFaq(this)" style="padding:16px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:14px">
         ${f.pergunta}
         <span style="color:var(--laranja);font-size:18px;flex-shrink:0;margin-left:12px">+</span>
       </div>
       <div style="display:none;padding:0 20px 16px;font-size:13px;color:var(--cinza-texto);line-height:1.7">${f.resposta}</div>
     </div>
   `).join('');
+}
+
+function filtrarFaqAluno(termo) {
+  const t = (termo || '').toLowerCase().trim();
+  if (!t) { renderizarFaqAluno(todasFaqAluno); return; }
+  renderizarFaqAluno(todasFaqAluno.filter(f => (f.pergunta||'').toLowerCase().includes(t) || (f.resposta||'').toLowerCase().includes(t)));
 }
 
 function toggleFaq(el) {
@@ -2315,17 +2824,28 @@ function toggleFaq(el) {
 }
 
 function mostrarPaginaAluno(id, el) {
-  ['aluno-dados','aluno-docs','aluno-escala','aluno-faq'].forEach(p => {
+  PAGINAS_ALUNO.forEach(p => {
     const el2 = document.getElementById(p);
     if(el2) { el2.style.display='none'; }
   });
   const pag = document.getElementById(id);
-  if(pag) { pag.style.cssText = 'display:flex;flex-direction:column;flex:1;'; }
+  if(pag) { pag.style.display='flex'; }
   document.querySelectorAll('#tela-aluno .nav-item').forEach(n=>n.classList.remove('ativo'));
   if(el) el.classList.add('ativo');
+
+  const titulo = document.getElementById('aluno-titulo-pagina');
+  if (titulo) titulo.textContent = TITULOS_PAGINA_ALUNO[id] || '';
+
+  const painel = document.getElementById('painel-lateral-aluno');
+  if (painel) painel.style.display = (id === 'aluno-dashboard' || id === 'aluno-dados') ? 'flex' : 'none';
+
+  const menu = document.getElementById('menu-perfil-aluno');
+  if (menu) menu.classList.remove('aberto');
+
   if(id==='aluno-docs') carregarDocsAluno();
   if(id==='aluno-escala') carregarEscalaAluno();
   if(id==='aluno-faq') carregarFaqAluno();
+  if (window.lucide) lucide.createIcons();
 }
 
 function copiarLinkCadastroAluno() {
