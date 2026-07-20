@@ -1113,8 +1113,22 @@ function scheduleLucide() {
 // ===== SUPABASE =====
 const SUPABASE_URL = 'https://muwbmqkoxflvbvewfmfo.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_P_CcTtiSZluXIBvfm0CtWg_LZgEuDL-';
-const { createClient } = supabase;
-const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+let sb;
+try {
+  if (typeof supabase === 'undefined') {
+    throw new Error('Biblioteca Supabase não carregou (CDN bloqueado ou offline).');
+  }
+  const { createClient } = supabase;
+  sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+} catch (e) {
+  console.error('Erro ao iniciar Supabase:', e);
+  document.addEventListener('DOMContentLoaded', () => {
+    const erroDiv = document.createElement('div');
+    erroDiv.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#c0392b;color:white;padding:16px;text-align:center;z-index:9999;font-family:sans-serif;font-size:14px';
+    erroDiv.textContent = '⚠️ Erro ao carregar o sistema: ' + e.message + ' — recarregue a página ou tente novamente em instantes.';
+    document.body.prepend(erroDiv);
+  });
+}
 
 let usuarioAtual = null;
 let preceptorAtual = null;
