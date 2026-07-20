@@ -4,8 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EstágioEnf — Anhanguera Asa Norte</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+let _lucideTimer = null;
+function scheduleLucide() {
+  if (_lucideTimer) clearTimeout(_lucideTimer);
+  _lucideTimer = setTimeout(() => { if (window.lucide) lucide.createIcons(); }, 60);
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js" defer></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -1767,7 +1773,7 @@ window.addEventListener('load', async () => {
     await definirPerfil();
   }
   document.getElementById('data-hoje-prec').textContent = '📅 ' + new Date().toLocaleDateString('pt-BR', {weekday:'long', day:'2-digit', month:'2-digit', year:'numeric'});
-  if (window.lucide) lucide.createIcons();
+  scheduleLucide();
 });
 document.addEventListener('click', (e) => {
   const menu = document.getElementById('menu-perfil-aluno');
@@ -2640,7 +2646,7 @@ let todasFaqAluno = [];
 async function entrarComoAluno() {
   irPara('tela-aluno');
   mostrarPaginaAluno('aluno-dashboard', document.querySelector('#tela-aluno .nav-item[data-page="aluno-dashboard"]'));
-  if (window.lucide) lucide.createIcons();
+  scheduleLucide();
 
   // Busca cadastro do aluno
   const { data } = await sb.from('alunos_cadastro').select('*').eq('user_id', usuarioAtual.id).single();
@@ -2727,7 +2733,7 @@ async function entrarComoAluno() {
   }
 
   atualizarKpisEJornada();
-  if (window.lucide) lucide.createIcons();
+  scheduleLucide();
 }
 
 function atualizarKpisEJornada() {
@@ -2846,7 +2852,7 @@ function atualizarKpisEJornada() {
     }
   }
 
-  if (window.lucide) lucide.createIcons();
+  scheduleLucide();
 }
 
 function abrirModalPersonalizarMsg() {
@@ -3083,7 +3089,7 @@ function mostrarPaginaAluno(id, el) {
   if(id==='aluno-docs') carregarDocsAluno();
   if(id==='aluno-escala') carregarEscalaAluno();
   if(id==='aluno-faq') carregarFaqAluno();
-  if (window.lucide) lucide.createIcons();
+  scheduleLucide();
 }
 
 function copiarLinkCadastroAluno() {
